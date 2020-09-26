@@ -1,5 +1,5 @@
 module finalreality.main {
-  exports com.github.cc3002.finalreality.gui;
+  exports com.github.estebanzuniga.finalreality.gui;
   requires javafx.controls;
   requires org.jetbrains.annotations;
 }

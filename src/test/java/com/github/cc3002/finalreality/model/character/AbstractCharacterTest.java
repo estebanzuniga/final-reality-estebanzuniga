@@ -3,8 +3,9 @@ package com.github.cc3002.finalreality.model.character;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import com.github.cc3002.finalreality.model.weapon.Weapon;
-import com.github.cc3002.finalreality.model.weapon.WeaponType;
+import com.github.estebanzuniga.finalreality.model.character.ICharacter;
+import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
+import com.github.estebanzuniga.finalreality.model.weapon.WeaponType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
