@@ -1,7 +1,7 @@
 package com.github.estebanzuniga;
 
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
-import com.github.estebanzuniga.finalreality.model.character.player.CharacterClass;
+import com.github.estebanzuniga.finalreality.model.character.CharacterClass;
 import com.github.estebanzuniga.finalreality.model.character.player.PlayerCharacter;
 import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
 import com.github.estebanzuniga.finalreality.model.weapon.WeaponType;

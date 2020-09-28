@@ -1,6 +1,5 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
-import com.github.estebanzuniga.finalreality.model.character.player.CharacterClass;
 import com.github.estebanzuniga.finalreality.model.character.player.PlayerCharacter;
 import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
 import java.util.concurrent.BlockingQueue;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * An abstract class that holds the common behaviour of all the characters in the game.
  *
  * @author Ignacio Slater Muñoz.
- * @author <Your name>
+ * @author Esteban Zúñiga Salamanca.
  */
 public abstract class AbstractCharacter implements ICharacter {
 
@@ -54,18 +53,6 @@ public abstract class AbstractCharacter implements ICharacter {
   @Override
   public String getName() {
     return name;
-  }
-
-  @Override
-  public void equip(Weapon weapon) {
-    if (this instanceof PlayerCharacter) {
-      this.equippedWeapon = weapon;
-    }
-  }
-
-  @Override
-  public Weapon getEquippedWeapon() {
-    return equippedWeapon;
   }
 
   @Override

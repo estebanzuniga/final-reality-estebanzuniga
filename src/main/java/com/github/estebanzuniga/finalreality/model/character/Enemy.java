@@ -1,6 +1,5 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
-import com.github.estebanzuniga.finalreality.model.character.player.CharacterClass;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
@@ -9,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A class that holds all the information of a single enemy of the game.
  *
- * @author Ignacio Slater Muñoz
- * @author <Your name>
+ * @author Ignacio Slater Muñoz.
+ * @author Esteban Zúñiga Salamanca.
  */
 public class Enemy extends AbstractCharacter {
 

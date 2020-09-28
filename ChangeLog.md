@@ -3,7 +3,12 @@ ChangeLog
 
 Version 2.0
 -----------
-Write your changes in here
+
+- 
+- Se quitó equipWeapon(Weapon weapon) y getEquippedWeapon() de ICharacter
+  y AbstractCharacter, debido a que Enemy no puede equiparse armas y se
+  implementaron en PlayerCharacter
+- Se agregaron los test faltante del código base
 
 Version 1.0
 -----------
