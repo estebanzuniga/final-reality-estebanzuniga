@@ -1,4 +1,4 @@
-package com.github.estebanzuniga.finalreality.model.character;
+package com.github.estebanzuniga.finalreality.model.character.player;
 
 /**
  * Enumeration of the classes a player character may have.
@@ -7,5 +7,5 @@ package com.github.estebanzuniga.finalreality.model.character;
  * @author Esteban Zúñiga Salamanca.
  */
 public enum CharacterClass {
-  KNIGHT, ENGINEER, THIEF, BLACK_MAGE, WHITE_MAGE, ENEMY
+  KNIGHT, ENGINEER, THIEF, BLACK_MAGE, WHITE_MAGE
 }

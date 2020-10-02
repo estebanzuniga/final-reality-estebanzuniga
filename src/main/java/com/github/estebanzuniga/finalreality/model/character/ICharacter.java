@@ -19,9 +19,4 @@ public interface ICharacter {
    * Returns this character's name.
    */
   String getName();
-
-  /**
-   * Returns this character's class.
-   */
-  CharacterClass getCharacterClass();
 }

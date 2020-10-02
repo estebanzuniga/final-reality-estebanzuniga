@@ -18,15 +18,13 @@ public abstract class AbstractCharacter implements ICharacter {
 
   protected final BlockingQueue<ICharacter> turnsQueue;
   protected final String name;
-  private final CharacterClass characterClass;
   private Weapon equippedWeapon = null;
   private ScheduledExecutorService scheduledExecutor;
 
   protected AbstractCharacter(@NotNull BlockingQueue<ICharacter> turnsQueue,
-      @NotNull String name, CharacterClass characterClass) {
+      @NotNull String name) {
     this.turnsQueue = turnsQueue;
     this.name = name;
-    this.characterClass = characterClass;
   }
 
   @Override
@@ -53,10 +51,5 @@ public abstract class AbstractCharacter implements ICharacter {
   @Override
   public String getName() {
     return name;
-  }
-
-  @Override
-  public CharacterClass getCharacterClass() {
-    return characterClass;
   }
 }

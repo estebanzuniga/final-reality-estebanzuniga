@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
-import com.github.estebanzuniga.finalreality.model.character.CharacterClass;
+import com.github.estebanzuniga.finalreality.model.character.player.CharacterClass;
 import com.github.estebanzuniga.finalreality.model.character.player.PlayerCharacter;
 import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
 import com.github.estebanzuniga.finalreality.model.weapon.WeaponType;

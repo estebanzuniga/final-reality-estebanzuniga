@@ -2,7 +2,6 @@ package com.github.estebanzuniga.finalreality.model.character;
 
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,7 +20,7 @@ public class Enemy extends AbstractCharacter {
    */
   public Enemy(@NotNull final String name, final int weight,
       @NotNull final BlockingQueue<ICharacter> turnsQueue) {
-    super(turnsQueue, name, CharacterClass.ENEMY);
+    super(turnsQueue, name);
     this.weight = weight;
   }
 

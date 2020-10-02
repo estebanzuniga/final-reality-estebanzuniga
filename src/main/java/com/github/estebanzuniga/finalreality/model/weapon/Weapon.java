@@ -8,7 +8,7 @@ import java.util.Objects;
  * @author Ignacio Slater Muñoz.
  * @author Esteban Zúñiga Salamanca.
  */
-public class Weapon {
+public abstract class Weapon implements IWeapon{
 
   private final String name;
   private final int damage;
@@ -28,19 +28,23 @@ public class Weapon {
     this.type = type;
   }
 
-  private String getName() {
+  @Override
+  public String getName() {
     return name;
   }
 
-  private int getDamage() {
+  @Override
+  public int getDamage() {
     return damage;
   }
 
+  @Override
   public int getWeight() {
     return weight;
   }
 
-  private WeaponType getType() {
+  @Override
+  public WeaponType getType() {
     return type;
   }
 

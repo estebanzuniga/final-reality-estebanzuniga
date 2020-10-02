@@ -1,11 +1,9 @@
 package com.github.estebanzuniga.finalreality.model.character.player;
 
 import com.github.estebanzuniga.finalreality.model.character.AbstractCharacter;
-import com.github.estebanzuniga.finalreality.model.character.CharacterClass;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
-
 import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerCharacter extends AbstractCharacter {
 
   private Weapon equippedWeapon = null;
+  private final CharacterClass characterClass;
 
   /**
    * Creates a new character.
@@ -32,7 +31,9 @@ public class PlayerCharacter extends AbstractCharacter {
   public PlayerCharacter(@NotNull String name,
                          @NotNull BlockingQueue<ICharacter> turnsQueue,
                          final CharacterClass characterClass) {
-    super(turnsQueue, name, characterClass);
+    super(turnsQueue, name);
+
+    this.characterClass = characterClass;
   }
 
   public void equip(Weapon weapon) {
@@ -41,6 +42,10 @@ public class PlayerCharacter extends AbstractCharacter {
 
   public Weapon getEquippedWeapon() {
     return equippedWeapon;
+  }
+
+  public CharacterClass getCharacterClass() {
+    return characterClass;
   }
 
   @Override

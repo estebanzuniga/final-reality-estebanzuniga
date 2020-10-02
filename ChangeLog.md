@@ -4,11 +4,20 @@ ChangeLog
 Version 2.0
 -----------
 
-- 
+- Se quitó ENEMY de CharacterClass, debido a que se podía instanciar objetos de ese tipo,
+  luego se definió el método getCharacterClass solo en la clase PlayerCharacter.
+  (Existe la duda sobre si la clase Enemy debe tener el método getCharacterClass o no,
+  se asumió que no debido a que actualmente no se aprecia la utilidad que este pueda tener)
+  
+- Se creó la interfaz IWeapon, la cual define ciertos métodos que luego implementa
+  abstractWeapon. Esto nos ayudará próximamente a crear los diferentes tipos de armas.
+  
 - Se quitó equipWeapon(Weapon weapon) y getEquippedWeapon() de ICharacter
   y AbstractCharacter, debido a que Enemy no puede equiparse armas y se
-  implementaron en PlayerCharacter
-- Se agregaron los test faltante del código base
+  implementaron en PlayerCharacter.
+  
+- Se agregaron los test faltante del código base.
+  (No sirvió debido a los cambios realizado posteriormente)
 
 Version 1.0
 -----------
