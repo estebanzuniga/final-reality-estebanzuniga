@@ -1,5 +1,7 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
+import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
+
 /**
  * This represents a character from the game.
  * A character can be controlled by the player or by the CPU (an enemy).
@@ -19,4 +21,15 @@ public interface ICharacter {
    * Returns this character's name.
    */
   String getName();
+
+  /**
+   * Returns this character's equipped weapon.
+   */
+  Weapon getEquippedWeapon();
+
+  /**
+   * Return this character's class.
+   */
+  CharacterClass getCharacterClass();
+
 }

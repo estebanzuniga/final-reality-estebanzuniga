@@ -1,5 +1,6 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
+import com.github.estebanzuniga.finalreality.model.character.player.Enemy;
 import com.github.estebanzuniga.finalreality.model.character.player.PlayerCharacter;
 import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
 import java.util.concurrent.BlockingQueue;
@@ -18,13 +19,15 @@ public abstract class AbstractCharacter implements ICharacter {
 
   protected final BlockingQueue<ICharacter> turnsQueue;
   protected final String name;
-  private Weapon equippedWeapon = null;
+  private final CharacterClass characterClass;
   private ScheduledExecutorService scheduledExecutor;
+  protected Weapon equippedWeapon = null;
 
   protected AbstractCharacter(@NotNull BlockingQueue<ICharacter> turnsQueue,
-      @NotNull String name) {
+      @NotNull String name, CharacterClass characterClass) {
     this.turnsQueue = turnsQueue;
     this.name = name;
+    this.characterClass = characterClass;
   }
 
   @Override
@@ -46,6 +49,16 @@ public abstract class AbstractCharacter implements ICharacter {
   private void addToQueue() {
     turnsQueue.add(this);
     scheduledExecutor.shutdown();
+  }
+
+  @Override
+  public Weapon getEquippedWeapon() {
+    return equippedWeapon;
+  }
+
+  @Override
+  public CharacterClass getCharacterClass() {
+    return characterClass;
   }
 
   @Override
