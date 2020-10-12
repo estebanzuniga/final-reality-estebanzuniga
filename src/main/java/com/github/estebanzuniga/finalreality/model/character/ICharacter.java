@@ -1,14 +1,13 @@
-package com.github.cc3002.finalreality.model.character;
+package com.github.estebanzuniga.finalreality.model.character;
 
-import com.github.cc3002.finalreality.model.character.player.CharacterClass;
-import com.github.cc3002.finalreality.model.weapon.Weapon;
+import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
 
 /**
  * This represents a character from the game.
  * A character can be controlled by the player or by the CPU (an enemy).
  *
  * @author Ignacio Slater Muñoz.
- * @author <Your name>
+ * @author Esteban Zúñiga Salamanca.
  */
 public interface ICharacter {
 
@@ -24,17 +23,13 @@ public interface ICharacter {
   String getName();
 
   /**
-   * Equips a weapon to the character.
-   */
-  void equip(Weapon weapon);
-
-  /**
-   * Return this character's equipped weapon.
+   * Returns this character's equipped weapon.
    */
   Weapon getEquippedWeapon();
 
   /**
-   * Returns this character's class.
+   * Return this character's class.
    */
   CharacterClass getCharacterClass();
+
 }

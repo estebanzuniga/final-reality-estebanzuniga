@@ -1,8 +1,8 @@
-package com.github.cc3002.finalreality.model.character;
+package com.github.estebanzuniga.finalreality.model.character;
 
-import com.github.cc3002.finalreality.model.character.player.CharacterClass;
-import com.github.cc3002.finalreality.model.character.player.PlayerCharacter;
-import com.github.cc3002.finalreality.model.weapon.Weapon;
+import com.github.estebanzuniga.finalreality.model.character.player.Enemy;
+import com.github.estebanzuniga.finalreality.model.character.player.PlayerCharacter;
+import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -13,15 +13,15 @@ import org.jetbrains.annotations.NotNull;
  * An abstract class that holds the common behaviour of all the characters in the game.
  *
  * @author Ignacio Slater Muñoz.
- * @author <Your name>
+ * @author Esteban Zúñiga Salamanca.
  */
 public abstract class AbstractCharacter implements ICharacter {
 
   protected final BlockingQueue<ICharacter> turnsQueue;
   protected final String name;
   private final CharacterClass characterClass;
-  private Weapon equippedWeapon = null;
   private ScheduledExecutorService scheduledExecutor;
+  protected Weapon equippedWeapon = null;
 
   protected AbstractCharacter(@NotNull BlockingQueue<ICharacter> turnsQueue,
       @NotNull String name, CharacterClass characterClass) {
@@ -52,18 +52,6 @@ public abstract class AbstractCharacter implements ICharacter {
   }
 
   @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void equip(Weapon weapon) {
-    if (this instanceof PlayerCharacter) {
-      this.equippedWeapon = weapon;
-    }
-  }
-
-  @Override
   public Weapon getEquippedWeapon() {
     return equippedWeapon;
   }
@@ -71,5 +59,10 @@ public abstract class AbstractCharacter implements ICharacter {
   @Override
   public CharacterClass getCharacterClass() {
     return characterClass;
+  }
+
+  @Override
+  public String getName() {
+    return name;
   }
 }

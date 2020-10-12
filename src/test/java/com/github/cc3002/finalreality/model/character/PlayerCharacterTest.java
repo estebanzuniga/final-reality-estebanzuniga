@@ -4,9 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import com.github.cc3002.finalreality.model.character.player.CharacterClass;
-import com.github.cc3002.finalreality.model.character.player.PlayerCharacter;
+import com.github.estebanzuniga.finalreality.model.character.player.Enemy;
+import com.github.estebanzuniga.finalreality.model.character.CharacterClass;
+import com.github.estebanzuniga.finalreality.model.character.player.PlayerCharacter;
+
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +19,7 @@ import org.junit.jupiter.api.Test;
  * Set of tests for the {@code GameCharacter} class.
  *
  * @author Ignacio Slater Muñoz.
- * @author <Your name>
+ * @author Esteban Zúñiga Salamanca.
  * @see PlayerCharacter
  */
 class PlayerCharacterTest extends AbstractCharacterTest {
@@ -25,6 +29,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
   private static final String WHITE_MAGE_NAME = "Eiko";
   private static final String ENGINEER_NAME = "Cid";
   private static final String THIEF_NAME = "Zidane";
+  private List<PlayerCharacter> testPlayerCharacters;
   private Map<CharacterClass, String> characterNames;
 
   /**
@@ -35,6 +40,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
   void setUp() {
     super.basicSetUp();
 
+    testPlayerCharacters = new ArrayList<>();
     characterNames = new EnumMap<>(CharacterClass.class);
     characterNames.put(CharacterClass.BLACK_MAGE, BLACK_MAGE_NAME);
     characterNames.put(CharacterClass.KNIGHT, KNIGHT_NAME);
@@ -44,7 +50,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
 
     for (var characterClass :
         characterNames.keySet()) {
-      testCharacters.add(
+      testPlayerCharacters.add(
           new PlayerCharacter(characterNames.get(characterClass), turns, characterClass));
     }
   }
@@ -56,7 +62,7 @@ class PlayerCharacterTest extends AbstractCharacterTest {
   void constructorTest() {
     var enemy = new Enemy("Enemy", 10, turns);
     for (var character :
-        testCharacters) {
+        testPlayerCharacters) {
       var characterClass = character.getCharacterClass();
       var characterName = characterNames.get(characterClass);
       checkConstruction(new PlayerCharacter(characterName, turns, characterClass),
@@ -67,13 +73,12 @@ class PlayerCharacterTest extends AbstractCharacterTest {
                   : CharacterClass.THIEF));
       assertNotEquals(character, enemy);
     }
-
   }
 
   @Test
   void equipWeaponTest() {
     for (var character :
-        testCharacters) {
+        testPlayerCharacters) {
       assertNull(character.getEquippedWeapon());
       character.equip(testWeapon);
       assertEquals(testWeapon, character.getEquippedWeapon());
