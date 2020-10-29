@@ -23,11 +23,6 @@ public interface ICharacter {
   String getName();
 
   /**
-   * Return this character's class.
-   */
-  CharacterClass getCharacterClass();
-
-  /**
    * Returns the character's life.
    */
   int getLife();

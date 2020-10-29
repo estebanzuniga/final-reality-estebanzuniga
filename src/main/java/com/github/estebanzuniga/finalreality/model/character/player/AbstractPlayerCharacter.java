@@ -1,8 +1,6 @@
 package com.github.estebanzuniga.finalreality.model.character.player;
 
 import com.github.estebanzuniga.finalreality.model.character.AbstractCharacter;
-import com.github.estebanzuniga.finalreality.model.character.CharacterClass;
-import java.util.Objects;
 
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import org.jetbrains.annotations.NotNull;
@@ -15,9 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractPlayerCharacter extends AbstractCharacter implements IPlayerCharacter {
 
-  public AbstractPlayerCharacter(@NotNull String name,
-                                 final CharacterClass characterClass) {
-    super(name, characterClass);
+  public AbstractPlayerCharacter(@NotNull String name) {
+    super(name);
   }
 
   @Override

@@ -1,12 +1,9 @@
 package com.github.estebanzuniga.finalreality.model.character.player.party;
 
-import com.github.estebanzuniga.finalreality.model.character.CharacterClass;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
-import com.github.estebanzuniga.finalreality.model.character.player.AbstractPlayerCharacter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -26,7 +23,7 @@ public class BlackMage extends AbstractMage{
      *     the black mage's name.
      */
     public BlackMage(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue) {
-        super(name, CharacterClass.BLACK_MAGE);
+        super(name);
         this.turnsQueue = turnsQueue;
         mana = 200;
     }
@@ -66,6 +63,6 @@ public class BlackMage extends AbstractMage{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCharacterClass());
+        return Objects.hash(getName(), getDefense());
     }
 }

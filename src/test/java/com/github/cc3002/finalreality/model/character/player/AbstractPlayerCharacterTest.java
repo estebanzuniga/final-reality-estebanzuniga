@@ -10,10 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.estebanzuniga.finalreality.model.character.player.IPlayerCharacter;
-import com.github.estebanzuniga.finalreality.model.character.player.party.*;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
  * Set of tests for the {@code GameCharacter} class.
@@ -21,7 +19,7 @@ import org.junit.jupiter.api.Test;
  * @author Esteban Zúñiga Salamanca.
  * @see AbstractPlayerCharacter
  */
-public class AbstractPlayerCharacterTest extends AbstractCharacterTest {
+public abstract class AbstractPlayerCharacterTest extends AbstractCharacterTest {
 
   protected List<IPlayerCharacter> testAbstractPlayerCharacters;
 
@@ -34,11 +32,6 @@ public class AbstractPlayerCharacterTest extends AbstractCharacterTest {
     super.basicSetUp();
 
     testAbstractPlayerCharacters = new ArrayList<>();
-    var testBlackMage = new BlackMage(BLACK_MAGE_NAME, turns);
-    var testKnight = new Knight(THIEF_NAME, turns);
-    var testWhiteMage = new WhiteMage(WHITE_MAGE_NAME, turns);
-    var testEngineer = new Engineer(ENGINEER_NAME, turns);
-    var testThief = new Thief(THIEF_NAME, turns);
     testAbstractPlayerCharacters.add(testBlackMage);
     testAbstractPlayerCharacters.add(testKnight);
     testAbstractPlayerCharacters.add(testWhiteMage);
@@ -46,7 +39,7 @@ public class AbstractPlayerCharacterTest extends AbstractCharacterTest {
     testAbstractPlayerCharacters.add(testThief);
     }
 
-  public void checkEquipWeapon(IPlayerCharacter playerCharacter, IWeapon testWeapon) {
+  protected void checkEquipWeapon(IPlayerCharacter playerCharacter, IWeapon testWeapon) {
       assertNull(playerCharacter.getEquippedWeapon());
       playerCharacter.equip(testWeapon);
       assertEquals(testWeapon, playerCharacter.getEquippedWeapon());

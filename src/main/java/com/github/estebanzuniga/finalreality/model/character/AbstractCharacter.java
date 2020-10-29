@@ -17,13 +17,11 @@ public abstract class AbstractCharacter implements ICharacter {
 
   protected BlockingQueue<ICharacter> turnsQueue = new LinkedBlockingQueue<>();
   protected final String name;
-  private final CharacterClass characterClass;
   protected ScheduledExecutorService scheduledExecutor;
   protected IWeapon equippedWeapon = null;
 
-  protected AbstractCharacter(@NotNull String name, CharacterClass characterClass) {
+  protected AbstractCharacter(@NotNull String name) {
     this.name = name;
-    this.characterClass = characterClass;
   }
 
   @Override
@@ -43,11 +41,6 @@ public abstract class AbstractCharacter implements ICharacter {
   public void addToQueue() {
     turnsQueue.add(this);
     scheduledExecutor.shutdown();
-  }
-
-  @Override
-  public CharacterClass getCharacterClass() {
-    return characterClass;
   }
 
   @Override

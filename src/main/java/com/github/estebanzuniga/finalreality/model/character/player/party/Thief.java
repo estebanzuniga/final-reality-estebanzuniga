@@ -1,6 +1,5 @@
 package com.github.estebanzuniga.finalreality.model.character.player.party;
 
-import com.github.estebanzuniga.finalreality.model.character.CharacterClass;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.character.player.AbstractPlayerCharacter;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +24,7 @@ public class Thief extends AbstractPlayerCharacter {
      *     the thief's name.
      */
     public Thief(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue) {
-        super(name, CharacterClass.THIEF);
+        super(name);
         this.turnsQueue = turnsQueue;
     }
 
@@ -65,6 +64,6 @@ public class Thief extends AbstractPlayerCharacter {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCharacterClass());
+        return Objects.hash(getName(), getDefense());
     }
 }

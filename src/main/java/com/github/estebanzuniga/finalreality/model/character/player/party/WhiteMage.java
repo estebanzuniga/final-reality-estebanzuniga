@@ -1,6 +1,5 @@
 package com.github.estebanzuniga.finalreality.model.character.player.party;
 
-import com.github.estebanzuniga.finalreality.model.character.CharacterClass;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +23,7 @@ public class WhiteMage extends AbstractMage{
      *     the white mage's name.
      */
     public WhiteMage(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue) {
-        super(name, CharacterClass.WHITE_MAGE);
+        super(name);
         this.turnsQueue = turnsQueue;
         mana = 200;
     }
@@ -64,7 +63,7 @@ public class WhiteMage extends AbstractMage{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCharacterClass());
+        return Objects.hash(getName(), getDefense());
     }
 
 }
