@@ -1,6 +1,6 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
-import com.github.estebanzuniga.finalreality.model.weapon.Weapon;
+import com.github.estebanzuniga.finalreality.model.character.player.party.*;
 
 /**
  * This represents a character from the game.
@@ -23,13 +23,68 @@ public interface ICharacter {
   String getName();
 
   /**
-   * Returns this character's equipped weapon.
+   * Returns the character's life.
    */
-  Weapon getEquippedWeapon();
+  int getLife();
 
   /**
-   * Return this character's class.
+   * Set a character's life after being attacked.
+   * @param life
+   *        The character's current life.
    */
-  CharacterClass getCharacterClass();
+  void setLife(int life);
 
+  /**
+   * Returns the character's defense.
+   */
+  int getDefense();
+
+  /**
+   * Represents the character's attack.
+   * @param character
+   *        The attacked character.
+   */
+  void attack(ICharacter character);
+
+  /**
+   * Represents the attack of an enemy.
+   * @param enemy
+   *        The attacking enemy.
+   */
+  void attackedByEnemy(Enemy enemy);
+
+  /**
+   * Represents the attack of an engineer.
+   * @param engineer
+   *        The attacking engineer.
+   */
+  void attackedByEngineer(Engineer engineer);
+
+  /**
+   * Represents the attack of a thief.
+   * @param thief
+   *        The attacking thief.
+   */
+  void attackedByThief(Thief thief);
+
+  /**
+   * Represents the attack of a knight.
+   * @param knight
+   *        The attacking knight.
+   */
+  void attackedByKnight(Knight knight);
+
+  /**
+   * Represents the attack of a white mage.
+   * @param whiteMage
+   *        The attacking white mage.
+   */
+  void attackedByWhiteMage(WhiteMage whiteMage);
+
+  /**
+   * Represents the attack of a black mage.
+   * @param blackMage
+   *        The attacking black mage.
+   */
+  void attackedByBlackMage(BlackMage blackMage);
 }
