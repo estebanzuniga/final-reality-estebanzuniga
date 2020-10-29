@@ -1,6 +1,25 @@
 ChangeLog
 =========
 
+Version 3.0
+-----------
+
+- Se completaron los test con 100% de Coverage.
+
+- Se crearon métodos attakedBy(...), los cuales son llamados por el método attack
+  de cada clase.
+
+- Se eliminaron las clases CharacterClass y WeaponType.
+
+- En el paquete Weapon se eliminó la clase Weapon y se creó una clase para cada
+  tipo de arma, es decir, Axe, Bow, Knife, Staff, Sword.
+
+- Se crearon clases para Engineer, Knight y Thief, además, una clase abstracta
+  AbstractMage, de la cual heredan WhiteMage y BlackMage.
+
+- Se añadió la interfaz IPlayerCharacter, la cual implementa la clase
+  abstractPlayerCharacter (ex PlayerCharacter).
+
 Version 2.0
 -----------
 
@@ -9,8 +28,8 @@ Version 2.0
 - Se creó la interfaz IWeapon, la cual define ciertos métodos que luego implementa
   abstractWeapon. Esto nos ayudará próximamente a crear los diferentes tipos de armas.
   
-- Se quitó equipWeapon(Weapon weapon) de ICharacter y AbstractCharacter,
-  debido a que Enemy no puede equiparse armas y se implementó en PlayerCharacter.
+- Se quitó equipWeapon de ICharacter y AbstractCharacter, debido a que
+  Enemy no puede equiparse armas y se implementó en PlayerCharacter.
   
 - Se agregaron los test faltante del código base.
   (No sirvió debido a los cambios realizado posteriormente)
