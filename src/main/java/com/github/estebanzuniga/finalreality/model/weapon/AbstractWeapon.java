@@ -3,34 +3,20 @@ package com.github.estebanzuniga.finalreality.model.weapon;
 import java.util.Objects;
 
 /**
- * A class that holds all the information of a weapon.
+ * An abstract class that holds the common behaviour of all the weapons in the game.
  *
- * @author Ignacio Slater Muñoz.
  * @author Esteban Zúñiga Salamanca.
  */
-public class Weapon implements IWeapon{
+public abstract class AbstractWeapon implements IWeapon{
 
-  private final String name;
   private final int damage;
   private final int weight;
   private final WeaponType type;
 
-  /**
-   * Creates a weapon with a name, a base damage, speed and it's type.
-   *
-   * @see WeaponType
-   */
-  public Weapon(final String name, final int damage, final int weight,
-      final WeaponType type) {
-    this.name = name;
+  public AbstractWeapon(final int damage, final int weight, final WeaponType type) {
     this.damage = damage;
     this.weight = weight;
     this.type = type;
-  }
-
-  @Override
-  public String getName() {
-    return name;
   }
 
   @Override
@@ -53,18 +39,17 @@ public class Weapon implements IWeapon{
     if (this == o) {
       return true;
     }
-    if (!(o instanceof Weapon)) {
+    if (!(o instanceof AbstractWeapon)) {
       return false;
     }
-    final Weapon weapon = (Weapon) o;
+    final AbstractWeapon weapon = (AbstractWeapon) o;
     return getDamage() == weapon.getDamage() &&
         getWeight() == weapon.getWeight() &&
-        getName().equals(weapon.getName()) &&
         getType() == weapon.getType();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getName(), getDamage(), getWeight(), getType());
+    return Objects.hash(getDamage(), getWeight(), getType());
   }
 }
