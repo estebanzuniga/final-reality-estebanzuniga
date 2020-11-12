@@ -3,6 +3,7 @@ package com.github.cc3002.finalreality.model.character.player.party;
 import com.github.cc3002.finalreality.model.character.player.AbstractPlayerCharacterTest;
 import com.github.estebanzuniga.finalreality.model.character.player.party.Engineer;
 import com.github.estebanzuniga.finalreality.model.character.player.party.Thief;
+import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,37 +12,46 @@ import java.util.List;
 
 class EngineerTest extends AbstractPlayerCharacterTest {
 
-    private List<Engineer> testEngineerList;
+    private Engineer engineer;
+    private List<IWeapon> testEngineerWeaponList;
 
     @BeforeEach
     void setUp() {
         super.basicSetUp();
-        testCharacters.add(new Engineer(ENGINEER_NAME, turns));
-        testEngineerList = new ArrayList<>();
-        testEngineerList.add(testEngineer);
+        engineer = new Engineer(turns, OTHER_NAME);
+        testEngineerWeaponList = new ArrayList<>();
+        testEngineerWeaponList.add(testAxe);
+        testEngineerWeaponList.add(testBow);
     }
 
     @Test
     void constructorTest() {
-        checkConstruction(new Engineer(ENGINEER_NAME, turns),
-                testEngineerList.get(0),
-                testEnemy,
-                new Thief(THIEF_NAME, turns));
+        checkConstruction(new Engineer(turns, ENGINEER_NAME),
+                testEngineer,
+                engineer,
+                new Thief(turns, THIEF_NAME));
     }
 
     @Test
     void waitTurnTest() {
-        checkWaitTurn();
+        for (IWeapon weapon : testEngineerWeaponList) {
+            engineer.equip(weapon);
+            checkWaitTurn(engineer);
+        }
     }
 
     @Test
     void equipWeaponTest() {
-        checkEquipWeapon(testEngineer, testWeapon);
+        for (IWeapon weapon : testEngineerWeaponList) {
+            checkEquipWeapon(engineer, weapon);
+        }
     }
 
     @Test
     void attackTest() {
-        testEngineer.equip(testWeapon);
-        checkAttack(testEnemy, testEngineer);
+        for (IWeapon weapon : testEngineerWeaponList) {
+            engineer.equip(weapon);
+            checkAttack(testEnemy, engineer);
+        }
     }
 }

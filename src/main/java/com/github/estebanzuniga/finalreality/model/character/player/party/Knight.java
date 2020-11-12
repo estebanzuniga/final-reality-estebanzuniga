@@ -15,7 +15,6 @@ import java.util.concurrent.BlockingQueue;
 public class Knight extends AbstractPlayerCharacter {
 
     private int life = 500;
-    private final int defense = 100;
 
     /**
      * Creates a new knight.
@@ -23,9 +22,9 @@ public class Knight extends AbstractPlayerCharacter {
      * @param name
      *     the knight's name.
      */
-    public Knight(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue) {
-        super(name);
-        this.turnsQueue = turnsQueue;
+    public Knight(@NotNull final BlockingQueue<ICharacter> turnsQueue,
+                  @NotNull String name){
+        super(turnsQueue, name);
     }
 
     @Override
@@ -40,12 +39,17 @@ public class Knight extends AbstractPlayerCharacter {
 
     @Override
     public int getDefense() {
-        return defense;
+        return 100;
     }
 
     @Override
     public void attack(ICharacter character) {
-        character.attackedByKnight(this);
+        if (character.isAlive()) {
+            character.attackedByKnight(this);
+        }
+        if (character.getLife() <= 0) {
+            character.setLife(0);
+        }
     }
 
     @Override

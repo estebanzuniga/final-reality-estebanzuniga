@@ -13,6 +13,11 @@ public interface IPlayerCharacter {
     void equip(IWeapon weapon);
 
     /**
+     * Unequip a weapon to a PlayerCharacter.
+     */
+    void unequip();
+
+    /**
      * Returns this character's equipped weapon.
      */
     IWeapon getEquippedWeapon();

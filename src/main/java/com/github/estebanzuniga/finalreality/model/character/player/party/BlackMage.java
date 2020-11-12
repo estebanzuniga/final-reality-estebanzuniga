@@ -14,7 +14,7 @@ import java.util.concurrent.BlockingQueue;
 public class BlackMage extends AbstractMage{
 
     private int life = 500;
-    private final int defense = 100;
+    //protected int mana;
 
     /**
      * Creates a new black mage.
@@ -22,10 +22,10 @@ public class BlackMage extends AbstractMage{
      * @param name
      *     the black mage's name.
      */
-    public BlackMage(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue) {
-        super(name);
-        this.turnsQueue = turnsQueue;
-        mana = 200;
+    public BlackMage(@NotNull final BlockingQueue<ICharacter> turnsQueue,
+                     @NotNull String name){
+        super(turnsQueue, name);
+        //this.mana = mana;
     }
 
     @Override
@@ -40,12 +40,17 @@ public class BlackMage extends AbstractMage{
 
     @Override
     public int getDefense() {
-        return defense;
+        return 100;
     }
 
     @Override
     public void attack(ICharacter character) {
-        character.attackedByBlackMage(this);
+        if (character.isAlive()) {
+            character.attackedByBlackMage(this);
+        }
+        if (character.getLife() <= 0) {
+            character.setLife(0);
+        }
     }
 
     @Override
@@ -65,4 +70,12 @@ public class BlackMage extends AbstractMage{
     public int hashCode() {
         return Objects.hash(getName(), getDefense());
     }
+
+    /*public int getMana() {
+        return mana;
+    }
+
+    public void setMana(int mana) {
+        this.mana = mana;
+    }*/
 }

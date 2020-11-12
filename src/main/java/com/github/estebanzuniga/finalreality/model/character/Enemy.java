@@ -2,6 +2,8 @@ package com.github.estebanzuniga.finalreality.model.character;
 
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,14 +24,19 @@ public class Enemy extends AbstractCharacter {
    * Creates a new enemy with a name, a weight and the queue with the characters ready to
    * play.
    */
-  public Enemy(@NotNull final String name, final int weight, int life, int attack, int defense,
-               @NotNull BlockingQueue<ICharacter> turnsQueue) {
-    super(name);
+  public Enemy(@NotNull BlockingQueue<ICharacter> turnsQueue,
+               @NotNull final String name, final int weight, int life, int attack, int defense) {
+    super(turnsQueue, name);
     this.weight = weight;
     this.life = life;
     this.attack = attack;
     this.defense = defense;
-    this.turnsQueue = turnsQueue;
+  }
+
+  @Override
+  public void waitTurn() {
+    scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+    scheduledExecutor.schedule(this::addToQueue, this.getWeight() / 10, TimeUnit.SECONDS);
   }
 
   @Override
@@ -63,7 +70,12 @@ public class Enemy extends AbstractCharacter {
 
   @Override
   public void attack(ICharacter character) {
-    character.attackedByEnemy(this);
+    if (character.isAlive()) {
+      character.attackedByEnemy(this);
+    }
+    if (character.getLife() <= 0) {
+      character.setLife(0);
+    }
   }
 
   @Override

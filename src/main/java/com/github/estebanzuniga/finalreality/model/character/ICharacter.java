@@ -87,4 +87,11 @@ public interface ICharacter {
    *        The attacking black mage.
    */
   void attackedByBlackMage(BlackMage blackMage);
+
+  /**
+   * Checks if a character is alive or not.
+   * @return
+   *        true if the character is alive, false if is dead.
+   */
+  boolean isAlive();
 }

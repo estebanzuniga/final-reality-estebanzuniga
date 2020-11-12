@@ -1,8 +1,11 @@
 package com.github.cc3002.finalreality.model.character.player.party;
 
 import com.github.cc3002.finalreality.model.character.player.AbstractPlayerCharacterTest;
+import com.github.estebanzuniga.finalreality.model.character.player.party.Engineer;
 import com.github.estebanzuniga.finalreality.model.character.player.party.Knight;
 import com.github.estebanzuniga.finalreality.model.character.player.party.Thief;
+import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
+import com.github.estebanzuniga.finalreality.model.weapon.party.Knife;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,37 +14,47 @@ import java.util.List;
 
 class KnightTest extends AbstractPlayerCharacterTest {
 
-    private List<Knight> testKnightList;
+    private Knight knight;
+    private List<IWeapon> testKnightWeaponList;
 
     @BeforeEach
     void setUp() {
         super.basicSetUp();
-        testCharacters.add(new Knight(KNIGHT_NAME, turns));
-        testKnightList = new ArrayList<>();
-        testKnightList.add(testKnight);
+        knight = new Knight(turns, OTHER_NAME);
+        testKnightWeaponList = new ArrayList<>();
+        testKnightWeaponList.add(testSword);
+        testKnightWeaponList.add(testAxe);
+        testKnightWeaponList.add(testKnife);
     }
 
     @Test
     void constructorTest() {
-        checkConstruction(new Knight(KNIGHT_NAME, turns),
-                testKnightList.get(0),
-                testEnemy,
-                new Thief(THIEF_NAME, turns));
+        checkConstruction(new Knight(turns, KNIGHT_NAME),
+                testKnight,
+                knight,
+                new Engineer(turns, ENGINEER_NAME));
     }
 
     @Test
     void waitTurnTest() {
-        checkWaitTurn();
+        for (IWeapon weapon : testKnightWeaponList) {
+            knight.equip(weapon);
+            checkWaitTurn(knight);
+        }
     }
 
     @Test
-    void EquipWeaponTest() {
-        checkEquipWeapon(testKnight, testWeapon);
+    void equipWeaponTest() {
+        for (IWeapon weapon : testKnightWeaponList) {
+            checkEquipWeapon(knight, weapon);
+        }
     }
 
     @Test
     void attackTest() {
-        testKnight.equip(testWeapon);
-        checkAttack(testEnemy, testKnight);
+        for (IWeapon weapon : testKnightWeaponList) {
+            knight.equip(weapon);
+            checkAttack(testEnemy, knight);
+        }
     }
 }

@@ -15,7 +15,6 @@ import java.util.concurrent.BlockingQueue;
 public class Engineer extends AbstractPlayerCharacter {
 
     private int life = 500;
-    private final int defense = 100;
 
     /**
      * Creates a new engineer.
@@ -23,9 +22,9 @@ public class Engineer extends AbstractPlayerCharacter {
      * @param name
      *     the engineer's name.
      */
-    public Engineer(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue){
-        super(name);
-        this.turnsQueue = turnsQueue;
+    public Engineer(@NotNull final BlockingQueue<ICharacter> turnsQueue,
+                    @NotNull String name){
+        super(turnsQueue, name);
     }
 
     @Override
@@ -40,12 +39,17 @@ public class Engineer extends AbstractPlayerCharacter {
 
     @Override
     public int getDefense() {
-        return defense;
+        return 100;
     }
 
     @Override
     public void attack(ICharacter character) {
-        character.attackedByEngineer(this);
+        if (character.isAlive()) {
+            character.attackedByEngineer(this);
+        }
+        if (character.getLife() <= 0) {
+            character.setLife(0);
+        }
     }
 
     @Override

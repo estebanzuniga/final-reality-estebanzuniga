@@ -4,7 +4,6 @@ import com.github.estebanzuniga.finalreality.model.character.player.party.*;
 
 import java.util.concurrent.*;
 
-import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,24 +14,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractCharacter implements ICharacter {
 
-  protected BlockingQueue<ICharacter> turnsQueue = new LinkedBlockingQueue<>();
+  protected BlockingQueue<ICharacter> turnsQueue;
   protected final String name;
   protected ScheduledExecutorService scheduledExecutor;
-  protected IWeapon equippedWeapon = null;
 
-  protected AbstractCharacter(@NotNull String name) {
+  protected AbstractCharacter(@NotNull BlockingQueue<ICharacter> turnsQueue,
+                              @NotNull String name) {
+    this.turnsQueue = turnsQueue;
     this.name = name;
-  }
-
-  @Override
-  public void waitTurn() {
-    scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-    if (this instanceof Enemy) {
-      var enemy = (Enemy) this;
-      scheduledExecutor.schedule(this::addToQueue, enemy.getWeight() / 10, TimeUnit.SECONDS);
-    } else {
-      scheduledExecutor.schedule(this::addToQueue, equippedWeapon.getWeight() / 10, TimeUnit.SECONDS);
-    }
   }
 
   /**
@@ -82,5 +71,10 @@ public abstract class AbstractCharacter implements ICharacter {
   public void attackedByBlackMage(BlackMage blackMage) {
     int damage = blackMage.getEquippedWeapon().getDamage() - this.getDefense();
     this.setLife(this.getLife()-damage);
+  }
+
+  @Override
+  public boolean isAlive() {
+    return this.getLife() != 0;
   }
 }
