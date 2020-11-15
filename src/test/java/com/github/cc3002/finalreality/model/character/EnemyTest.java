@@ -5,11 +5,20 @@ import com.github.estebanzuniga.finalreality.model.character.player.party.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Set of tests for the enemies.
+ *
+ * @author Esteban Zúñiga Salamanca.
+ * @see Enemy
+ */
 class EnemyTest extends AbstractCharacterTest {
+
+  private Enemy enemy;
 
   @BeforeEach
   void setUp() {
     basicSetUp();
+    enemy = new Enemy(turns, OTHER_NAME, 10, 400, 200, 50);
   }
 
   @Test
@@ -17,7 +26,7 @@ class EnemyTest extends AbstractCharacterTest {
     checkConstruction(new Enemy(turns, ENEMY_NAME, 10, 500, 250, 100),
         testEnemy,
         new Enemy(turns, ENEMY_NAME, 11, 500, 250, 100),
-        new Thief(turns, THIEF_NAME));
+        new Thief(turns, THIEF_NAME, 500, 100));
   }
 
   @Test
@@ -28,14 +37,10 @@ class EnemyTest extends AbstractCharacterTest {
   @Test
   void attackTest() {
     checkAttack(testEngineer, testEnemy);
-    testEngineer.setLife(500);
     checkAttack(testKnight, testEnemy);
-    testKnight.setLife(500);
     checkAttack(testThief, testEnemy);
-    testThief.setLife(500);
     checkAttack(testWhiteMage, testEnemy);
-    testWhiteMage.setLife(500);
     checkAttack(testBlackMage, testEnemy);
-    testBlackMage.setLife(500);
+    checkAttack(enemy, testEnemy);
   }
 }

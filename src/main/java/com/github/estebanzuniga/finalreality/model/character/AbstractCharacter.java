@@ -18,6 +18,15 @@ public abstract class AbstractCharacter implements ICharacter {
   protected final String name;
   protected ScheduledExecutorService scheduledExecutor;
 
+
+  /**
+   * Creates a new abstract character.
+   *
+   * @param name
+   *     the character's name
+   * @param turnsQueue
+   *     the queue with the characters waiting for their turn
+   */
   protected AbstractCharacter(@NotNull BlockingQueue<ICharacter> turnsQueue,
                               @NotNull String name) {
     this.turnsQueue = turnsQueue;

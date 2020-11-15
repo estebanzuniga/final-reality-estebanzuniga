@@ -1,6 +1,7 @@
 package com.github.estebanzuniga.finalreality.model.character.player.party;
 
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
+import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -13,18 +14,26 @@ import java.util.concurrent.BlockingQueue;
  */
 public class BlackMage extends AbstractMage{
 
-    private int life = 500;
+    private int life;
+    private final int defense;
     //protected int mana;
 
     /**
      * Creates a new black mage.
-     *
+     * @param turnsQueue
+     *        the queue with the characters waiting for their turn.
      * @param name
-     *     the black mage's name.
+     *        the black mage's name.
+     * @param life
+     *        the black mage's life.
+     * @param defense
+     *        the black mage's defense.
      */
     public BlackMage(@NotNull final BlockingQueue<ICharacter> turnsQueue,
-                     @NotNull String name){
+                     @NotNull String name, int life, int defense){
         super(turnsQueue, name);
+        this.life = life;
+        this.defense = defense;
         //this.mana = mana;
     }
 
@@ -40,17 +49,22 @@ public class BlackMage extends AbstractMage{
 
     @Override
     public int getDefense() {
-        return 100;
+        return defense;
     }
 
     @Override
     public void attack(ICharacter character) {
         if (character.isAlive()) {
             character.attackedByBlackMage(this);
+            if (character.getLife() <= 0) {
+                character.setLife(0);
+            }
         }
-        if (character.getLife() <= 0) {
-            character.setLife(0);
-        }
+    }
+
+    @Override
+    public void equip(IWeapon weapon) {
+        weapon.equippedByBlackMage(this);
     }
 
     @Override

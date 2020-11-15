@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * An abstract class that holds information of a single character controlled by the player.
  *
- * @author Ignacio Slater Muñoz.
  * @author Esteban Zúñiga Salamanca.
  */
 public abstract class AbstractPlayerCharacter extends AbstractCharacter implements IPlayerCharacter {
@@ -21,7 +20,7 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
   protected IWeapon equippedWeapon = null;
 
   /**
-   * Creates a new character.
+   * Creates a new player character.
    *
    * @param name
    *     the character's name
@@ -40,17 +39,17 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
   }
 
   @Override
-  public void equip(IWeapon weapon) {
+  public IWeapon getEquippedWeapon() {
+    return equippedWeapon;
+  }
+
+  @Override
+  public void setEquippedWeapon(IWeapon weapon) {
     this.equippedWeapon = weapon;
   }
 
   @Override
-  public void unequip() {
+  public void setEquippedWeaponNull() {
     this.equippedWeapon = null;
-  }
-
-  @Override
-  public IWeapon getEquippedWeapon() {
-    return equippedWeapon;
   }
 }

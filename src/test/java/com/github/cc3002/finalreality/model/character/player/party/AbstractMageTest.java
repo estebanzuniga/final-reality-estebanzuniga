@@ -13,9 +13,9 @@ public abstract class AbstractMageTest extends AbstractPlayerCharacterTest {
         super.basicSetUp();
     }
 
-    protected void checkGetMana(AbstractMage mage) {
+    /*protected void checkGetMana(AbstractMage mage) {
         int mana = mage.getMana();
         mage.setMana(mana);
         assertEquals(mana, mage.getMana());
-    }
+    }*/
 }

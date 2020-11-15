@@ -13,6 +13,14 @@ import java.util.concurrent.BlockingQueue;
  */
 public abstract class AbstractMage extends AbstractPlayerCharacter {
 
+    /**
+     * Creates a new mage.
+     *
+     * @param name
+     *     the mage's name
+     * @param turnsQueue
+     *     the queue with the characters waiting for their turn
+     */
     public AbstractMage(@NotNull final BlockingQueue<ICharacter> turnsQueue,
                         @NotNull String name){
         super(turnsQueue, name);

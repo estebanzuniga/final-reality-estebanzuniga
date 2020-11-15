@@ -10,26 +10,37 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Set of tests for the engineers.
+ *
+ * @author Esteban Zúñiga Salamanca.
+ * @see Engineer
+ */
 class EngineerTest extends AbstractPlayerCharacterTest {
 
     private Engineer engineer;
     private List<IWeapon> testEngineerWeaponList;
+    private List<IWeapon> testEngineerNotWeaponList;
 
     @BeforeEach
     void setUp() {
         super.basicSetUp();
-        engineer = new Engineer(turns, OTHER_NAME);
+        engineer = new Engineer(turns, OTHER_NAME,500,100);
         testEngineerWeaponList = new ArrayList<>();
         testEngineerWeaponList.add(testAxe);
         testEngineerWeaponList.add(testBow);
+        testEngineerNotWeaponList = new ArrayList<>();
+        testEngineerNotWeaponList.add(testKnife);
+        testEngineerNotWeaponList.add(testStaff);
+        testEngineerNotWeaponList.add(testSword);
     }
 
     @Test
     void constructorTest() {
-        checkConstruction(new Engineer(turns, ENGINEER_NAME),
+        checkConstruction(new Engineer(turns, ENGINEER_NAME,500,100),
                 testEngineer,
                 engineer,
-                new Thief(turns, THIEF_NAME));
+                new Thief(turns, THIEF_NAME,500,100));
     }
 
     @Test
@@ -48,9 +59,21 @@ class EngineerTest extends AbstractPlayerCharacterTest {
     }
 
     @Test
+    void equipNotWeaponTest() {
+        for (IWeapon weapon : testEngineerNotWeaponList) {
+            checkNotEquipWeapon(engineer, weapon);
+        }
+    }
+
+    @Test
     void attackTest() {
         for (IWeapon weapon : testEngineerWeaponList) {
             engineer.equip(weapon);
+            checkAttack(testEngineer, engineer);
+            checkAttack(testKnight, engineer);
+            checkAttack(testThief, engineer);
+            checkAttack(testWhiteMage, engineer);
+            checkAttack(testBlackMage, engineer);
             checkAttack(testEnemy, engineer);
         }
     }

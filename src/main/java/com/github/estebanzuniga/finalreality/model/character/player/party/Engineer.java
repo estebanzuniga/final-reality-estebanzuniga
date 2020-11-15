@@ -2,6 +2,7 @@ package com.github.estebanzuniga.finalreality.model.character.player.party;
 
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.character.player.AbstractPlayerCharacter;
+import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -14,17 +15,25 @@ import java.util.concurrent.BlockingQueue;
  */
 public class Engineer extends AbstractPlayerCharacter {
 
-    private int life = 500;
+    private int life;
+    private final int defense;
 
     /**
      * Creates a new engineer.
-     *
+     * @param turnsQueue
+     *        the queue with the characters waiting for their turn.
      * @param name
-     *     the engineer's name.
+     *        the engineer's name.
+     * @param life
+     *        the engineer's life.
+     * @param defense
+     *        the engineer's defense.
      */
     public Engineer(@NotNull final BlockingQueue<ICharacter> turnsQueue,
-                    @NotNull String name){
+                    @NotNull String name, int life, int defense){
         super(turnsQueue, name);
+        this.life = life;
+        this.defense = defense;
     }
 
     @Override
@@ -39,17 +48,22 @@ public class Engineer extends AbstractPlayerCharacter {
 
     @Override
     public int getDefense() {
-        return 100;
+        return defense;
     }
 
     @Override
     public void attack(ICharacter character) {
         if (character.isAlive()) {
             character.attackedByEngineer(this);
+            if (character.getLife() <= 0) {
+                character.setLife(0);
+            }
         }
-        if (character.getLife() <= 0) {
-            character.setLife(0);
-        }
+    }
+
+    @Override
+    public void equip(IWeapon weapon) {
+        weapon.equippedByEngineer(this);
     }
 
     @Override

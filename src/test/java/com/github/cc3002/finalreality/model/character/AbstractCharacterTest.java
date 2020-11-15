@@ -45,17 +45,16 @@ public abstract class AbstractCharacterTest {
   protected Staff testStaff;
   protected Sword testSword;
 
-
   @BeforeEach
   protected void basicSetUp() {
     turns = new LinkedBlockingQueue<>();
     testCharacters = new ArrayList<>();
     testEnemy = new Enemy(turns, ENEMY_NAME, 10, 400, 200, 50);
-    testEngineer = new Engineer(turns, ENGINEER_NAME);
-    testKnight = new Knight(turns, KNIGHT_NAME);
-    testThief = new Thief(turns, THIEF_NAME);
-    testWhiteMage = new WhiteMage(turns, WHITE_MAGE_NAME);
-    testBlackMage = new BlackMage(turns, BLACK_MAGE_NAME);
+    testEngineer = new Engineer(turns, ENGINEER_NAME, 500, 100);
+    testKnight = new Knight(turns, KNIGHT_NAME, 500, 100);
+    testThief = new Thief(turns, THIEF_NAME, 500, 100);
+    testWhiteMage = new WhiteMage(turns, WHITE_MAGE_NAME, 500, 100);
+    testBlackMage = new BlackMage(turns, BLACK_MAGE_NAME, 500, 100);
     testAxe = new Axe(151, 10);
     testBow = new Bow(151, 10);
     testKnife = new Knife(151, 10);
@@ -84,6 +83,9 @@ public abstract class AbstractCharacterTest {
     turns.clear();
   }
 
+  /**
+   * Checks that the character's constructor works.
+   */
   protected void checkConstruction(final ICharacter expectedCharacter,
                                    final ICharacter testEqualCharacter,
                                    final ICharacter sameClassDifferentCharacter,
@@ -95,11 +97,14 @@ public abstract class AbstractCharacterTest {
     assertEquals(expectedCharacter.hashCode(), testEqualCharacter.hashCode());
   }
 
+  /**
+   * Checks that the characters can attack to another one.
+   */
   protected void checkAttack(final ICharacter attacked, final ICharacter attacker) {
     int life = attacked.getLife();
+    assertTrue(attacked.isAlive());
     attacker.attack(attacked);
     assertNotEquals(life, attacked.getLife());
-    assertTrue(attacked.isAlive());
     while (attacked.isAlive()) {
       attacker.attack(attacked);
     }

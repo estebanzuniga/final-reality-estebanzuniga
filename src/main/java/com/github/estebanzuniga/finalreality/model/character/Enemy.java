@@ -21,8 +21,19 @@ public class Enemy extends AbstractCharacter {
   private final int weight;
 
   /**
-   * Creates a new enemy with a name, a weight and the queue with the characters ready to
-   * play.
+   * Creates a new enemy with a name, a weight and the queue with the characters ready to play.
+   * @param turnsQueue
+   *        the queue with the characters waiting for their turn.
+   * @param name
+   *        the enemy's name.
+   * @param weight
+   *        the enemy's weight.
+   * @param life
+   *        the enemy's life.
+   * @param attack
+   *        the enemy's attack.
+   * @param defense
+   *        the enemy's defense.
    */
   public Enemy(@NotNull BlockingQueue<ICharacter> turnsQueue,
                @NotNull final String name, final int weight, int life, int attack, int defense) {
@@ -72,9 +83,9 @@ public class Enemy extends AbstractCharacter {
   public void attack(ICharacter character) {
     if (character.isAlive()) {
       character.attackedByEnemy(this);
-    }
-    if (character.getLife() <= 0) {
-      character.setLife(0);
+      if (character.getLife() <= 0) {
+        character.setLife(0);
+      }
     }
   }
 

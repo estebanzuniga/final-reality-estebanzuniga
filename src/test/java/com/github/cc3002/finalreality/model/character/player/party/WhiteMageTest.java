@@ -9,25 +9,37 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Set of tests for the white mages.
+ *
+ * @author Esteban Zúñiga Salamanca.
+ * @see WhiteMage
+ */
 class WhiteMageTest extends AbstractMageTest {
 
     private WhiteMage whiteMage;
     private List<IWeapon> testWhiteMageWeaponList;
+    private List<IWeapon> testWhiteMageNotWeaponList;
 
     @BeforeEach
     void setUp() {
         super.basicSetUp();
-        whiteMage = new WhiteMage(turns, OTHER_NAME);
+        whiteMage = new WhiteMage(turns, OTHER_NAME,500,100);
         testWhiteMageWeaponList = new ArrayList<>();
         testWhiteMageWeaponList.add(testStaff);
+        testWhiteMageNotWeaponList = new ArrayList<>();
+        testWhiteMageNotWeaponList.add(testAxe);
+        testWhiteMageNotWeaponList.add(testBow);
+        testWhiteMageNotWeaponList.add(testKnife);
+        testWhiteMageNotWeaponList.add(testSword);
     }
 
     @Test
     void constructorTest() {
-        checkConstruction(new WhiteMage(turns, WHITE_MAGE_NAME),
+        checkConstruction(new WhiteMage(turns, WHITE_MAGE_NAME,500,100),
                 testWhiteMage,
                 whiteMage,
-                new Engineer(turns, ENGINEER_NAME));
+                new Engineer(turns, ENGINEER_NAME,500,100));
     }
 
     @Test
@@ -46,15 +58,27 @@ class WhiteMageTest extends AbstractMageTest {
     }
 
     @Test
-    void attackTest() {
-        for (IWeapon weapon : testWhiteMageWeaponList) {
-            whiteMage.equip(weapon);
-            checkAttack(testEnemy, whiteMage);
+    void equipNotWeaponTest() {
+        for (IWeapon weapon : testWhiteMageNotWeaponList) {
+            checkNotEquipWeapon(whiteMage, weapon);
         }
     }
 
     @Test
+    void attackTest() {
+        for (IWeapon weapon : testWhiteMageWeaponList) {
+            whiteMage.equip(weapon);
+            checkAttack(testEngineer, whiteMage);
+            checkAttack(testKnight, whiteMage);
+            checkAttack(testThief, whiteMage);
+            checkAttack(testWhiteMage, whiteMage);
+            checkAttack(testBlackMage, whiteMage);
+            checkAttack(testEnemy, whiteMage);
+        }
+    }
+
+    /*@Test
     void getManaTest() {
         checkGetMana(testWhiteMage);
-    }
+    }*/
 }
