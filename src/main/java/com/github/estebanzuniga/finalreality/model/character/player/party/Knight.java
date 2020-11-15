@@ -2,6 +2,7 @@ package com.github.estebanzuniga.finalreality.model.character.player.party;
 
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.character.player.AbstractPlayerCharacter;
+import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -14,18 +15,25 @@ import java.util.concurrent.BlockingQueue;
  */
 public class Knight extends AbstractPlayerCharacter {
 
-    private int life = 500;
-    private final int defense = 100;
+    private int life;
+    private final int defense;
 
     /**
      * Creates a new knight.
-     *
+     * @param turnsQueue
+     *        the queue with the characters waiting for their turn.
      * @param name
-     *     the knight's name.
+     *        the knight's name.
+     * @param life
+     *        the knight's life.
+     * @param defense
+     *        the knight's defense.
      */
-    public Knight(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue) {
-        super(name);
-        this.turnsQueue = turnsQueue;
+    public Knight(@NotNull final BlockingQueue<ICharacter> turnsQueue,
+                  @NotNull String name, int life, int defense){
+        super(turnsQueue, name);
+        this.life = life;
+        this.defense = defense;
     }
 
     @Override
@@ -45,7 +53,17 @@ public class Knight extends AbstractPlayerCharacter {
 
     @Override
     public void attack(ICharacter character) {
-        character.attackedByKnight(this);
+        if (character.isAlive()) {
+            character.attackedByKnight(this);
+            if (character.getLife() <= 0) {
+                character.setLife(0);
+            }
+        }
+    }
+
+    @Override
+    public void equip(IWeapon weapon) {
+        weapon.equippedByKnight(this);
     }
 
     @Override

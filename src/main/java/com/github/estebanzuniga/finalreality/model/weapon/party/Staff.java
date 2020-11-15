@@ -1,6 +1,8 @@
 package com.github.estebanzuniga.finalreality.model.weapon.party;
 
-import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
+import com.github.estebanzuniga.finalreality.model.character.player.party.Engineer;
+import com.github.estebanzuniga.finalreality.model.character.player.party.Knight;
+import com.github.estebanzuniga.finalreality.model.weapon.AbstractWeapon;
 
 import java.util.Objects;
 
@@ -9,13 +11,17 @@ import java.util.Objects;
  *
  * @author Esteban Zúñiga Salamanca.
  */
-public class Staff implements IWeapon {
+public class Staff extends AbstractWeapon {
 
     private final int damage;
     private final int weight;
 
     /**
      * Creates a new staff.
+     * @param damage
+     *        the staff's damage.
+     * @param weight
+     *        the staff's weight.
      */
     public Staff(int damage, int weight){
         this.damage = damage;
@@ -30,6 +36,14 @@ public class Staff implements IWeapon {
     @Override
     public int getWeight() {
         return weight;
+    }
+
+    @Override
+    public void equippedByKnight(Knight knight) {
+    }
+
+    @Override
+    public void equippedByEngineer(Engineer engineer) {
     }
 
     @Override

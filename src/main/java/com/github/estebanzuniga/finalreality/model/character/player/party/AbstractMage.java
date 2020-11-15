@@ -1,7 +1,10 @@
 package com.github.estebanzuniga.finalreality.model.character.player.party;
 
+import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.character.player.AbstractPlayerCharacter;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.BlockingQueue;
 
 /**
  * An abstract class that holds the common behaviour of both mages of the game.
@@ -10,17 +13,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractMage extends AbstractPlayerCharacter {
 
-    protected int mana;
-
-    public AbstractMage(@NotNull String name) {
-        super(name);
+    /**
+     * Creates a new mage.
+     *
+     * @param name
+     *     the mage's name
+     * @param turnsQueue
+     *     the queue with the characters waiting for their turn
+     */
+    public AbstractMage(@NotNull final BlockingQueue<ICharacter> turnsQueue,
+                        @NotNull String name){
+        super(turnsQueue, name);
     }
 
-    public int getMana() {
-        return mana;
-    }
+    //Se escribieron algunas líneas en las clases hijas para cuando se implementen las magias
+    //Se creó la variable mana y los métodos getMana y setMana
 
-    public void setMana(int mana) {
-        this.mana = mana;
-    }
+    //Próximamente se crearán métodos en esta clase.
+
 }

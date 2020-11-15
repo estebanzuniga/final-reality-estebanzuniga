@@ -1,6 +1,7 @@
 package com.github.estebanzuniga.finalreality.model.character.player.party;
 
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
+import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -13,19 +14,27 @@ import java.util.concurrent.BlockingQueue;
  */
 public class WhiteMage extends AbstractMage{
 
-    private int life = 500;
-    private final int defense = 100;
+    private int life;
+    private final int defense;
+    //protected int mana;
 
     /**
      * Creates a new white mage.
-     *
+     * @param turnsQueue
+     *        the queue with the characters waiting for their turn.
      * @param name
-     *     the white mage's name.
+     *        the white mage's name.
+     * @param life
+     *        the white mage's life.
+     * @param defense
+     *        the white mage's defense.
      */
-    public WhiteMage(@NotNull String name, @NotNull BlockingQueue<ICharacter> turnsQueue) {
-        super(name);
-        this.turnsQueue = turnsQueue;
-        mana = 200;
+    public WhiteMage(@NotNull final BlockingQueue<ICharacter> turnsQueue,
+                     @NotNull String name, int life, int defense){
+        super(turnsQueue, name);
+        this.life = life;
+        this.defense = defense;
+        //this.mana = mana;
     }
 
     @Override
@@ -45,7 +54,17 @@ public class WhiteMage extends AbstractMage{
 
     @Override
     public void attack(ICharacter character) {
-        character.attackedByWhiteMage(this);
+        if (character.isAlive()) {
+            character.attackedByWhiteMage(this);
+            if (character.getLife() <= 0) {
+                character.setLife(0);
+            }
+        }
+    }
+
+    @Override
+    public void equip(IWeapon weapon) {
+        weapon.equippedByWhiteMage(this);
     }
 
     @Override
@@ -66,4 +85,11 @@ public class WhiteMage extends AbstractMage{
         return Objects.hash(getName(), getDefense());
     }
 
+    /*public int getMana() {
+        return mana;
+    }
+
+    public void setMana(int mana) {
+        this.mana = mana;
+    }*/
 }

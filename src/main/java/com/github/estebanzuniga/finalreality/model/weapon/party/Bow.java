@@ -1,6 +1,9 @@
 package com.github.estebanzuniga.finalreality.model.weapon.party;
 
-import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
+import com.github.estebanzuniga.finalreality.model.character.player.party.BlackMage;
+import com.github.estebanzuniga.finalreality.model.character.player.party.Knight;
+import com.github.estebanzuniga.finalreality.model.character.player.party.WhiteMage;
+import com.github.estebanzuniga.finalreality.model.weapon.AbstractWeapon;
 
 import java.util.Objects;
 
@@ -9,13 +12,17 @@ import java.util.Objects;
  *
  * @author Esteban Zúñiga Salamanca.
  */
-public class Bow implements IWeapon {
+public class Bow extends AbstractWeapon {
 
     private final int damage;
     private final int weight;
 
     /**
      * Creates a new bow.
+     * @param damage
+     *        the bow's damage.
+     * @param weight
+     *        the bow's weight.
      */
     public Bow(int damage, int weight){
         this.damage = damage;
@@ -30,6 +37,18 @@ public class Bow implements IWeapon {
     @Override
     public int getWeight() {
         return weight;
+    }
+
+    @Override
+    public void equippedByKnight(Knight knight) {
+    }
+
+    @Override
+    public void equippedByWhiteMage(WhiteMage whiteMage) {
+    }
+
+    @Override
+    public void equippedByBlackMage(BlackMage blackMage) {
     }
 
     @Override

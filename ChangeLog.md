@@ -1,5 +1,12 @@
 ChangeLog
 =========
+Version 4.0
+-----------
+
+- Se incluyeron las condiciones de que solo algunos personajes
+  pueden equipar ciertas armas.
+
+- Se actualizaron los test, manteniendo el 100% de Coverage.
 
 Version 3.0
 -----------
