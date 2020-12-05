@@ -39,8 +39,10 @@ class KnightTest extends AbstractPlayerCharacterTest {
     void constructorTest() {
         checkConstruction(new Knight(turns, KNIGHT_NAME,500,100),
                 testKnight,
+                new Engineer(turns, ENGINEER_NAME,500,100),
                 knight,
-                new Engineer(turns, ENGINEER_NAME,500,100));
+                new Knight(turns, KNIGHT_NAME, 501, 100),
+                new Knight(turns, KNIGHT_NAME, 500, 101));
     }
 
     @Test

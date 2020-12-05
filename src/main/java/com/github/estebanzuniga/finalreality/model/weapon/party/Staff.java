@@ -13,19 +13,28 @@ import java.util.Objects;
  */
 public class Staff extends AbstractWeapon {
 
+    private final String name;
     private final int damage;
     private final int weight;
 
     /**
      * Creates a new staff.
+     * @param name
+     *        the staff's name.
      * @param damage
      *        the staff's damage.
      * @param weight
      *        the staff's weight.
      */
-    public Staff(int damage, int weight){
+    public Staff(String name, int damage, int weight){
+        this.name = name;
         this.damage = damage;
         this.weight = weight;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -55,12 +64,13 @@ public class Staff extends AbstractWeapon {
             return false;
         }
         final Staff weapon = (Staff) o;
-        return getDamage() == weapon.getDamage() &&
+        return getName().equals(weapon.getName()) &&
+                getDamage() == weapon.getDamage() &&
                 getWeight() == weapon.getWeight();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDamage(), getWeight());
+        return Objects.hash(getName(), getDamage(), getWeight());
     }
 }

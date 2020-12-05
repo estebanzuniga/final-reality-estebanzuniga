@@ -11,6 +11,11 @@ import com.github.estebanzuniga.finalreality.model.character.player.party.*;
 public interface IWeapon {
 
     /**
+     * Returns the weapon's name.
+     */
+    String getName();
+
+    /**
      * Returns the weapon's damage.
      */
     int getDamage();

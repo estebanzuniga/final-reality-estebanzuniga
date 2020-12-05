@@ -1,5 +1,6 @@
 package com.github.estebanzuniga.finalreality.model.character.player;
 
+import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 
 /**
@@ -7,7 +8,7 @@ import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
  *
  * @author Esteban Zúñiga Salamanca.
  */
-public interface IPlayerCharacter {
+public interface IPlayerCharacter extends ICharacter {
 
     /**
      * Equip a weapon to a PlayerCharacter.

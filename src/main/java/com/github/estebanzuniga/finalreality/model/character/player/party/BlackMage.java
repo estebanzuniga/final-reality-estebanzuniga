@@ -53,16 +53,6 @@ public class BlackMage extends AbstractMage{
     }
 
     @Override
-    public void attack(ICharacter character) {
-        if (character.isAlive()) {
-            character.attackedByBlackMage(this);
-            if (character.getLife() <= 0) {
-                character.setLife(0);
-            }
-        }
-    }
-
-    @Override
     public void equip(IWeapon weapon) {
         weapon.equippedByBlackMage(this);
     }
@@ -76,13 +66,14 @@ public class BlackMage extends AbstractMage{
             return false;
         }
         final BlackMage that = (BlackMage) o;
-        return getName().equals(that.getName())
-                && getDefense() == that.getDefense();
+        return getName().equals(that.getName()) &&
+                getLife() == (that.getLife()) &&
+                getDefense() == that.getDefense();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getDefense());
+        return Objects.hash(getName(), getLife(), getDefense());
     }
 
     /*public int getMana() {

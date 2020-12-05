@@ -14,19 +14,28 @@ import java.util.Objects;
  */
 public class Knife extends AbstractWeapon {
 
+    private final String name;
     private final int damage;
     private final int weight;
 
     /**
      * Creates a new knife.
+     * @param name
+     *        the knife's name.
      * @param damage
      *        the knife's damage.
      * @param weight
      *        the knife's weight.
      */
-    public Knife(int damage, int weight){
+    public Knife(String name, int damage, int weight){
+        this.name = name;
         this.damage = damage;
         this.weight = weight;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -57,12 +66,13 @@ public class Knife extends AbstractWeapon {
             return false;
         }
         final Knife weapon = (Knife) o;
-        return getDamage() == weapon.getDamage() &&
+        return getName().equals(weapon.getName()) &&
+                getDamage() == weapon.getDamage() &&
                 getWeight() == weapon.getWeight();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDamage(), getWeight());
+        return Objects.hash(getName(), getDamage(), getWeight());
     }
 }

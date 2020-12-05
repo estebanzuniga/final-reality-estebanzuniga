@@ -39,6 +39,15 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
   }
 
   @Override
+  public void attack(ICharacter character) {
+    int damage = this.getEquippedWeapon().getDamage() - character.getDefense();
+    character.setLife(character.getLife()-damage);
+    if (character.getLife() <= 0) {
+      character.setLife(0);
+    }
+  }
+
+  @Override
   public IWeapon getEquippedWeapon() {
     return equippedWeapon;
   }

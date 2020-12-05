@@ -81,11 +81,10 @@ public class Enemy extends AbstractCharacter {
 
   @Override
   public void attack(ICharacter character) {
-    if (character.isAlive()) {
-      character.attackedByEnemy(this);
-      if (character.getLife() <= 0) {
-        character.setLife(0);
-      }
+    int damage = this.getAttack() - character.getDefense();
+    character.setLife(character.getLife()-damage);
+    if (character.getLife() <= 0) {
+      character.setLife(0);
     }
   }
 
@@ -98,12 +97,15 @@ public class Enemy extends AbstractCharacter {
       return false;
     }
     final Enemy enemy = (Enemy) o;
-    return getWeight() == enemy.getWeight() &&
-            getName().equals(enemy.getName());
+    return getName().equals(enemy.getName()) &&
+            getWeight() == enemy.getWeight() &&
+            getLife() == enemy.getLife() &&
+            getAttack() == enemy.getAttack() &&
+            getDefense() == enemy.getDefense();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getWeight());
+    return Objects.hash(getName(), getWeight(), getLife(), getAttack(), getDefense());
   }
 }
