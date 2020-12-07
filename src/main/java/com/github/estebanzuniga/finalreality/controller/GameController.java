@@ -1,5 +1,9 @@
 package com.github.estebanzuniga.finalreality.controller;
 
+import com.github.estebanzuniga.finalreality.controller.handlers.CharacterIsDeadHandler;
+import com.github.estebanzuniga.finalreality.controller.handlers.EnemyEndsTurnHandler;
+import com.github.estebanzuniga.finalreality.controller.handlers.IEventHandler;
+import com.github.estebanzuniga.finalreality.controller.handlers.PlayerEndsTurnHandler;
 import com.github.estebanzuniga.finalreality.model.character.Enemy;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.character.player.IPlayerCharacter;
@@ -7,7 +11,6 @@ import com.github.estebanzuniga.finalreality.model.character.player.party.*;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import com.github.estebanzuniga.finalreality.model.weapon.party.*;
 
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
@@ -15,107 +18,80 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class GameController {
 
-    private final IEventHandler playerHandler = new PlayerEndsTurnHandler(this);
-    private final IEventHandler enemyHandler = new EnemyEndsTurnHandler(this);
+    private final IEventHandler playerEndsTurnHandler = new PlayerEndsTurnHandler(this);
+    private final IEventHandler enemyEndsTurnHandler = new EnemyEndsTurnHandler(this);
+    private final IEventHandler characterIsDeadHandler = new CharacterIsDeadHandler(this);
 
-    private final PropertyChangeSupport attackNotification = new PropertyChangeSupport(this);
-
-    private BlockingQueue<ICharacter> turns = new LinkedBlockingQueue<>();
-    private ArrayList<Enemy> enemies = new ArrayList<>();
-    private ArrayList<IPlayerCharacter> party = new ArrayList<>();
-    private ArrayList<IWeapon> inventory = new ArrayList<>();
-
-    private Enemy enemy1;
-    private Enemy enemy2;
-    private Enemy enemy3;
-    private Enemy enemy4;
-    private IPlayerCharacter character1;
-    private IPlayerCharacter character2;
-    private IPlayerCharacter character3;
-    private IPlayerCharacter character4;
-
+    private final BlockingQueue<ICharacter> turns = new LinkedBlockingQueue<>();
+    private final ArrayList<Enemy> enemies = new ArrayList<>();
+    private final ArrayList<IPlayerCharacter> party = new ArrayList<>();
+    private final ArrayList<IWeapon> inventory = new ArrayList<>();
     Random rng = new Random();
 
     public GameController() {}
 
-    /*public void game() {
-        for (var character : playerCharacters) {
-            character.waitTurn();
-        }
-        for (var enemy : enemies) {
-            enemy.waitTurn();
-        }
-        ICharacter head = turns.poll();
-        head.attack();
-        endTurn(head);
-     }*/
-
-    public void setParty() {
-        for (int i=0; i<4; i++) {
-            //Crear los 4 personajes
-        }
-        party.add(character1);
-        party.add(character2);
-        party.add(character3);
-        party.add(character4);
+    public void playerTurn(IPlayerCharacter character, int indexAttack) {
+        playerAttack(character, indexAttack);
+        endTurn(character);
     }
 
-    public void setEnemies() {
-        enemy1 = createEnemy("Enemy1", rng.nextInt(10)+1, rng.nextInt(100)+400,
-                    rng.nextInt(100)+100, rng.nextInt(30)+30);
-        enemy2 = createEnemy("Enemy2", rng.nextInt(10)+1, rng.nextInt(100)+400,
-                rng.nextInt(100)+100, rng.nextInt(30)+30);
-        enemy3 = createEnemy("Enemy3", rng.nextInt(10)+1, rng.nextInt(100)+400,
-                rng.nextInt(100)+100, rng.nextInt(30)+30);
-        enemy4 = createEnemy("Enemy4", rng.nextInt(10)+1, rng.nextInt(100)+400,
-                rng.nextInt(100)+100, rng.nextInt(30)+30);
-        enemies.add(enemy1);
-        enemies.add(enemy2);
-        enemies.add(enemy3);
-        enemies.add(enemy4);
+    public void enemyTurn(Enemy enemy) {
+        enemyAttack(enemy);
+        endTurn(enemy);
     }
 
     public void endTurn(ICharacter character) {
+        turns.remove(character);
         turns.add(character);
+        if (playerWon() || enemyWon()) {
+            endGame();
+        }
     }
 
-    public boolean playerWin() {
+    public void endGame() {
+        //
+    }
+
+    public boolean playerWon() {
         return enemies.isEmpty();
     }
 
-    public boolean enemyWin() {
+    public boolean enemyWon() {
         return party.isEmpty();
     }
 
-    public boolean isAlive(ICharacter character) {
-        return character.isAlive();
+    public boolean isDead(ICharacter character) {
+        return !character.isAlive();
     }
 
-    public void onCharacterPlayed(ICharacter character) {
-        System.out.println(character.getName() + "attacked.");
+    public void enemyAttack(Enemy attacker) {
+        attacker.attack(party.get(rng.nextInt(party.size())));
+    }
+
+    public void playerAttack(IPlayerCharacter attacker, int indexEnemy) {
+        attacker.attack(enemies.get(indexEnemy));
     }
 
     public Enemy createEnemy(String name, int weight, int life, int attack, int defense) {
         Enemy enemy = new Enemy(turns, name, weight, life, attack, defense);
         enemies.add(enemy);
-
+        enemy.addCharacterIsDeadListener(characterIsDeadHandler);
+        enemy.addEnemyEndsTurnListener(enemyEndsTurnHandler);
         return enemy;
-    }
-
-    public void enemyAttack(ICharacter attacker) {
-        attacker.attack(party.get(rng.nextInt(party.size())));
-        attackNotification.firePropertyChange("Enemy attacked", null, attacker);
     }
 
     public IPlayerCharacter createEngineer(String name, int life, int defense) {
         IPlayerCharacter engineer = new Engineer(turns, name, life, defense);
         party.add(engineer);
-
+        engineer.addCharacterIsDeadListener(characterIsDeadHandler);
+        engineer.addPlayerEndsTurnListener(playerEndsTurnHandler);
         return engineer;
     }
 
     public IPlayerCharacter createKnight(String name, int life, int defense) {
         IPlayerCharacter knight = new Knight(turns, name, life, defense);
+        knight.addCharacterIsDeadListener(characterIsDeadHandler);
+        knight.addPlayerEndsTurnListener(playerEndsTurnHandler);
         party.add(knight);
 
         return knight;
@@ -123,6 +99,8 @@ public class GameController {
 
     public IPlayerCharacter createThief(String name, int life, int defense) {
         IPlayerCharacter thief = new Thief(turns, name, life, defense);
+        thief.addCharacterIsDeadListener(characterIsDeadHandler);
+        thief.addPlayerEndsTurnListener(playerEndsTurnHandler);
         party.add(thief);
 
         return thief;
@@ -130,6 +108,8 @@ public class GameController {
 
     public IPlayerCharacter createWhiteMage(String name, int life, int defense) {
         IPlayerCharacter whiteMage = new WhiteMage(turns, name, life, defense);
+        whiteMage.addCharacterIsDeadListener(characterIsDeadHandler);
+        whiteMage.addPlayerEndsTurnListener(playerEndsTurnHandler);
         party.add(whiteMage);
 
         return whiteMage;
@@ -137,20 +117,13 @@ public class GameController {
 
     public IPlayerCharacter createBlackMage(String name, int life, int defense) {
         IPlayerCharacter blackMage = new BlackMage(turns, name, life, defense);
+        blackMage.addCharacterIsDeadListener(characterIsDeadHandler);
+        blackMage.addPlayerEndsTurnListener(playerEndsTurnHandler);
         party.add(blackMage);
 
         return blackMage;
     }
 
-    public void playerAttack(ICharacter attacker) {
-        attacker.attack(enemies.get(rng.nextInt(enemies.size())));
-        attackNotification.firePropertyChange("Player attacked", null, attacker);
-    }
-
-
-    /**
-     * GETTERS
-     */
 
     public String getNameCharacter(ICharacter character) {
         return character.getName();
@@ -188,10 +161,6 @@ public class GameController {
         return character.getEquippedWeapon().getWeight();
     }
 
-
-    /**
-     * Weapon
-     */
 
     public ArrayList<IWeapon> getInventory() {
         return inventory;
@@ -233,20 +202,3 @@ public class GameController {
         return sword;
     }
 }
-
-    /*public void showCharacterStats(IPlayerCharacter character) {
-        String name = character.getName();
-        int life = character.getLife();
-        int defense = character.getDefense();
-        IWeapon weapon = character.getEquippedWeapon();
-        int damage = weapon.getDamage();
-        int weight = weapon.getWeight();
-    }
-
-    public void showEnemyStats(IPlayerCharacter character) {
-        String name = character.getName();
-        int weight = weapon.getWeight();
-        int life = character.getLife();
-        int damage = weapon.getAttack();
-        int defense = character.getDefense();
-    }*/

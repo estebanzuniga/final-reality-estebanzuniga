@@ -1,14 +1,15 @@
-package com.github.estebanzuniga.finalreality.controller;
+package com.github.estebanzuniga.finalreality.controller.handlers;
 
+import com.github.estebanzuniga.finalreality.controller.GameController;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 
 import java.beans.PropertyChangeEvent;
 
-public class PlayerEndsTurnHandler implements IEventHandler {
+public class CharacterIsDeadHandler implements IEventHandler {
 
     private final GameController controller;
 
-    public PlayerEndsTurnHandler(GameController controller) {
+    public CharacterIsDeadHandler(GameController controller) {
         this.controller = controller;
     }
 
@@ -20,6 +21,6 @@ public class PlayerEndsTurnHandler implements IEventHandler {
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        controller.onCharacterPlayed((ICharacter) evt.getNewValue());
+        controller.isDead((ICharacter) evt.getNewValue());
     }
 }

@@ -1,4 +1,4 @@
-package com.github.estebanzuniga.finalreality.controller;
+package com.github.estebanzuniga.finalreality.controller.handlers;
 
 import java.beans.PropertyChangeListener;
 

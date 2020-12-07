@@ -1,5 +1,6 @@
 package com.github.estebanzuniga.finalreality.model.character.player;
 
+import com.github.estebanzuniga.finalreality.controller.handlers.IEventHandler;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 
@@ -35,4 +36,11 @@ public interface IPlayerCharacter extends ICharacter {
      * Sets equippedWeapon as null
      */
     void setEquippedWeaponNull();
+
+    /**
+     * Add a character to a handler.
+     * @param playerEndsTurnHandler
+     *        the handler.
+     */
+    void addPlayerEndsTurnListener(IEventHandler playerEndsTurnHandler);
 }

@@ -1,7 +1,9 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
+import java.beans.PropertyChangeSupport;
 import java.util.concurrent.*;
 
+import com.github.estebanzuniga.finalreality.controller.handlers.IEventHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,6 +17,7 @@ public abstract class AbstractCharacter implements ICharacter {
   protected BlockingQueue<ICharacter> turnsQueue;
   protected final String name;
   protected ScheduledExecutorService scheduledExecutor;
+  private final PropertyChangeSupport characterIsDeadNotification = new PropertyChangeSupport(this);
 
 
   /**
@@ -46,6 +49,15 @@ public abstract class AbstractCharacter implements ICharacter {
 
   @Override
   public boolean isAlive() {
-    return this.getLife() != 0;
+    if (this.getLife() <= 0) {
+      characterIsDeadNotification.firePropertyChange("CHARACTER_IS_DEAD", null, this);
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public void addCharacterIsDeadListener(IEventHandler characterIsDeadHandler) {
+    characterIsDeadNotification.addPropertyChangeListener(characterIsDeadHandler);
   }
 }

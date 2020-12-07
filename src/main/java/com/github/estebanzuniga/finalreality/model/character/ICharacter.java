@@ -1,5 +1,7 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
+import com.github.estebanzuniga.finalreality.controller.handlers.IEventHandler;
+
 /**
  * This represents a character from the game.
  * A character can be controlled by the player or by the CPU (an enemy).
@@ -50,4 +52,11 @@ public interface ICharacter {
    *        true if the character is alive, false if is dead.
    */
   boolean isAlive();
+
+  /**
+   * Add a character to a handler.
+   * @param characterIsDeadHandler
+   *        the handler.
+   */
+  void addCharacterIsDeadListener(IEventHandler characterIsDeadHandler);
 }
