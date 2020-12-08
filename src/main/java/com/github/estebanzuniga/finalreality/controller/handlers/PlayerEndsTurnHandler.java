@@ -5,10 +5,20 @@ import com.github.estebanzuniga.finalreality.model.character.player.IPlayerChara
 
 import java.beans.PropertyChangeEvent;
 
+/**
+ * A class that simulates an listener(observer) that notify to controller when a player ends its turn.
+ *
+ * @author Esteban Zúñiga Salamanca.
+ */
 public class PlayerEndsTurnHandler implements IEventHandler {
 
     private final GameController controller;
 
+    /**
+     * Creates a listener.
+     * @param controller
+     *        the controller that the listener is observing.
+     */
     public PlayerEndsTurnHandler(GameController controller) {
         this.controller = controller;
     }

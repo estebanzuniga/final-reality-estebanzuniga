@@ -12,11 +12,11 @@ public class GettersTest extends GameControllerTest {
 
     @Test
     public void gettersTest() {
-        checkEnemyGetters(testEnemy, ENEMY_NAME, 10, 400, 200, 50);
-        checkCharacterGetters(testEngineer, ENGINEER_NAME, 500, 100);
-        checkCharacterGetters(testKnight, KNIGHT_NAME, 500, 100);
-        checkCharacterGetters(testThief, THIEF_NAME, 500, 100);
-        checkCharacterGetters(testWhiteMage, WHITE_MAGE_NAME, 500, 100);
-        checkCharacterGetters(testBlackMage, BLACK_MAGE_NAME, 500, 100);
+        checkEnemyGetters(testEnemy);
+        checkCharacterGetters(testEngineer, ENGINEER_NAME);
+        checkCharacterGetters(testKnight, KNIGHT_NAME);
+        checkCharacterGetters(testThief, THIEF_NAME);
+        checkCharacterGetters(testWhiteMage, WHITE_MAGE_NAME);
+        checkCharacterGetters(testBlackMage, BLACK_MAGE_NAME);
     }
 }
