@@ -8,21 +8,23 @@ import org.junit.jupiter.api.Test;
 public class SwordTest extends AbstractWeaponTest {
 
     private Sword expectedSword;
+    private Sword difNameExpectedSword;
     private Sword difDamageExpectedSword;
-    private Sword difSpeedExpectedSword;
+    private Sword difWeightExpectedSword;
 
     @BeforeEach
     void setUp() {
         super.basicSetUp();
-        expectedSword = new Sword(DAMAGE, SPEED);
-        difDamageExpectedSword = new Sword(DAMAGE+1, SPEED);
-        difSpeedExpectedSword = new Sword(DAMAGE, SPEED+1);
+        expectedSword = new Sword(SWORD_NAME, DAMAGE, WEIGHT);
+        difNameExpectedSword = new Sword(OTHER_NAME,DAMAGE, WEIGHT);
+        difDamageExpectedSword = new Sword(SWORD_NAME,DAMAGE+1, WEIGHT);
+        difWeightExpectedSword = new Sword(SWORD_NAME, DAMAGE, WEIGHT +1);
     }
 
     @Test
     void constructorTest() {
-        checkConstruction(testSword, expectedSword,
-                difDamageExpectedSword, difSpeedExpectedSword,
+        checkConstruction(testSword, expectedSword, difNameExpectedSword,
+                difDamageExpectedSword, difWeightExpectedSword,
                 testAxe, testBow, testKnife, testStaff);
     }
 }

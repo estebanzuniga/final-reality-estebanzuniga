@@ -1,6 +1,6 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
-import com.github.estebanzuniga.finalreality.model.character.player.party.*;
+import com.github.estebanzuniga.finalreality.controller.handlers.IEventHandler;
 
 /**
  * This represents a character from the game.
@@ -47,51 +47,16 @@ public interface ICharacter {
   void attack(ICharacter character);
 
   /**
-   * Represents the attack of an enemy.
-   * @param enemy
-   *        The attacking enemy.
-   */
-  void attackedByEnemy(Enemy enemy);
-
-  /**
-   * Represents the attack of an engineer.
-   * @param engineer
-   *        The attacking engineer.
-   */
-  void attackedByEngineer(Engineer engineer);
-
-  /**
-   * Represents the attack of a thief.
-   * @param thief
-   *        The attacking thief.
-   */
-  void attackedByThief(Thief thief);
-
-  /**
-   * Represents the attack of a knight.
-   * @param knight
-   *        The attacking knight.
-   */
-  void attackedByKnight(Knight knight);
-
-  /**
-   * Represents the attack of a white mage.
-   * @param whiteMage
-   *        The attacking white mage.
-   */
-  void attackedByWhiteMage(WhiteMage whiteMage);
-
-  /**
-   * Represents the attack of a black mage.
-   * @param blackMage
-   *        The attacking black mage.
-   */
-  void attackedByBlackMage(BlackMage blackMage);
-
-  /**
    * Checks if a character is alive or not.
    * @return
    *        true if the character is alive, false if is dead.
    */
   boolean isAlive();
+
+  /**
+   * Add a character to a handler.
+   * @param characterIsDeadHandler
+   *        the handler.
+   */
+  void addCharacterIsDeadListener(IEventHandler characterIsDeadHandler);
 }

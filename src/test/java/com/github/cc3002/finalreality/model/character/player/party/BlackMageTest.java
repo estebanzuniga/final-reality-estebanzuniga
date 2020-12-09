@@ -37,9 +37,11 @@ class BlackMageTest extends AbstractMageTest {
     @Test
     void constructorTest() {
         checkConstruction(new BlackMage(turns, BLACK_MAGE_NAME,500,100),
-                testBlackMage,
-                blackMage,
-                new Engineer(turns, ENGINEER_NAME,500,100));
+                            testBlackMage,
+                            new Engineer(turns, ENGINEER_NAME,500,100),
+                            blackMage,
+                            new BlackMage(turns, BLACK_MAGE_NAME, 501, 100),
+                            new BlackMage(turns, BLACK_MAGE_NAME, 500, 101));
     }
 
     @Test

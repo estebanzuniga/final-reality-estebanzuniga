@@ -1,10 +1,12 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
+import java.beans.PropertyChangeSupport;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.github.estebanzuniga.finalreality.controller.handlers.IEventHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,6 +21,7 @@ public class Enemy extends AbstractCharacter {
   private final int defense;
   private final int attack;
   private final int weight;
+  private final PropertyChangeSupport enemyEndsTurnNotification = new PropertyChangeSupport(this);
 
   /**
    * Creates a new enemy with a name, a weight and the queue with the characters ready to play.
@@ -81,12 +84,12 @@ public class Enemy extends AbstractCharacter {
 
   @Override
   public void attack(ICharacter character) {
-    if (character.isAlive()) {
-      character.attackedByEnemy(this);
-      if (character.getLife() <= 0) {
-        character.setLife(0);
-      }
+    int damage = this.getAttack() - character.getDefense();
+    character.setLife(character.getLife()-damage);
+    if (character.getLife() <= 0) {
+      character.setLife(0);
     }
+    enemyEndsTurnNotification.firePropertyChange("ENEMY_ENDS_TURN", null, this);
   }
 
   @Override
@@ -98,12 +101,24 @@ public class Enemy extends AbstractCharacter {
       return false;
     }
     final Enemy enemy = (Enemy) o;
-    return getWeight() == enemy.getWeight() &&
-            getName().equals(enemy.getName());
+    return getName().equals(enemy.getName()) &&
+            getWeight() == enemy.getWeight() &&
+            getLife() == enemy.getLife() &&
+            getAttack() == enemy.getAttack() &&
+            getDefense() == enemy.getDefense();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getWeight());
+    return Objects.hash(getName(), getWeight(), getLife(), getAttack(), getDefense());
+  }
+
+  /**
+   * Add a character to a handler.
+   * @param enemyEndsTurnHandler
+   *        the handler.
+   */
+  public void addEnemyEndsTurnListener(IEventHandler enemyEndsTurnHandler) {
+    enemyEndsTurnNotification.addPropertyChangeListener(enemyEndsTurnHandler);
   }
 }

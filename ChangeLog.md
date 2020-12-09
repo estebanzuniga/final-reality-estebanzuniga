@@ -1,5 +1,16 @@
 ChangeLog
 =========
+
+Version 5.0
+-----------
+
+- Se aplicó el patrón de diseño "Observer" para notificar al controlador cuando
+  ocurren algunos eventos.
+
+- Se creó el controlador.
+
+- Se actualizaron los test.
+
 Version 4.0
 -----------
 

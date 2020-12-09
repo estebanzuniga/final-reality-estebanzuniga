@@ -1,9 +1,9 @@
 package com.github.estebanzuniga.finalreality.model.character;
 
-import com.github.estebanzuniga.finalreality.model.character.player.party.*;
-
+import java.beans.PropertyChangeSupport;
 import java.util.concurrent.*;
 
+import com.github.estebanzuniga.finalreality.controller.handlers.IEventHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,6 +17,7 @@ public abstract class AbstractCharacter implements ICharacter {
   protected BlockingQueue<ICharacter> turnsQueue;
   protected final String name;
   protected ScheduledExecutorService scheduledExecutor;
+  private final PropertyChangeSupport characterIsDeadNotification = new PropertyChangeSupport(this);
 
 
   /**
@@ -47,43 +48,16 @@ public abstract class AbstractCharacter implements ICharacter {
   }
 
   @Override
-  public void attackedByEnemy(Enemy enemy) {
-    int damage = enemy.getAttack() - this.getDefense();
-    this.setLife(this.getLife()-damage);
-  }
-
-  @Override
-  public void attackedByEngineer(Engineer engineer) {
-    int damage = engineer.getEquippedWeapon().getDamage() - this.getDefense();
-    this.setLife(this.getLife()-damage);
-  }
-
-  @Override
-  public void attackedByThief(Thief thief) {
-    int damage = thief.getEquippedWeapon().getDamage() - this.getDefense();
-    this.setLife(this.getLife()-damage);
-  }
-
-  @Override
-  public void attackedByKnight(Knight knight) {
-    int damage = knight.getEquippedWeapon().getDamage() - this.getDefense();
-    this.setLife(this.getLife()-damage);
-  }
-
-  @Override
-  public void attackedByWhiteMage(WhiteMage whiteMage) {
-    int damage = whiteMage.getEquippedWeapon().getDamage() - this.getDefense();
-    this.setLife(this.getLife()-damage);
-  }
-
-  @Override
-  public void attackedByBlackMage(BlackMage blackMage) {
-    int damage = blackMage.getEquippedWeapon().getDamage() - this.getDefense();
-    this.setLife(this.getLife()-damage);
-  }
-
-  @Override
   public boolean isAlive() {
-    return this.getLife() != 0;
+    if (this.getLife() <= 0) {
+      characterIsDeadNotification.firePropertyChange("CHARACTER_IS_DEAD", null, this);
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public void addCharacterIsDeadListener(IEventHandler characterIsDeadHandler) {
+    characterIsDeadNotification.addPropertyChangeListener(characterIsDeadHandler);
   }
 }

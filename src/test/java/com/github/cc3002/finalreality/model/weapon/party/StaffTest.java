@@ -8,21 +8,23 @@ import org.junit.jupiter.api.Test;
 public class StaffTest extends AbstractWeaponTest {
 
     private Staff expectedStaff;
+    private Staff difNameExpectedStaff;
     private Staff difDamageExpectedStaff;
-    private Staff difSpeedExpectedStaff;
+    private Staff difWeightExpectedStaff;
 
     @BeforeEach
     void setUp() {
         super.basicSetUp();
-        expectedStaff = new Staff(DAMAGE, SPEED);
-        difDamageExpectedStaff = new Staff(DAMAGE+1, SPEED);
-        difSpeedExpectedStaff = new Staff(DAMAGE, SPEED+1);
+        expectedStaff = new Staff(STAFF_NAME, DAMAGE, WEIGHT);
+        difNameExpectedStaff = new Staff(OTHER_NAME, DAMAGE, WEIGHT);
+        difDamageExpectedStaff = new Staff(STAFF_NAME, DAMAGE+1, WEIGHT);
+        difWeightExpectedStaff = new Staff(STAFF_NAME, DAMAGE, WEIGHT +1);
     }
 
     @Test
     void constructorTest() {
-        checkConstruction(testStaff, expectedStaff,
-                difDamageExpectedStaff, difSpeedExpectedStaff,
+        checkConstruction(testStaff, expectedStaff, difNameExpectedStaff,
+                difDamageExpectedStaff, difWeightExpectedStaff,
                 testSword, testAxe, testBow, testKnife);
     }
 }

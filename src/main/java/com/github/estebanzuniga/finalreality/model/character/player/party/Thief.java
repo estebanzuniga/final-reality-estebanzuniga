@@ -52,16 +52,6 @@ public class Thief extends AbstractPlayerCharacter {
     }
 
     @Override
-    public void attack(ICharacter character) {
-        if (character.isAlive()) {
-            character.attackedByThief(this);
-            if (character.getLife() <= 0) {
-                character.setLife(0);
-            }
-        }
-    }
-
-    @Override
     public void equip(IWeapon weapon) {
         weapon.equippedByThief(this);
     }
@@ -75,12 +65,13 @@ public class Thief extends AbstractPlayerCharacter {
             return false;
         }
         final Thief that = (Thief) o;
-        return getName().equals(that.getName())
-                && getDefense() == that.getDefense();
+        return getName().equals(that.getName()) &&
+                getLife() == (that.getLife()) &&
+                getDefense() == that.getDefense();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getDefense());
+        return Objects.hash(getName(), getLife(), getDefense());
     }
 }

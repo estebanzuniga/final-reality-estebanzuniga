@@ -3,8 +3,6 @@ package com.github.cc3002.finalreality.model.character;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.character.Enemy;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -25,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class AbstractCharacterTest {
 
   protected BlockingQueue<ICharacter> turns;
-  protected List<ICharacter> testCharacters;
   protected static final String BLACK_MAGE_NAME = "Vivi";
   protected static final String KNIGHT_NAME = "Adelbert";
   protected static final String WHITE_MAGE_NAME = "Eiko";
@@ -48,18 +45,17 @@ public abstract class AbstractCharacterTest {
   @BeforeEach
   protected void basicSetUp() {
     turns = new LinkedBlockingQueue<>();
-    testCharacters = new ArrayList<>();
     testEnemy = new Enemy(turns, ENEMY_NAME, 10, 400, 200, 50);
     testEngineer = new Engineer(turns, ENGINEER_NAME, 500, 100);
     testKnight = new Knight(turns, KNIGHT_NAME, 500, 100);
     testThief = new Thief(turns, THIEF_NAME, 500, 100);
     testWhiteMage = new WhiteMage(turns, WHITE_MAGE_NAME, 500, 100);
     testBlackMage = new BlackMage(turns, BLACK_MAGE_NAME, 500, 100);
-    testAxe = new Axe(151, 10);
-    testBow = new Bow(151, 10);
-    testKnife = new Knife(151, 10);
-    testStaff = new Staff(151, 10);
-    testSword = new Sword(151, 10);
+    testAxe = new Axe("TEST_AXE" , 151, 10);
+    testBow = new Bow("TEST_BOW", 151, 10);
+    testKnife = new Knife("TEST_KNIFE", 151, 10);
+    testStaff = new Staff("TEST_STAFF", 151, 10);
+    testSword = new Sword("TEST_SWORD", 151, 10);
   }
 
   /**
@@ -81,20 +77,6 @@ public abstract class AbstractCharacterTest {
       e.printStackTrace();
     }
     turns.clear();
-  }
-
-  /**
-   * Checks that the character's constructor works.
-   */
-  protected void checkConstruction(final ICharacter expectedCharacter,
-                                   final ICharacter testEqualCharacter,
-                                   final ICharacter sameClassDifferentCharacter,
-                                   final ICharacter differentClassCharacter) {
-    assertEquals(expectedCharacter, expectedCharacter);
-    assertEquals(expectedCharacter, testEqualCharacter);
-    assertNotEquals(sameClassDifferentCharacter, testEqualCharacter);
-    assertNotEquals(testEqualCharacter, differentClassCharacter);
-    assertEquals(expectedCharacter.hashCode(), testEqualCharacter.hashCode());
   }
 
   /**

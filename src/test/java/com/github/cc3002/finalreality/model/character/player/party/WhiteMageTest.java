@@ -38,8 +38,10 @@ class WhiteMageTest extends AbstractMageTest {
     void constructorTest() {
         checkConstruction(new WhiteMage(turns, WHITE_MAGE_NAME,500,100),
                 testWhiteMage,
+                new Engineer(turns, ENGINEER_NAME,500,100),
                 whiteMage,
-                new Engineer(turns, ENGINEER_NAME,500,100));
+                new WhiteMage(turns, WHITE_MAGE_NAME, 501, 100),
+                new WhiteMage(turns, WHITE_MAGE_NAME, 500, 101));
     }
 
     @Test

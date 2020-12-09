@@ -16,8 +16,13 @@ enemies controlled by the computer.
 
 ---
 
-Estructura
--------
+###Arquitectura del proyecto
+
+Para la realización del proyecto se aplicó el patrón de arquitectura "modelo-vista-controlador"
+
+#Modelo
+
+###Estructura
 
 Para lograr el objetivo del proyecto se deben crear los personajes, estos se dividen en los
 controlados por el jugador y los controlados por el computador.
@@ -39,8 +44,7 @@ implementarán sus clases hijas, las que corresponden a una clase por arma. Las 
 
 ---
 
-Equipamiento
-------------
+###Equipamiento
 
 Para el equipamiento de armas se utilizó double dispatch, ya que los personajes pueden equiparse
 solo algunas armas, para esto se creó el método ``equip``, que llama a un método ``equippedBy...``,
@@ -56,8 +60,7 @@ en la clase ``Knife``, para que no haga nada, es decir, no equipe un cuchillo.
 
 ---
 
-Combate
--------
+###Combate
 
 El combate consiste en el ataque de un personaje a otro. Para poder realizar este ataque se crearon
 distintos métodos de la forma ``attackedBy...``, siendo (...) el nombre de una clase de cualquier personaje.
@@ -79,7 +82,18 @@ getters y setters propios de la clase del personaje atacado, como:
 
 ---
 
+#Controlador
 
+Siguiendo la arquitectura de este proyecto, corresponde crear un controlador que una todo lo creado
+en el modelo. Este controlador fue creado e implementado en la clase ``GameController``.
+
+La clase ``GameController`` consta de muchos métodos que simulan una tarea dentro del juego, como
+lo sería un turno, un ataque, un equipamiento, etc.
+
+El fin de la creación de un controlador es para que la vista solo interactúe con este y no
+directamente con el modelo, lo que provocaría un debilitamiento en la seguridad del proyecto.
+
+---
 
 Por implementar:
 
