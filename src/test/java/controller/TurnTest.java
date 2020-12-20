@@ -14,24 +14,19 @@ public class TurnTest extends GameControllerTest {
     @Test
     void checkPlayerTurnTest() {
         for (IWeapon weapon : testEngineerWeaponList) {
-            controllerTest.equipWeapon(testEngineer, weapon);
-            checkPlayerTurn(testEngineer, testEnemy);
+            checkPlayerTurn(testEngineer, testEnemy, weapon);
         }
         for (IWeapon weapon : testKnightWeaponList) {
-            controllerTest.equipWeapon(testKnight, weapon);
-            checkPlayerTurn(testKnight, testEnemy);
+            checkPlayerTurn(testKnight, testEnemy, weapon);
         }
         for (IWeapon weapon : testThiefWeaponList) {
-            controllerTest.equipWeapon(testThief, weapon);
-            checkPlayerTurn(testThief, testEnemy);
+            checkPlayerTurn(testThief, testEnemy, weapon);
         }
         for (IWeapon weapon : testWhiteMageWeaponList) {
-            controllerTest.equipWeapon(testWhiteMage, weapon);
-            checkPlayerTurn(testWhiteMage, testEnemy);
+            checkPlayerTurn(testWhiteMage, testEnemy, weapon);
         }
         for (IWeapon weapon : testBlackMageWeaponList) {
-            controllerTest.equipWeapon(testBlackMage, weapon);
-            checkPlayerTurn(testBlackMage, testEnemy);
+            checkPlayerTurn(testBlackMage, testEnemy, weapon);
         }
     }
 

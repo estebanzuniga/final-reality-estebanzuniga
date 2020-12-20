@@ -188,12 +188,12 @@ public class GameControllerTest {
         assertEquals(life, controllerTest.getLifeCharacter(attacked));
     }
 
-    public void checkPlayerTurn(IPlayerCharacter playerCharacter, Enemy enemy) {
+    public void checkPlayerTurn(IPlayerCharacter playerCharacter, Enemy enemy, IWeapon weapon) {
         controllerTest.addPlayer(playerCharacter);
         controllerTest.addEnemy(enemy);
         int life = controllerTest.getLifeCharacter(enemy);
         while (controllerTest.getLifeCharacter(enemy) > 0) {
-            controllerTest.playerTurn(controllerTest.getPlayer(0), 0);
+            controllerTest.playerTurn(controllerTest.getPlayer(0), 0, weapon);
         }
         controllerTest.setLifeCharacter(enemy, life);
         assertEquals(life, controllerTest.getLifeCharacter(enemy));
