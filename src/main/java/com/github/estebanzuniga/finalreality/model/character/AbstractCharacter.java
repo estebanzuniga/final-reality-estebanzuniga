@@ -56,6 +56,10 @@ public abstract class AbstractCharacter implements ICharacter {
     return true;
   }
 
+  public boolean isPlayerCharacter(ICharacter character) {
+    return isPlayer(character);
+  }
+
   @Override
   public void addCharacterIsDeadListener(IEventHandler characterIsDeadHandler) {
     characterIsDeadNotification.addPropertyChangeListener(characterIsDeadHandler);

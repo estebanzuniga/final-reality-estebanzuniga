@@ -67,6 +67,11 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
   }
 
   @Override
+  public boolean isPlayer(ICharacter character) {
+    return true;
+  }
+
+  @Override
   public void addPlayerEndsTurnListener(IEventHandler playerEndsTurnHandler) {
     playerEndsTurnNotification.addPropertyChangeListener(playerEndsTurnHandler);
   }

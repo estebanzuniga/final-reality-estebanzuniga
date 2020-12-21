@@ -50,29 +50,67 @@ public class GameController {
     }
 
     /**
+     * Remove and return the first character of the turns queue.
+     * @return
+     *        the firs element of the turns queue.
+     */
+    public ICharacter extractCharacter() {
+        return turns.poll();
+    }
+
+    public void tryToExtractCharacter() {
+        try {
+            phase.extractCharacter();
+        } catch (InvalidMovementException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Equips a weapon to a character.
+     *
+     * @param character the character that will equip the weapon.
+     * @param weapon    the weapon that will be equipped.
+     */
+    public void equipWeapon(IPlayerCharacter character, IWeapon weapon) {
+        if (inventory.contains(weapon)) {
+            character.equip(weapon);
+        }
+    }
+
+    public void tryToEquip(IPlayerCharacter character, IWeapon weapon) {
+        try {
+            phase.equipWeapon(character, weapon);
+        } catch (InvalidMovementException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Simulates the player turn.
      *
      * @param character   the character that the player use.
-     * @param indexAttack the index of the attacked enemy in the enemies list.
+     * @param attacked    the attacked enemy.
      */
-    public void playerTurn(IPlayerCharacter character, int indexAttack, IWeapon weapon) {
+    public void playerTurn(IPlayerCharacter character, Enemy attacked, IWeapon weapon) {
         this.setPhase(new SelectingWeaponPhase());
         equipWeapon(character, weapon);
         this.setPhase(new SelectingAttackTargetPhase());
-        playerAttack(character, indexAttack);
+        attack(character, attacked);
         endTurn(character);
         playerEndsTurnNotification.firePropertyChange("PLAYER_ENDS_TURN", null, this);
     }
 
     /**
+     *
      * Simulates the enemy turn.
      *
      * @param enemy       the enemy in turn.
-     * @param indexAttack the index of the attacked character in the party list.
+     * @param attacked    the attacked character.
      */
-    public void enemyTurn(Enemy enemy, int indexAttack) {
+    public void enemyTurn(Enemy enemy, IPlayerCharacter attacked) {
         setPhase(new EnemyAttackingPhase());
-        enemyAttack(enemy, indexAttack);
+        attack(enemy, attacked);
         endTurn(enemy);
         enemyEndsTurnNotification.firePropertyChange("ENEMY_ENDS_TURN", null, this);
     }
@@ -119,47 +157,25 @@ public class GameController {
         return false;
     }
 
-    /**
-     * Represents the attack of an enemy.
+    public void attack(ICharacter attacker, ICharacter attacked) {
+        attacker.attack(attacked);
+        attacker.waitTurn();
+    }
+
+     /**
+     * Represents the attack of a character.
      *
      * @param attacker    the enemy that is attacking.
-     * @param indexAttack the index of the attacked character in party list.
+     * @param attacked    the attacked character.
      */
-    public void enemyAttack(Enemy attacker, int indexAttack) {
-        IPlayerCharacter attacked = party.get(indexAttack);
-        attacker.attack(attacked);
-        if (isDead(attacked)) {
-            party.remove(attacked);
-            turns.remove(attacked);
+    public void tryToAttack(ICharacter attacker, ICharacter attacked) {
+        try {
+            phase.attack(attacker, attacked);
+        } catch (InvalidMovementException e) {
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Represents the attack of a player.
-     *
-     * @param attacker    the character that is attacking.
-     * @param indexAttack the index of the attacked enemy in enemies list.
-     */
-    public void playerAttack(IPlayerCharacter attacker, int indexAttack) {
-        Enemy attacked = enemies.get(indexAttack);
-        attacker.attack(attacked);
-        if (isDead(attacked)) {
-            enemies.remove(attacked);
-            turns.remove(attacked);
-        }
-    }
-
-    /**
-     * Equips a weapon to a character.
-     *
-     * @param character the character that will equip the weapon.
-     * @param weapon    the weapon that will be equipped.
-     */
-    public void equipWeapon(IPlayerCharacter character, IWeapon weapon) {
-        if (inventory.contains(weapon)) {
-            character.equip(weapon);
-        }
-    }
 
 
     //CONSTRUCTORS
@@ -177,6 +193,15 @@ public class GameController {
         enemies.add(enemy1);
         enemies.add(enemy2);
         enemies.add(enemy3);
+    }
+
+    public void tryToSetEnemies() {
+        try {
+            phase.setEnemies();
+        } catch (InvalidMovementException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -451,20 +476,20 @@ public class GameController {
 
     /**
      * Get the enemies list.
-     *
-     * @return the enemies list.
+     * @return
+     *        the enemies list.
      */
-    public ArrayList<Enemy> getEnemiesList() {
-        return this.enemies;
+    public ArrayList<Enemy> getEnemies() {
+        return enemies;
     }
 
     /**
      * Get the party list.
-     *
-     * @return the party list.
+     * @return
+     *        the party list.
      */
-    public ArrayList<IPlayerCharacter> getPartyList() {
-        return this.party;
+    public ArrayList<IPlayerCharacter> getParty() {
+        return party;
     }
 
     /**
@@ -474,7 +499,7 @@ public class GameController {
      * @return the enemy in the indicated index.
      */
     public Enemy getEnemy(int index) {
-        return getEnemiesList().get(index);
+        return enemies.get(index);
     }
 
     /**
@@ -484,25 +509,17 @@ public class GameController {
      * @return the character in the indicated index.
      */
     public IPlayerCharacter getPlayer(int index) {
-        return getPartyList().get(index);
+        return party.get(index);
     }
 
     /**
-     * Add a enemy to enemies list.
+     * Get a weapon from the inventory.
      *
-     * @param enemy the enemy that will be added to the list.
+     * @param index the index in the inventory of the weapon.
+     * @return the weapon in the indicated index.
      */
-    public void addEnemy(Enemy enemy) {
-        getEnemiesList().add(enemy);
-    }
-
-    /**
-     * Add a character to party list.
-     *
-     * @param character the character that will be added to the list.
-     */
-    public void addPlayer(IPlayerCharacter character) {
-        getPartyList().add(character);
+    public IWeapon getWeapon(int index) {
+        return getInventory().get(index);
     }
 
     /**
@@ -536,13 +553,16 @@ public class GameController {
         return turns;
     }
 
+
     /**
-     * Remove and return the first character of the turns queue.
+     * Returns true if the character is a player character.
+     * @param character
+     *       the character in question.
      * @return
-     *        the firs element of the turns queue.
+     *        true if the character is a player character.
      */
-    public ICharacter removeCharacter() {
-        return turns.poll();
+    public boolean isPlayer(ICharacter character) {
+        return character.isPlayerCharacter(character);
     }
 
 

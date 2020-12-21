@@ -31,7 +31,6 @@ public class FinalReality extends Application {
   private final GameController controller = new GameController();
   private Label partySizeLabel;
   private Scene actualScene = createSetPartyScene();
-  private ICharacter actualCharacter;
 
   public static void main(String[] args) {
     launch(args);
@@ -120,7 +119,6 @@ public class FinalReality extends Application {
         if (partySize == 3) {
           //SET ENEMIES
           controller.setEnemies();
-          actualCharacter = controller.removeCharacter();
           actualScene = createEquipWeaponScene();
         }
       }
@@ -163,34 +161,24 @@ public class FinalReality extends Application {
       pane.getChildren().add(b);
       switch(button) {
         case "Axe":
-          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) actualCharacter, controller.getInventory().get(0));});
-          if (controller.getEquippedWeaponCharacter((IPlayerCharacter) actualCharacter) != null) {
-            label2.setText("Invalid weapon. Choose another one.");
-            b.setDisable(true);}
+          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) controller.removeCharacter(), controller.getInventory().get(0));
+            b.setDisable(true);});
           break;
         case "Bow":
-          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) actualCharacter, controller.getInventory().get(1));});
-          if (controller.getEquippedWeaponCharacter((IPlayerCharacter) actualCharacter) != null) {
-            label2.setText("Invalid weapon. Choose another one.");
-            b.setDisable(true);}
+          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) controller.removeCharacter(), controller.getInventory().get(1));
+            b.setDisable(true);});
           break;
         case "Knife":
-          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) actualCharacter, controller.getInventory().get(2));});
-          if (controller.getEquippedWeaponCharacter((IPlayerCharacter) actualCharacter) != null) {
-            label2.setText("Invalid weapon. Choose another one.");
-            b.setDisable(true);}
+          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) controller.removeCharacter(), controller.getInventory().get(2));
+            b.setDisable(true);});
           break;
         case "Staff":
-          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) actualCharacter, controller.getInventory().get(3));});
-          if (controller.getEquippedWeaponCharacter((IPlayerCharacter) actualCharacter) != null) {
-            label2.setText("Invalid weapon. Choose another one.");
-            b.setDisable(true);}
+          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) controller.removeCharacter(), controller.getInventory().get(3));
+            b.setDisable(true);});
           break;
         case "Sword":
-          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) actualCharacter, controller.getInventory().get(4));});
-          if (controller.getEquippedWeaponCharacter((IPlayerCharacter) actualCharacter) != null) {
-            label2.setText("Invalid weapon. Choose another one.");
-            b.setDisable(true);}
+          b.setOnAction((e) -> {controller.equipWeapon((IPlayerCharacter) controller.removeCharacter(), controller.getInventory().get(4));
+            b.setDisable(true);});
           break;
       }
     }
@@ -208,7 +196,6 @@ public class FinalReality extends Application {
           controller.setEnemies();
           //COMPLETE INVENTORY
           controller.completeInventory();
-          actualCharacter = controller.removeCharacter();
           actualScene = createEquipWeaponScene();
         }
       }

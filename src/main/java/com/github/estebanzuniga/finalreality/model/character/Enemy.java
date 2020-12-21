@@ -93,6 +93,11 @@ public class Enemy extends AbstractCharacter {
   }
 
   @Override
+  public boolean isPlayer(ICharacter character) {
+    return false;
+  }
+
+  @Override
   public boolean equals(final Object o) {
     if (this == o) {
       return true;
