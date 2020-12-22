@@ -30,11 +30,11 @@ public class Phase {
         controller.attack(attacker, attacked);
     }
 
-    public void extractCharacter() throws InvalidMovementException {
+    public ICharacter extractCharacter() throws InvalidMovementException {
         if (!canExtractACharacter) {
             throw new InvalidMovementException("You can´t extract a character now.");
         }
-        controller.extractCharacter();
+        return controller.extractCharacter();
     }
 
     public void equipWeapon(IPlayerCharacter character, IWeapon weapon) throws InvalidMovementException {

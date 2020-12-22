@@ -39,6 +39,9 @@ public class GameController {
     private final ArrayList<IPlayerCharacter> party = new ArrayList<>();
     private final ArrayList<IWeapon> inventory = new ArrayList<>();
     private final Random rng = new Random();
+    private ICharacter actualCharacter;
+    private IWeapon actualWeapon = null;
+    private Enemy actualEnemyToAttack = null;
 
     private Phase phase;
 
@@ -47,6 +50,30 @@ public class GameController {
      */
     public GameController() {
         this.setPhase(new SelectingPartyPhase());
+    }
+
+    public ICharacter getActualCharacter() {
+        return actualCharacter;
+    }
+
+    public void setActualCharacter(ICharacter character) {
+        this.actualCharacter = character;
+    }
+
+    public IWeapon getActualWeapon() {
+        return actualWeapon;
+    }
+
+    public void setActualWeapon(IWeapon weapon) {
+        this.actualWeapon = weapon;
+    }
+
+    public Enemy getActualEnemyToAttack() {
+        return actualEnemyToAttack;
+    }
+
+    public void setActualEnemyToAttack(Enemy enemy) {
+        this.actualEnemyToAttack = enemy;
     }
 
     /**
@@ -58,12 +85,8 @@ public class GameController {
         return turns.poll();
     }
 
-    public void tryToExtractCharacter() {
-        try {
-            phase.extractCharacter();
-        } catch (InvalidMovementException e) {
-            e.printStackTrace();
-        }
+    public ICharacter tryToExtractCharacter() throws InvalidMovementException {
+        return phase.extractCharacter();
     }
 
     /**
