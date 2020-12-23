@@ -13,14 +13,7 @@ public class MainPhase extends Phase {
 
     @Override
     public ICharacter extractCharacter() {
-        ICharacter character = controller.extractCharacter();
-        if (controller.isPlayer(character)) {
-            toSelectingWeaponPhase();
-        }
-        else {
-            toEnemyAttackingPhase();
-        }
-        return character;
+        return controller.extractCharacter();
     }
 
     @Override

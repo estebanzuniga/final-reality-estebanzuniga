@@ -53,14 +53,6 @@ public class Phase {
 
 
 
-    public void endTurn() throws InvalidMovementException {
-        throw new InvalidMovementException("Can't end turn on " + this.toString() + ".");
-    }
-
-
-
-
-
     public void toMainPhase() throws InvalidTransitionException {
         throw new InvalidTransitionException(
                 "Can´t change from " + this.toString() + " to Main phase");

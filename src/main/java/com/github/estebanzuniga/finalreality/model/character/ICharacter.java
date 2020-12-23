@@ -55,21 +55,17 @@ public interface ICharacter {
 
   /**
    * Returns true if the character is a player character.
-   * @param character
-   *       the character in question.
    * @return
    *        true if the character is a player character.
    */
-  boolean isPlayer(ICharacter character);
+  boolean isPlayer();
 
   /**
    * Returns the return value of isPlayer method.
-   * @param character
-   *       the character in question.
    * @return
    *        true if the character is a player character.
    */
-  boolean isPlayerCharacter(ICharacter character);
+  boolean isPlayerCharacter();
 
   /**
    * Add a character to a handler.

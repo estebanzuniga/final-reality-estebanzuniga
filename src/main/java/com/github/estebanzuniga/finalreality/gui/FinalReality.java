@@ -1,7 +1,7 @@
 package com.github.estebanzuniga.finalreality.gui;
 
 import com.github.estebanzuniga.finalreality.controller.GameController;
-import com.github.estebanzuniga.finalreality.controller.phases.InvalidMovementException;
+import com.github.estebanzuniga.finalreality.controller.phases.*;
 import com.github.estebanzuniga.finalreality.model.character.player.IPlayerCharacter;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -31,6 +31,7 @@ public class FinalReality extends Application {
 
   private final GameController controller = new GameController();
   private Label partySizeLabel;
+  private Label enemySizeLabel;
   private Scene actualScene = createSetPartyScene();
   private final Random rng = new Random();
 
@@ -105,10 +106,15 @@ public class FinalReality extends Application {
       }
     }
 
-    partySizeLabel = new Label("Party List size: " + controller.getParty().size());
+    partySizeLabel = new Label("Party size: " + controller.getParty().size());
     partySizeLabel.setAlignment(Pos.TOP_RIGHT);
     partySizeLabel.setMinSize(336,40);
     root.getChildren().add(partySizeLabel);
+
+    enemySizeLabel = new Label("Enemy size: " + controller.getParty().size());
+    enemySizeLabel.setAlignment(Pos.TOP_LEFT);
+    enemySizeLabel.setMinSize(336,40);
+    root.getChildren().add(enemySizeLabel);
 
     controller.completeInventory();
 
@@ -123,9 +129,11 @@ public class FinalReality extends Application {
       public void handle(final long now) {
         int partySize = controller.getParty().size();
         partySizeLabel.setText("Party Size: " + partySize);
+        //int enemySize = controller.getInventory().size();
+        enemySizeLabel.setText(controller.getCurrentPhase());
         if (partySize == 3) {
-          //SET ENEMIES
-          controller.setEnemies();
+          controller.setPhase(new SettingEnemiesPhase());
+          controller.tryToSetEnemies();
           //EXTRACT A CHARACTER FROM THE TURNS QUEUE.
           try {
             controller.setActualCharacter(controller.tryToExtractCharacter());
@@ -134,9 +142,11 @@ public class FinalReality extends Application {
           }
           if (controller.isPlayer(controller.getActualCharacter())) {
             actualScene = createEquipWeaponScene();
+            controller.setPhase(new SelectingWeaponPhase());
           }
           else {
             actualScene = createEnemyAttackScene();
+            controller.setPhase(new EnemyAttackingPhase());
           }
         }
       }
@@ -156,7 +166,12 @@ public class FinalReality extends Application {
     label.setMinSize(336,40);
     root.getChildren().add(label);
 
-    controller.attack(controller.getActualCharacter(), controller.getPlayer(rng.nextInt(controller.getParty().size())));
+    controller.tryToAttack(controller.getActualCharacter(), controller.getPlayer(rng.nextInt(controller.getParty().size())));
+
+    enemySizeLabel = new Label("Enemy size: " + controller.getParty().size());
+    enemySizeLabel.setAlignment(Pos.TOP_RIGHT);
+    enemySizeLabel.setMinSize(336,40);
+    root.getChildren().add(enemySizeLabel);
 
     startAnimatorCreateEnemyAttackScene();
 
@@ -168,6 +183,7 @@ public class FinalReality extends Application {
       long time = System.currentTimeMillis();
       @Override
       public void handle(final long now) {
+        enemySizeLabel.setText(controller.getCurrentPhase());
         if (System.currentTimeMillis() - time < 1500) {
           //EXTRACT A CHARACTER FROM THE TURNS QUEUE.
           try {
@@ -177,9 +193,11 @@ public class FinalReality extends Application {
           }
           if (controller.isPlayer(controller.getActualCharacter())) {
             actualScene = createEquipWeaponScene();
+            controller.setPhase(new SelectingWeaponPhase());
           }
           else {
             actualScene = createEnemyAttackScene();
+            controller.setPhase(new EnemyAttackingPhase());
           }
         }
       }
@@ -240,6 +258,11 @@ public class FinalReality extends Application {
       }
     }
 
+    enemySizeLabel = new Label("Enemy size: " + controller.getParty().size());
+    enemySizeLabel.setAlignment(Pos.TOP_RIGHT);
+    enemySizeLabel.setMinSize(336,40);
+    root.getChildren().add(enemySizeLabel);
+
     startAnimatorEquipWeaponScene();
 
     return scene;
@@ -249,8 +272,9 @@ public class FinalReality extends Application {
     AnimationTimer timer = new AnimationTimer() {
       @Override
       public void handle(final long now) {
+        enemySizeLabel.setText(controller.getCurrentPhase());
         if (controller.getActualWeapon() != null) {
-          controller.equipWeapon((IPlayerCharacter) controller.getActualCharacter(), controller.getActualWeapon());
+          controller.tryToEquip((IPlayerCharacter) controller.getActualCharacter(), controller.getActualWeapon());
           actualScene = createAttackScene();
           controller.setActualWeapon(null);
         }

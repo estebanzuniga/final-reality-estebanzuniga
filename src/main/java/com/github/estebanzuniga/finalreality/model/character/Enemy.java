@@ -93,7 +93,7 @@ public class Enemy extends AbstractCharacter {
   }
 
   @Override
-  public boolean isPlayer(ICharacter character) {
+  public boolean isPlayer() {
     return false;
   }
 

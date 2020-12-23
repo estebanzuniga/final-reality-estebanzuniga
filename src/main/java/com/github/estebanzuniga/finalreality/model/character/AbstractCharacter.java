@@ -56,8 +56,8 @@ public abstract class AbstractCharacter implements ICharacter {
     return true;
   }
 
-  public boolean isPlayerCharacter(ICharacter character) {
-    return isPlayer(character);
+  public boolean isPlayerCharacter() {
+    return isPlayer();
   }
 
   @Override

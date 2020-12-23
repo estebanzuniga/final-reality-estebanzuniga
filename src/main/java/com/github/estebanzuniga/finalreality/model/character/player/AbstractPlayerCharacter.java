@@ -67,7 +67,7 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
   }
 
   @Override
-  public boolean isPlayer(ICharacter character) {
+  public boolean isPlayer() {
     return true;
   }
 

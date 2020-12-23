@@ -2,6 +2,7 @@ package com.github.estebanzuniga.finalreality.controller.handlers;
 
 import com.github.estebanzuniga.finalreality.controller.GameController;
 import com.github.estebanzuniga.finalreality.model.character.Enemy;
+import com.github.estebanzuniga.finalreality.model.character.player.IPlayerCharacter;
 
 import java.beans.PropertyChangeEvent;
 
@@ -31,6 +32,6 @@ public class EnemyEndsTurnHandler implements IEventHandler {
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        controller.enemyAttack((Enemy) evt.getNewValue(), (int) evt.getNewValue());
+        controller.attack((Enemy) evt.getNewValue(), (IPlayerCharacter) evt.getNewValue());
     }
 }

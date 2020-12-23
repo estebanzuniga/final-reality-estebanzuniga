@@ -39,6 +39,7 @@ public class GameController {
     private final ArrayList<IPlayerCharacter> party = new ArrayList<>();
     private final ArrayList<IWeapon> inventory = new ArrayList<>();
     private final Random rng = new Random();
+
     private ICharacter actualCharacter;
     private IWeapon actualWeapon = null;
     private Enemy actualEnemyToAttack = null;
@@ -206,16 +207,13 @@ public class GameController {
     /**
      * Creates three random enemies and complete the enemies list.
      */
-    public void setEnemies() {
+    public void setEnemies(){
         Enemy enemy1 = createEnemy("Enemy1", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
                 rng.nextInt(100) + 100, rng.nextInt(30) + 30);
         Enemy enemy2 = createEnemy("Enemy2", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
                 rng.nextInt(100) + 100, rng.nextInt(30) + 30);
         Enemy enemy3 = createEnemy("Enemy3", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
                 rng.nextInt(100) + 100, rng.nextInt(30) + 30);
-        enemies.add(enemy1);
-        enemies.add(enemy2);
-        enemies.add(enemy3);
     }
 
     public void tryToSetEnemies() {
@@ -240,6 +238,7 @@ public class GameController {
     public Enemy createEnemy(String name, int weight, int life, int attack, int defense) {
         Enemy enemy = new Enemy(turns, name, weight, life, attack, defense);
         enemies.add(enemy);
+        enemy.waitTurn();
         enemy.addCharacterIsDeadListener(characterIsDeadHandler);
         enemy.addEnemyEndsTurnListener(enemyEndsTurnHandler);
         return enemy;
@@ -258,6 +257,8 @@ public class GameController {
         party.add(engineer);
         engineer.addCharacterIsDeadListener(characterIsDeadHandler);
         engineer.addPlayerEndsTurnListener(playerEndsTurnHandler);
+        engineer.equip(new Axe("DefaultWeapon", 0, 10));
+        engineer.waitTurn();
         return engineer;
     }
 
@@ -274,6 +275,8 @@ public class GameController {
         knight.addCharacterIsDeadListener(characterIsDeadHandler);
         knight.addPlayerEndsTurnListener(playerEndsTurnHandler);
         party.add(knight);
+        knight.equip(new Sword("DefaultWeapon", 0, 10));
+        knight.waitTurn();
         return knight;
     }
 
@@ -290,6 +293,8 @@ public class GameController {
         thief.addCharacterIsDeadListener(characterIsDeadHandler);
         thief.addPlayerEndsTurnListener(playerEndsTurnHandler);
         party.add(thief);
+        thief.equip(new Sword("DefaultWeapon", 0, 10));
+        thief.waitTurn();
         return thief;
     }
 
@@ -306,6 +311,8 @@ public class GameController {
         whiteMage.addCharacterIsDeadListener(characterIsDeadHandler);
         whiteMage.addPlayerEndsTurnListener(playerEndsTurnHandler);
         party.add(whiteMage);
+        whiteMage.equip(new Staff("DefaultWeapon", 0, 10));
+        whiteMage.waitTurn();
         return whiteMage;
     }
 
@@ -322,6 +329,8 @@ public class GameController {
         blackMage.addCharacterIsDeadListener(characterIsDeadHandler);
         blackMage.addPlayerEndsTurnListener(playerEndsTurnHandler);
         party.add(blackMage);
+        blackMage.equip(new Staff("DefaultWeapon", 0, 10));
+        blackMage.waitTurn();
         return blackMage;
     }
 
@@ -560,11 +569,6 @@ public class GameController {
         IWeapon knife = createKnife("Knife", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
         IWeapon staff = createStaff("Staff", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
         IWeapon sword = createSword("Sword", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
-        inventory.add(axe);
-        inventory.add(bow);
-        inventory.add(knife);
-        inventory.add(staff);
-        inventory.add(sword);
     }
 
     /**
@@ -585,7 +589,7 @@ public class GameController {
      *        true if the character is a player character.
      */
     public boolean isPlayer(ICharacter character) {
-        return character.isPlayerCharacter(character);
+        return character.isPlayerCharacter();
     }
 
 
