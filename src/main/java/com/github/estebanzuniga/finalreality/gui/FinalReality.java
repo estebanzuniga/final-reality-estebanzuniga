@@ -31,7 +31,10 @@ public class FinalReality extends Application {
 
   private final GameController controller = new GameController();
   private Label partySizeLabel;
-  private Label enemySizeLabel;
+  private Label phaseLabel;
+  private Label mainLabel;
+  private Label aLabel;
+  private int index;
   private Scene actualScene = createSetPartyScene();
   private final Random rng = new Random();
 
@@ -111,10 +114,11 @@ public class FinalReality extends Application {
     partySizeLabel.setMinSize(336,40);
     root.getChildren().add(partySizeLabel);
 
-    enemySizeLabel = new Label("Enemy size: " + controller.getParty().size());
-    enemySizeLabel.setAlignment(Pos.TOP_LEFT);
-    enemySizeLabel.setMinSize(336,40);
-    root.getChildren().add(enemySizeLabel);
+    phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
+    phaseLabel.setLayoutX(20);
+    phaseLabel.setLayoutY(100);
+    phaseLabel.setMinSize(336,40);
+    root.getChildren().add(phaseLabel);
 
     controller.completeInventory();
 
@@ -129,25 +133,67 @@ public class FinalReality extends Application {
       public void handle(final long now) {
         int partySize = controller.getParty().size();
         partySizeLabel.setText("Party Size: " + partySize);
-        //int enemySize = controller.getInventory().size();
-        enemySizeLabel.setText(controller.getCurrentPhase());
+        phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
         if (partySize == 3) {
-          controller.setPhase(new SettingEnemiesPhase());
+          controller.setPhase(new InitialPhase());
           controller.tryToSetEnemies();
-          //EXTRACT A CHARACTER FROM THE TURNS QUEUE.
-          try {
-            controller.setActualCharacter(controller.tryToExtractCharacter());
-          } catch (InvalidMovementException e) {
-            e.printStackTrace();
-          }
-          if (controller.isPlayer(controller.getActualCharacter())) {
-            actualScene = createEquipWeaponScene();
-            controller.setPhase(new SelectingWeaponPhase());
-          }
-          else {
-            actualScene = createEnemyAttackScene();
-            controller.setPhase(new EnemyAttackingPhase());
-          }
+          actualScene = createMainScene();
+        }
+      }
+    };
+    timer.start();
+  }
+
+  private Scene createMainScene() {
+    Group root = new Group();
+    Scene scene = new Scene(root, 400, 400);
+
+    mainLabel = new Label("Next turn is for...");
+    mainLabel.setAlignment(Pos.CENTER);
+    mainLabel.setMinSize(336,40);
+    root.getChildren().add(mainLabel);
+
+    phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
+    phaseLabel.setLayoutX(20);
+    phaseLabel.setLayoutY(100);
+    phaseLabel.setMinSize(336,40);
+    root.getChildren().add(phaseLabel);
+
+
+    aLabel = new Label("Current phase: " + controller.getCurrentPhase());
+    aLabel.setLayoutX(20);
+    aLabel.setLayoutY(150);
+    aLabel.setMinSize(336,40);
+    root.getChildren().add(aLabel);
+
+    startAnimatorMainScene();
+
+    return scene;
+  }
+
+  private void startAnimatorMainScene() {
+    AnimationTimer timer = new AnimationTimer() {
+      @Override
+      public void handle(final long now) {
+        phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
+        aLabel.setText("Size: " + controller.getParty().size());
+        try {
+          Thread.sleep(500);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        controller.setActualCharacter(controller.getTurns().peek());
+        mainLabel.setText(controller.getNameCharacter(controller.getActualCharacter()));
+        try {
+          Thread.sleep(500);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        if (controller.isPlayer(controller.getActualCharacter())) {
+          actualScene = createEquipWeaponScene();
+        }
+        else {
+          actualScene = createEnemyAttackScene();
         }
       }
     };
@@ -161,45 +207,37 @@ public class FinalReality extends Application {
     Group root = new Group();
     Scene scene = new Scene(root, 400, 400);
 
-    Label label = new Label("Enemy is attacking");
+    Label label = new Label(controller.getNameCharacter(controller.getActualCharacter()) + "is attacking");
     label.setAlignment(Pos.CENTER);
     label.setMinSize(336,40);
     root.getChildren().add(label);
 
-    controller.tryToAttack(controller.getActualCharacter(), controller.getPlayer(rng.nextInt(controller.getParty().size())));
+    phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
+    phaseLabel.setLayoutX(20);
+    phaseLabel.setLayoutY(100);
+    phaseLabel.setMinSize(336,40);
+    root.getChildren().add(phaseLabel);
 
-    enemySizeLabel = new Label("Enemy size: " + controller.getParty().size());
-    enemySizeLabel.setAlignment(Pos.TOP_RIGHT);
-    enemySizeLabel.setMinSize(336,40);
-    root.getChildren().add(enemySizeLabel);
-
-    startAnimatorCreateEnemyAttackScene();
+    startAnimatorEnemyAttackScene();
 
     return scene;
   }
 
-  private void startAnimatorCreateEnemyAttackScene() {
+  private void startAnimatorEnemyAttackScene() {
     AnimationTimer timer = new AnimationTimer() {
-      long time = System.currentTimeMillis();
       @Override
       public void handle(final long now) {
-        enemySizeLabel.setText(controller.getCurrentPhase());
-        if (System.currentTimeMillis() - time < 1500) {
-          //EXTRACT A CHARACTER FROM THE TURNS QUEUE.
-          try {
-            controller.setActualCharacter(controller.tryToExtractCharacter());
-          } catch (InvalidMovementException e) {
-            e.printStackTrace();
-          }
-          if (controller.isPlayer(controller.getActualCharacter())) {
-            actualScene = createEquipWeaponScene();
-            controller.setPhase(new SelectingWeaponPhase());
-          }
-          else {
-            actualScene = createEnemyAttackScene();
-            controller.setPhase(new EnemyAttackingPhase());
-          }
+        phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
+        controller.setPhase(new AttackPhase());
+        int partySize = controller.getPartySize();
+        int ind = rng.nextInt(partySize);
+        controller.tryToAttack(controller.getActualCharacter(), controller.getPlayer(ind));
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
         }
+        actualScene = createMainScene();
       }
     };
     timer.start();
@@ -258,10 +296,11 @@ public class FinalReality extends Application {
       }
     }
 
-    enemySizeLabel = new Label("Enemy size: " + controller.getParty().size());
-    enemySizeLabel.setAlignment(Pos.TOP_RIGHT);
-    enemySizeLabel.setMinSize(336,40);
-    root.getChildren().add(enemySizeLabel);
+    phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
+    phaseLabel.setLayoutX(20);
+    phaseLabel.setLayoutY(100);
+    phaseLabel.setMinSize(336,40);
+    root.getChildren().add(phaseLabel);
 
     startAnimatorEquipWeaponScene();
 
@@ -272,7 +311,7 @@ public class FinalReality extends Application {
     AnimationTimer timer = new AnimationTimer() {
       @Override
       public void handle(final long now) {
-        enemySizeLabel.setText(controller.getCurrentPhase());
+        phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
         if (controller.getActualWeapon() != null) {
           controller.tryToEquip((IPlayerCharacter) controller.getActualCharacter(), controller.getActualWeapon());
           actualScene = createAttackScene();
@@ -358,6 +397,12 @@ public class FinalReality extends Application {
       }
     }*/
 
+    phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
+    phaseLabel.setLayoutX(20);
+    phaseLabel.setLayoutY(100);
+    phaseLabel.setMinSize(336,40);
+    root.getChildren().add(phaseLabel);
+
     startAnimatorAttackScene();
 
     return scene;
@@ -367,6 +412,7 @@ public class FinalReality extends Application {
     AnimationTimer timer = new AnimationTimer() {
       @Override
       public void handle(final long now) {
+        phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
         if (controller.getActualWeapon() != null) {
           controller.equipWeapon((IPlayerCharacter) controller.getActualCharacter(), controller.getActualWeapon());
           actualScene = createAttackScene();

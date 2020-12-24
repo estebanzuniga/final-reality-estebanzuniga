@@ -2,16 +2,17 @@ package com.github.estebanzuniga.finalreality.controller.handlers;
 
 import com.github.estebanzuniga.finalreality.controller.GameController;
 import com.github.estebanzuniga.finalreality.model.character.Enemy;
+import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.character.player.IPlayerCharacter;
 
 import java.beans.PropertyChangeEvent;
 
 /**
- * A class that simulates an listener(observer) that notify to controller when a enemy ends its turn.
+ * A class that simulates an listener(observer) that notify to controller when a player ends its turn.
  *
  * @author Esteban Zúñiga Salamanca.
  */
-public class EnemyEndsTurnHandler implements IEventHandler {
+public class CharacterEndsTurnHandler implements IEventHandler {
 
     private final GameController controller;
 
@@ -20,7 +21,7 @@ public class EnemyEndsTurnHandler implements IEventHandler {
      * @param controller
      *        the controller that the listener is observing.
      */
-    public EnemyEndsTurnHandler(GameController controller) {
+    public CharacterEndsTurnHandler(GameController controller) {
         this.controller = controller;
     }
 
@@ -32,6 +33,7 @@ public class EnemyEndsTurnHandler implements IEventHandler {
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        controller.attack((Enemy) evt.getNewValue(), (IPlayerCharacter) evt.getNewValue());
+        //controller.attack((IPlayerCharacter) evt.getNewValue(), (Enemy) evt.getNewValue());
+        controller.endTurn((ICharacter) evt.getNewValue());
     }
 }

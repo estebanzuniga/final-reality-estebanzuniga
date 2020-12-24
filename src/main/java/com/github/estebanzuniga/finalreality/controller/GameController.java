@@ -1,9 +1,8 @@
 package com.github.estebanzuniga.finalreality.controller;
 
 import com.github.estebanzuniga.finalreality.controller.handlers.CharacterIsDeadHandler;
-import com.github.estebanzuniga.finalreality.controller.handlers.EnemyEndsTurnHandler;
 import com.github.estebanzuniga.finalreality.controller.handlers.IEventHandler;
-import com.github.estebanzuniga.finalreality.controller.handlers.PlayerEndsTurnHandler;
+import com.github.estebanzuniga.finalreality.controller.handlers.CharacterEndsTurnHandler;
 import com.github.estebanzuniga.finalreality.controller.phases.*;
 import com.github.estebanzuniga.finalreality.model.character.Enemy;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
@@ -26,12 +25,10 @@ import java.util.Random;
  */
 public class GameController {
 
-    private final IEventHandler playerEndsTurnHandler = new PlayerEndsTurnHandler(this);
-    private final IEventHandler enemyEndsTurnHandler = new EnemyEndsTurnHandler(this);
+    private final IEventHandler characterEndsTurnHandler = new CharacterEndsTurnHandler(this);
     private final IEventHandler characterIsDeadHandler = new CharacterIsDeadHandler(this);
 
-    private final PropertyChangeSupport enemyEndsTurnNotification = new PropertyChangeSupport(this);
-    private final PropertyChangeSupport playerEndsTurnNotification = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport characterEndsTurnNotification = new PropertyChangeSupport(this);
     private final PropertyChangeSupport characterIsDeadNotification = new PropertyChangeSupport(this);
 
     private final BlockingQueue<ICharacter> turns = new LinkedBlockingQueue<>();
@@ -50,31 +47,7 @@ public class GameController {
      * Creates the controller of the game.
      */
     public GameController() {
-        this.setPhase(new SelectingPartyPhase());
-    }
-
-    public ICharacter getActualCharacter() {
-        return actualCharacter;
-    }
-
-    public void setActualCharacter(ICharacter character) {
-        this.actualCharacter = character;
-    }
-
-    public IWeapon getActualWeapon() {
-        return actualWeapon;
-    }
-
-    public void setActualWeapon(IWeapon weapon) {
-        this.actualWeapon = weapon;
-    }
-
-    public Enemy getActualEnemyToAttack() {
-        return actualEnemyToAttack;
-    }
-
-    public void setActualEnemyToAttack(Enemy enemy) {
-        this.actualEnemyToAttack = enemy;
+        this.setPhase(new InitialPhase());
     }
 
     /**
@@ -82,12 +55,22 @@ public class GameController {
      * @return
      *        the firs element of the turns queue.
      */
-    public ICharacter extractCharacter() {
-        return turns.poll();
+    public void extractCharacter() {
+        ICharacter character = turns.poll();
+        character.waitTurn();
     }
 
-    public ICharacter tryToExtractCharacter() throws InvalidMovementException {
-        return phase.extractCharacter();
+    public void tryToExtractCharacter() throws InvalidMovementException {
+        phase.extractCharacter();
+    }
+
+    public void getFirstCharacter() {
+        ICharacter character = turns.poll();
+        character.waitTurn();
+    }
+
+    public void tryToGetFirstCharacter() throws InvalidMovementException {
+        phase.extractCharacter();
     }
 
     /**
@@ -111,41 +94,11 @@ public class GameController {
     }
 
     /**
-     * Simulates the player turn.
-     *
-     * @param character   the character that the player use.
-     * @param attacked    the attacked enemy.
-     */
-    public void playerTurn(IPlayerCharacter character, Enemy attacked, IWeapon weapon) {
-        this.setPhase(new SelectingWeaponPhase());
-        equipWeapon(character, weapon);
-        this.setPhase(new SelectingAttackTargetPhase());
-        attack(character, attacked);
-        endTurn(character);
-        playerEndsTurnNotification.firePropertyChange("PLAYER_ENDS_TURN", null, this);
-    }
-
-    /**
-     *
-     * Simulates the enemy turn.
-     *
-     * @param enemy       the enemy in turn.
-     * @param attacked    the attacked character.
-     */
-    public void enemyTurn(Enemy enemy, IPlayerCharacter attacked) {
-        setPhase(new EnemyAttackingPhase());
-        attack(enemy, attacked);
-        endTurn(enemy);
-        enemyEndsTurnNotification.firePropertyChange("ENEMY_ENDS_TURN", null, this);
-    }
-
-    /**
      * Indicates the end of a turn.
      *
      * @param character the character that finish its turn.
      */
     public void endTurn(ICharacter character) {
-        turns.remove(character);
         character.waitTurn();
     }
 
@@ -183,7 +136,7 @@ public class GameController {
 
     public void attack(ICharacter attacker, ICharacter attacked) {
         attacker.attack(attacked);
-        attacker.waitTurn();
+        characterEndsTurnNotification.firePropertyChange("CHARACTER_ENDS_TURN", null, this);
     }
 
      /**
@@ -208,11 +161,11 @@ public class GameController {
      * Creates three random enemies and complete the enemies list.
      */
     public void setEnemies(){
-        Enemy enemy1 = createEnemy("Enemy1", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
+        createEnemy("Enemy1", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
                 rng.nextInt(100) + 100, rng.nextInt(30) + 30);
-        Enemy enemy2 = createEnemy("Enemy2", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
+        createEnemy("Enemy2", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
                 rng.nextInt(100) + 100, rng.nextInt(30) + 30);
-        Enemy enemy3 = createEnemy("Enemy3", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
+        createEnemy("Enemy3", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
                 rng.nextInt(100) + 100, rng.nextInt(30) + 30);
     }
 
@@ -240,7 +193,7 @@ public class GameController {
         enemies.add(enemy);
         enemy.waitTurn();
         enemy.addCharacterIsDeadListener(characterIsDeadHandler);
-        enemy.addEnemyEndsTurnListener(enemyEndsTurnHandler);
+        enemy.addEnemyEndsTurnListener(characterEndsTurnHandler);
         return enemy;
     }
 
@@ -256,7 +209,7 @@ public class GameController {
         IPlayerCharacter engineer = new Engineer(turns, name, life, defense);
         party.add(engineer);
         engineer.addCharacterIsDeadListener(characterIsDeadHandler);
-        engineer.addPlayerEndsTurnListener(playerEndsTurnHandler);
+        engineer.addPlayerEndsTurnListener(characterEndsTurnHandler);
         engineer.equip(new Axe("DefaultWeapon", 0, 10));
         engineer.waitTurn();
         return engineer;
@@ -273,7 +226,7 @@ public class GameController {
     public IPlayerCharacter createKnight(String name, int life, int defense) {
         IPlayerCharacter knight = new Knight(turns, name, life, defense);
         knight.addCharacterIsDeadListener(characterIsDeadHandler);
-        knight.addPlayerEndsTurnListener(playerEndsTurnHandler);
+        knight.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(knight);
         knight.equip(new Sword("DefaultWeapon", 0, 10));
         knight.waitTurn();
@@ -291,7 +244,7 @@ public class GameController {
     public IPlayerCharacter createThief(String name, int life, int defense) {
         IPlayerCharacter thief = new Thief(turns, name, life, defense);
         thief.addCharacterIsDeadListener(characterIsDeadHandler);
-        thief.addPlayerEndsTurnListener(playerEndsTurnHandler);
+        thief.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(thief);
         thief.equip(new Sword("DefaultWeapon", 0, 10));
         thief.waitTurn();
@@ -309,7 +262,7 @@ public class GameController {
     public IPlayerCharacter createWhiteMage(String name, int life, int defense) {
         IPlayerCharacter whiteMage = new WhiteMage(turns, name, life, defense);
         whiteMage.addCharacterIsDeadListener(characterIsDeadHandler);
-        whiteMage.addPlayerEndsTurnListener(playerEndsTurnHandler);
+        whiteMage.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(whiteMage);
         whiteMage.equip(new Staff("DefaultWeapon", 0, 10));
         whiteMage.waitTurn();
@@ -327,7 +280,7 @@ public class GameController {
     public IPlayerCharacter createBlackMage(String name, int life, int defense) {
         IPlayerCharacter blackMage = new BlackMage(turns, name, life, defense);
         blackMage.addCharacterIsDeadListener(characterIsDeadHandler);
-        blackMage.addPlayerEndsTurnListener(playerEndsTurnHandler);
+        blackMage.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(blackMage);
         blackMage.equip(new Staff("DefaultWeapon", 0, 10));
         blackMage.waitTurn();
@@ -564,11 +517,11 @@ public class GameController {
     }
 
     public void completeInventory() {
-        IWeapon axe = createAxe("Axe", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
-        IWeapon bow = createBow("Bow", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
-        IWeapon knife = createKnife("Knife", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
-        IWeapon staff = createStaff("Staff", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
-        IWeapon sword = createSword("Sword", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
+        createAxe("Axe", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
+        createBow("Bow", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
+        createKnife("Knife", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
+        createStaff("Staff", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
+        createSword("Sword", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
     }
 
     /**
@@ -589,13 +542,39 @@ public class GameController {
      *        true if the character is a player character.
      */
     public boolean isPlayer(ICharacter character) {
-        return character.isPlayerCharacter();
+        return party.contains(character);
     }
 
 
 
 
+    public int getPartySize() {
+        return party.size();
+    }
 
+    public ICharacter getActualCharacter() {
+        return actualCharacter;
+    }
+
+    public void setActualCharacter(ICharacter character) {
+        this.actualCharacter = character;
+    }
+
+    public IWeapon getActualWeapon() {
+        return actualWeapon;
+    }
+
+    public void setActualWeapon(IWeapon weapon) {
+        this.actualWeapon = weapon;
+    }
+
+    public Enemy getActualEnemyToAttack() {
+        return actualEnemyToAttack;
+    }
+
+    public void setActualEnemyToAttack(Enemy enemy) {
+        this.actualEnemyToAttack = enemy;
+    }
 
     //PHASES
 
@@ -606,5 +585,9 @@ public class GameController {
 
     public String getCurrentPhase() {
         return phase.toString();
+    }
+
+    public Phase getPhase() {
+        return phase;
     }
 }

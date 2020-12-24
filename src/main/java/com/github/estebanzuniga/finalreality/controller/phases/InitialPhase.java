@@ -1,26 +1,26 @@
 package com.github.estebanzuniga.finalreality.controller.phases;
 
-public class SettingEnemiesPhase extends Phase {
+public class InitialPhase extends Phase {
 
-    public SettingEnemiesPhase() {
+    public InitialPhase() {
         this.canSetEnemies = true;
+        this.canEquip = false;
         this.canAttack = false;
         this.canExtractACharacter = false;
-        this.canEquip = false;
     }
 
     @Override
     public void setEnemies(){
         controller.setEnemies();
-        toMainPhase();
+        toAttackPhase();
     }
 
     @Override
-    public void toMainPhase() {
-        changePhase(new MainPhase());
+    public void toAttackPhase() {
+        changePhase(new AttackPhase());
     }
 
     public String toString() {
-        return "Setting enemies phase";
+        return "Initial phase";
     }
 }

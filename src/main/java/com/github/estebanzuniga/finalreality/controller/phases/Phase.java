@@ -11,9 +11,9 @@ public class Phase {
     protected GameController controller;
 
     protected boolean canSetEnemies = false;
-    protected boolean canAttack = false;
     protected boolean canExtractACharacter = false;
     protected boolean canEquip = false;
+    protected boolean canAttack = false;
 
     public void setController(final @NotNull GameController controller) {
         this.controller = controller;
@@ -23,18 +23,13 @@ public class Phase {
         controller.setPhase(phase);
     }
 
-    public void attack(ICharacter attacker, ICharacter attacked) throws InvalidMovementException {
-        if (!canAttack) {
-            throw new InvalidMovementException("You can't attack now.");
-        }
-        controller.attack(attacker, attacked);
-    }
 
-    public ICharacter extractCharacter() throws InvalidMovementException {
-        if (!canExtractACharacter) {
-            throw new InvalidMovementException("You can´t extract a character now.");
+
+    public void setEnemies() throws InvalidMovementException {
+        if (!canSetEnemies) {
+            throw new InvalidMovementException("You can´t set party now.");
         }
-        return controller.extractCharacter();
+        controller.setEnemies();
     }
 
     public void equipWeapon(IPlayerCharacter character, IWeapon weapon) throws InvalidMovementException {
@@ -44,38 +39,43 @@ public class Phase {
         controller.equipWeapon(character, weapon);
     }
 
-    public void setEnemies() throws InvalidMovementException {
-        if (!canSetEnemies) {
-            throw new InvalidMovementException("You can´t set party now.");
+    public void attack(ICharacter attacker, ICharacter attacked) throws InvalidMovementException {
+        if (!canAttack) {
+            throw new InvalidMovementException("You can't attack now.");
         }
-        controller.setEnemies();
+        controller.attack(attacker, attacked);
+    }
+
+    public void extractCharacter() throws InvalidMovementException {
+        if (!canExtractACharacter) {
+            throw new InvalidMovementException("You can´t extract a character now.");
+        }
+        controller.extractCharacter();
     }
 
 
 
-    public void toMainPhase() throws InvalidTransitionException {
+
+
+
+    public void toInitialPhase() throws InvalidTransitionException {
         throw new InvalidTransitionException(
-                "Can´t change from " + this.toString() + " to Main phase");
+                "Can´t change form " + this.toString() + " to Initial phase");
     }
 
-    public void toSelectingPartyPhase() throws InvalidTransitionException {
+    public void toAttackPhase() throws InvalidTransitionException {
         throw new InvalidTransitionException(
-                "Can't change from " + this.toString() + " to Selecting party phase");
+                "Can't change from " + this.toString() + " to Attack phase");
     }
 
-    public void toSelectingWeaponPhase() throws InvalidTransitionException {
+    public void toEndTurnPhase() throws InvalidTransitionException {
         throw new InvalidTransitionException(
-                "Can't change from " + this.toString() + " to Selecting weapon phase");
+                "Can´t change from " + this.toString() + " to End turn phase");
     }
 
-    public void toSelectingAttackTargetPhase() throws InvalidTransitionException {
+    public void toGameOverPhase() throws InvalidTransitionException {
         throw new InvalidTransitionException(
-                "Can't change from " + this.toString() + " to Selecting attack target phase");
-    }
-
-    public void toEnemyAttackingPhase() throws InvalidTransitionException {
-        throw new InvalidTransitionException(
-                "Can't change from " + this.toString() + " to Enemy attacking phase");
+                "Can't change from " + this.toString() + " to Game Over phase");
     }
 
 }
