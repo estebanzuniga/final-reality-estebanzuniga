@@ -136,10 +136,9 @@ public class GameControllerTest {
 
     protected void checkEnemyGetters(final Enemy expectedEnemy) {
         assertEquals(GameControllerTest.ENEMY_NAME, controllerTest.getNameCharacter(expectedEnemy));
-        assertEquals(10, controllerTest.getWeightEnemy(expectedEnemy));
-        assertEquals(400, controllerTest.getLifeCharacter(expectedEnemy));
-        assertEquals(200, controllerTest.getAttackEnemy(expectedEnemy));
-        assertEquals(50, controllerTest.getDefenseCharacter(expectedEnemy));
+        assertEquals(400, Integer.parseInt(controllerTest.getLifeCharacter(expectedEnemy)));
+        assertEquals(200, Integer.parseInt(controllerTest.getAttackCharacter(expectedEnemy)));
+        assertEquals(50, Integer.parseInt(controllerTest.getDefenseCharacter(expectedEnemy)));
     }
 
     protected void checkEquipWeapon(IPlayerCharacter character, IWeapon weapon) {
@@ -147,8 +146,6 @@ public class GameControllerTest {
         assertNull(controllerTest.getEquippedWeaponCharacter(character));
         controllerTest.equipWeapon(character, weapon);
         assertEquals(weapon, controllerTest.getEquippedWeaponCharacter(character));
-        assertEquals(151, controllerTest.getDamageCharacter(character));
-        assertEquals(10, controllerTest.getWeightCharacter(character));
     }
 
     protected void checkNotEquipWeapon(IPlayerCharacter character, IWeapon weapon) {
@@ -161,7 +158,7 @@ public class GameControllerTest {
     protected void checkPlayerAttack(final Enemy attacked, final IPlayerCharacter attacker) {
         controllerTest.getEnemies().add(attacked);
         controllerTest.getParty().add(attacker);
-        int life = controllerTest.getLifeCharacter(attacked);
+        String life = controllerTest.getLifeCharacter(attacked);
         assertFalse(controllerTest.isDead(attacked));
         Enemy attackedEnemy = controllerTest.getEnemies().get(0);
         controllerTest.attack(controllerTest.getPlayer(0), attackedEnemy);
@@ -170,14 +167,14 @@ public class GameControllerTest {
             controllerTest.attack(attacker, attackedEnemy);
         }
         assertTrue(controllerTest.isDead(attacked));
-        controllerTest.setLifeCharacter(attacked, life);
+        controllerTest.setLifeCharacter(attacked, Integer.parseInt(life));
         assertEquals(life, controllerTest.getLifeCharacter(attacked));
     }
 
     protected void checkEnemyAttack(final IPlayerCharacter attacked, final Enemy attacker) {
         controllerTest.getParty().add(attacked);
         controllerTest.getEnemies().add(attacker);
-        int life = controllerTest.getLifeCharacter(attacked);
+        String life = controllerTest.getLifeCharacter(attacked);
         assertFalse(controllerTest.isDead(attacked));
         IPlayerCharacter attackedCharacter = controllerTest.getParty().get(0);
         controllerTest.attack(controllerTest.getEnemy(0), attackedCharacter);
@@ -186,19 +183,20 @@ public class GameControllerTest {
             controllerTest.attack(attacker, attackedCharacter);
         }
         assertTrue(controllerTest.isDead(attacked));
-        controllerTest.setLifeCharacter(attacked, life);
+        controllerTest.setLifeCharacter(attacked, Integer.parseInt(life));
         assertEquals(life, controllerTest.getLifeCharacter(attacked));
     }
 
     public void checkPlayerTurn(IPlayerCharacter playerCharacter, Enemy enemy, IWeapon weapon) {
         controllerTest.getParty().add(playerCharacter);
         controllerTest.getEnemies().add(enemy);
-        int life = controllerTest.getLifeCharacter(enemy);
-        while (controllerTest.getLifeCharacter(enemy) > 0) {
+        String life = controllerTest.getLifeCharacter(enemy);
+        while (Integer.parseInt(controllerTest.getLifeCharacter(enemy)) > 0) {
             Enemy attacked = controllerTest.getEnemies().get(0);
-            controllerTest.playerTurn(controllerTest.getPlayer(0), attacked, weapon);
+            controllerTest.equipWeapon(playerCharacter, weapon);
+            controllerTest.attack(playerCharacter, attacked);
         }
-        controllerTest.setLifeCharacter(enemy, life);
+        controllerTest.setLifeCharacter(enemy, Integer.parseInt(life));
         assertEquals(life, controllerTest.getLifeCharacter(enemy));
         assertTrue(controllerTest.playerWon());
     }
@@ -206,12 +204,12 @@ public class GameControllerTest {
     public void checkEnemyTurn(Enemy enemy, IPlayerCharacter playerCharacter) {
         controllerTest.getEnemies().add(enemy);
         controllerTest.getParty().add(playerCharacter);
-        int life = controllerTest.getLifeCharacter(playerCharacter);
-        while (controllerTest.getLifeCharacter(playerCharacter) > 0) {
+        String life = controllerTest.getLifeCharacter(playerCharacter);
+        while (Integer.parseInt(controllerTest.getLifeCharacter(playerCharacter)) > 0) {
             IPlayerCharacter attacked = controllerTest.getParty().get(0);
-            controllerTest.enemyTurn(controllerTest.getEnemy(0), attacked);
+            controllerTest.attack(enemy, attacked);
         }
-        controllerTest.setLifeCharacter(playerCharacter, life);
+        controllerTest.setLifeCharacter(playerCharacter, Integer.parseInt(life));
         assertEquals(life, controllerTest.getLifeCharacter(playerCharacter));
         assertTrue(controllerTest.enemyWon());
     }

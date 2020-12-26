@@ -12,7 +12,7 @@ public class EndTurnPhase extends Phase {
     @Override
     public void extractCharacter() {
         controller.extractCharacter();
-        while (controller.getTurns().isEmpty()) {}
+        //while (controller.getTurns().isEmpty()) {}
         toAttackPhase();
     }
 

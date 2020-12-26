@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.Random;
@@ -32,12 +33,12 @@ public class GameController {
     private final PropertyChangeSupport characterIsDeadNotification = new PropertyChangeSupport(this);
 
     private final BlockingQueue<ICharacter> turns = new LinkedBlockingQueue<>();
-    private final ArrayList<Enemy> enemies = new ArrayList<>();
-    private final ArrayList<IPlayerCharacter> party = new ArrayList<>();
-    private final ArrayList<IWeapon> inventory = new ArrayList<>();
+    private List<Enemy> enemies = new ArrayList<>();
+    private List<IPlayerCharacter> party = new ArrayList<>();
+    private List<IWeapon> inventory = new ArrayList<>();
     private final Random rng = new Random();
 
-    private ICharacter actualCharacter;
+    private ICharacter actualCharacter = null;
     private IWeapon actualWeapon = null;
     private Enemy actualEnemyToAttack = null;
 
@@ -52,8 +53,6 @@ public class GameController {
 
     /**
      * Remove and return the first character of the turns queue.
-     * @return
-     *        the firs element of the turns queue.
      */
     public void extractCharacter() {
         ICharacter character = turns.poll();
@@ -64,30 +63,21 @@ public class GameController {
         phase.extractCharacter();
     }
 
-    public void getFirstCharacter() {
-        ICharacter character = turns.poll();
-        character.waitTurn();
-    }
-
-    public void tryToGetFirstCharacter() throws InvalidMovementException {
-        phase.extractCharacter();
-    }
-
     /**
      * Equips a weapon to a character.
      *
      * @param character the character that will equip the weapon.
      * @param weapon    the weapon that will be equipped.
      */
-    public void equipWeapon(IPlayerCharacter character, IWeapon weapon) {
+    public void equipWeapon(ICharacter character, IWeapon weapon) {
         if (inventory.contains(weapon)) {
-            character.equip(weapon);
+            ((IPlayerCharacter) character).equip(weapon);
         }
     }
 
-    public void tryToEquip(IPlayerCharacter character, IWeapon weapon) {
+    public void tryToEquip(ICharacter character, IWeapon weapon) {
         try {
-            phase.equipWeapon(character, weapon);
+            phase.equipWeapon((IPlayerCharacter) character, weapon);
         } catch (InvalidMovementException e) {
             e.printStackTrace();
         }
@@ -137,6 +127,12 @@ public class GameController {
     public void attack(ICharacter attacker, ICharacter attacked) {
         attacker.attack(attacked);
         characterEndsTurnNotification.firePropertyChange("CHARACTER_ENDS_TURN", null, this);
+        if (isPlayerCharacter(attacker) && isDead(attacked)) {
+            getEnemies().remove(attacked);
+        }
+        else if (!isPlayerCharacter(attacker) && isDead(attacked)){
+            getParty().remove(attacked);
+        }
     }
 
      /**
@@ -376,8 +372,8 @@ public class GameController {
      * @param character the character in question.
      * @return the character's life.
      */
-    public int getLifeCharacter(ICharacter character) {
-        return character.getLife();
+    public String getLifeCharacter(ICharacter character) {
+        return String.valueOf(character.getLife());
     }
 
     /**
@@ -396,28 +392,28 @@ public class GameController {
      * @param character the character in question.
      * @return the character's defense.
      */
-    public int getDefenseCharacter(ICharacter character) {
-        return character.getDefense();
+    public String getDefenseCharacter(ICharacter character) {
+        return String.valueOf(character.getDefense());
     }
 
     /**
-     * Get the enemy's weight.
+     * Get the character's attack.
      *
-     * @param enemy the enemy in question.
-     * @return the enemy's weight.
-     */
-    public int getWeightEnemy(Enemy enemy) {
-        return enemy.getWeight();
-    }
-
-    /**
-     * Get the enemy's attack.
-     *
-     * @param enemy the enemy in question.
+     * @param character the character in question.
      * @return the enemy's attack.
      */
-    public int getAttackEnemy(Enemy enemy) {
-        return enemy.getAttack();
+    public String getAttackEnemy(ICharacter character) {
+        return String.valueOf(((Enemy) character).getAttack());
+    }
+
+    /**
+     * Get the character's attack.
+     *
+     * @param character the character in question.
+     * @return the enemy's attack.
+     */
+    public String getDamageWeapon(ICharacter character) {
+        return String.valueOf(((IPlayerCharacter) character).getEquippedWeapon().getDamage());
     }
 
     /**
@@ -426,8 +422,12 @@ public class GameController {
      * @param character the character in question.
      * @return the character's equipped weapon.
      */
-    public IWeapon getEquippedWeaponCharacter(IPlayerCharacter character) {
-        return character.getEquippedWeapon();
+    public IWeapon getEquippedWeaponCharacter(ICharacter character) {
+        return ((IPlayerCharacter) character).getEquippedWeapon();
+    }
+
+    public String getNameEquippedWeapon(ICharacter character) {
+        return ((IPlayerCharacter) character).getEquippedWeapon().getName();
     }
 
     /**
@@ -435,28 +435,8 @@ public class GameController {
      *
      * @param character the character in question.
      */
-    public void setEquippedWeaponCharacterNull(IPlayerCharacter character) {
-        character.setEquippedWeaponNull();
-    }
-
-    /**
-     * Get the character's equipped weapon damage.
-     *
-     * @param character the character in question.
-     * @return the character's equipped weapon damage.
-     */
-    public int getDamageCharacter(IPlayerCharacter character) {
-        return character.getEquippedWeapon().getDamage();
-    }
-
-    /**
-     * Get the character's equipped weapon weight.
-     *
-     * @param character the character in question.
-     * @return the character's equipped weapon weight.
-     */
-    public int getWeightCharacter(IPlayerCharacter character) {
-        return character.getEquippedWeapon().getWeight();
+    public void setEquippedWeaponCharacterNull(ICharacter character) {
+        ((IPlayerCharacter) character).setEquippedWeaponNull();
     }
 
     /**
@@ -464,7 +444,7 @@ public class GameController {
      * @return
      *        the enemies list.
      */
-    public ArrayList<Enemy> getEnemies() {
+    public List<Enemy> getEnemies() {
         return enemies;
     }
 
@@ -473,7 +453,7 @@ public class GameController {
      * @return
      *        the party list.
      */
-    public ArrayList<IPlayerCharacter> getParty() {
+    public List<IPlayerCharacter> getParty() {
         return party;
     }
 
@@ -512,7 +492,7 @@ public class GameController {
      *
      * @return the inventory.
      */
-    public ArrayList<IWeapon> getInventory() {
+    public List<IWeapon> getInventory() {
         return inventory;
     }
 
@@ -541,16 +521,19 @@ public class GameController {
      * @return
      *        true if the character is a player character.
      */
-    public boolean isPlayer(ICharacter character) {
+    public boolean isPlayerCharacter(ICharacter character) {
         return party.contains(character);
     }
 
 
 
 
-    public int getPartySize() {
-        return party.size();
-    }
+
+
+
+
+
+
 
     public ICharacter getActualCharacter() {
         return actualCharacter;

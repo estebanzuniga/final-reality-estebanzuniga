@@ -20,13 +20,7 @@ public class AttackPhase extends Phase {
 
     @Override
     public void attack(ICharacter attacker, ICharacter attacked) {
-        attacker.attack(attacked);
-        if (controller.isPlayer(attacker) && controller.isDead(attacked)) {
-            controller.getEnemies().remove(attacked);
-        }
-        else {
-            controller.getParty().remove(attacked);
-        }
+        controller.attack(attacker, attacked);
         toEndTurnPhase();
     }
 
