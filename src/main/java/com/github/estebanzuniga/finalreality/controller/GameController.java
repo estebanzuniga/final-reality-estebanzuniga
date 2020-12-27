@@ -38,9 +38,9 @@ public class GameController {
     private List<IWeapon> inventory = new ArrayList<>();
     private final Random rng = new Random();
 
-    private ICharacter actualCharacter = null;
-    private IWeapon actualWeapon = null;
-    private ICharacter actualEnemyToAttack = null;
+    private ICharacter currentCharacter = null;
+    private IWeapon currentWeapon = null;
+    private ICharacter currentOpponentToAttack = null;
 
     private Phase phase;
 
@@ -157,12 +157,12 @@ public class GameController {
      * Creates three random enemies and complete the enemies list.
      */
     public void setEnemies(){
-        createEnemy("Enemy1", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
-                rng.nextInt(100) + 100, rng.nextInt(30) + 30);
-        createEnemy("Enemy2", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
-                rng.nextInt(100) + 100, rng.nextInt(30) + 30);
-        createEnemy("Enemy3", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
-                rng.nextInt(100) + 100, rng.nextInt(30) + 30);
+        createEnemy("Enemy 1", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
+                rng.nextInt(50) + 100, rng.nextInt(30) + 20);
+        createEnemy("Enemy 2", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
+                rng.nextInt(50) + 100, rng.nextInt(30) + 20);
+        createEnemy("Enemy 3", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
+                rng.nextInt(50) + 100, rng.nextInt(30) + 20);
     }
 
     public void tryToSetEnemies() {
@@ -206,7 +206,7 @@ public class GameController {
         party.add(engineer);
         engineer.addCharacterIsDeadListener(characterIsDeadHandler);
         engineer.addPlayerEndsTurnListener(characterEndsTurnHandler);
-        engineer.equip(new Axe("DefaultWeapon", 0, 10));
+        engineer.equip(new Axe("DefaultWeapon", 0, rng.nextInt(10) + 1));
         engineer.waitTurn();
         return engineer;
     }
@@ -224,7 +224,7 @@ public class GameController {
         knight.addCharacterIsDeadListener(characterIsDeadHandler);
         knight.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(knight);
-        knight.equip(new Sword("DefaultWeapon", 0, 10));
+        knight.equip(new Sword("DefaultWeapon", 0, rng.nextInt(10) + 1));
         knight.waitTurn();
         return knight;
     }
@@ -242,7 +242,7 @@ public class GameController {
         thief.addCharacterIsDeadListener(characterIsDeadHandler);
         thief.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(thief);
-        thief.equip(new Sword("DefaultWeapon", 0, 10));
+        thief.equip(new Sword("DefaultWeapon", 0, rng.nextInt(10) + 1));
         thief.waitTurn();
         return thief;
     }
@@ -260,7 +260,7 @@ public class GameController {
         whiteMage.addCharacterIsDeadListener(characterIsDeadHandler);
         whiteMage.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(whiteMage);
-        whiteMage.equip(new Staff("DefaultWeapon", 0, 10));
+        whiteMage.equip(new Staff("DefaultWeapon", 0, rng.nextInt(10) + 1));
         whiteMage.waitTurn();
         return whiteMage;
     }
@@ -278,7 +278,7 @@ public class GameController {
         blackMage.addCharacterIsDeadListener(characterIsDeadHandler);
         blackMage.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(blackMage);
-        blackMage.equip(new Staff("DefaultWeapon", 0, 10));
+        blackMage.equip(new Staff("DefaultWeapon", 0, rng.nextInt(10) + 1));
         blackMage.waitTurn();
         return blackMage;
     }
@@ -426,8 +426,8 @@ public class GameController {
         return ((IPlayerCharacter) character).getEquippedWeapon();
     }
 
-    public String getNameEquippedWeapon(ICharacter character) {
-        return ((IPlayerCharacter) character).getEquippedWeapon().getName();
+    public String getNameWeapon(IWeapon weapon) {
+        return (weapon).getName();
     }
 
     /**
@@ -497,11 +497,11 @@ public class GameController {
     }
 
     public void completeInventory() {
-        createAxe("Axe", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
-        createBow("Bow", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
-        createKnife("Knife", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
-        createStaff("Staff", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
-        createSword("Sword", rng.nextInt(20) + 100, rng.nextInt(5) + 5);
+        createAxe("Axe", rng.nextInt(50) + 100, rng.nextInt(10) + 1);
+        createBow("Bow", rng.nextInt(50) + 100, rng.nextInt(10) + 1);
+        createKnife("Knife", rng.nextInt(50) + 100, rng.nextInt(10) + 1);
+        createStaff("Staff", rng.nextInt(50) + 100, rng.nextInt(10) + 1);
+        createSword("Sword", rng.nextInt(50) + 100, rng.nextInt(10) + 1);
     }
 
     /**
@@ -529,34 +529,28 @@ public class GameController {
 
 
 
-
-
-
-
-
-
-    public ICharacter getActualCharacter() {
-        return actualCharacter;
+    public ICharacter getCurrentCharacter() {
+        return currentCharacter;
     }
 
-    public void setActualCharacter(ICharacter character) {
-        this.actualCharacter = character;
+    public void setCurrentCharacter(ICharacter character) {
+        this.currentCharacter = character;
     }
 
-    public IWeapon getActualWeapon() {
-        return actualWeapon;
+    public IWeapon getCurrentWeapon() {
+        return currentWeapon;
     }
 
-    public void setActualWeapon(IWeapon weapon) {
-        this.actualWeapon = weapon;
+    public void setCurrentWeapon(IWeapon weapon) {
+        this.currentWeapon = weapon;
     }
 
-    public ICharacter getActualEnemyToAttack() {
-        return actualEnemyToAttack;
+    public ICharacter getCurrentOpponentToAttack() {
+        return currentOpponentToAttack;
     }
 
-    public void setActualEnemyToAttack(ICharacter character) {
-        this.actualEnemyToAttack = character;
+    public void setCurrentOpponentToAttack(ICharacter character) {
+        this.currentOpponentToAttack = character;
     }
 
     //PHASES
