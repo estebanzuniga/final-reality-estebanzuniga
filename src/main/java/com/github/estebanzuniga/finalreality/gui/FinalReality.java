@@ -33,6 +33,7 @@ public class FinalReality extends Application {
   private Label partySizeLabel;
   private Label phaseLabel;
   private Label mainLabel;
+  private Label centralLabel;
   private Label enemiesLabel;
   private Label playerCharactersLabel;
   private Label inventoryLabel;
@@ -47,7 +48,6 @@ public class FinalReality extends Application {
   private Label inventorySizeLabel;
   private Pane enemyPane = new Pane();
   private Pane playerPane = new Pane();
-
   private Label aLabel;
   private Scene actualScene = createSetPartyScene();
   private final Random rng = new Random();
@@ -159,6 +159,9 @@ public class FinalReality extends Application {
     timer.start();
   }
 
+
+  ///MAIN SCENE
+
   private Scene createMainScene() {
     Group root = new Group();
     Scene scene = new Scene(root, 400, 400);
@@ -169,17 +172,23 @@ public class FinalReality extends Application {
     mainLabel.setMinSize(100, 10);
     root.getChildren().add(mainLabel);
 
+    centralLabel = new Label("");
+    centralLabel.setLayoutX(130);
+    centralLabel.setLayoutY(190);
+    centralLabel.setMinSize(100, 20);
+    root.getChildren().add(centralLabel);
+
     enemiesLabel = new Label("Enemies");
     enemiesLabel.setLayoutX(160);
     enemiesLabel.setLayoutY(40);
     enemiesLabel.setMinSize(100, 10);
     root.getChildren().add(enemiesLabel);
 
-    playerCharactersLabel = new Label("");
+    /*playerCharactersLabel = new Label("");
     playerCharactersLabel.setLayoutX(160);
     playerCharactersLabel.setLayoutY(250);
     playerCharactersLabel.setMinSize(100, 10);
-    root.getChildren().add(playerCharactersLabel);
+    root.getChildren().add(playerCharactersLabel);*/
 
     inventoryLabel = new Label("Inventory");
     inventoryLabel.setLayoutX(160);
@@ -188,14 +197,14 @@ public class FinalReality extends Application {
     root.getChildren().add(inventoryLabel);
 
     aliveEnemiesLabel = new Label("Alive enemies: " + controller.getEnemies().size());
-    aliveEnemiesLabel.setLayoutX(160);
-    aliveEnemiesLabel.setLayoutY(165);
+    aliveEnemiesLabel.setLayoutX(260);
+    aliveEnemiesLabel.setLayoutY(365);
     aliveEnemiesLabel.setMinSize(100, 10);
     root.getChildren().add(aliveEnemiesLabel);
 
     alivePlayerCharacterLabel = new Label("Alive player characters: " + controller.getParty().size());
-    alivePlayerCharacterLabel.setLayoutX(160);
-    alivePlayerCharacterLabel.setLayoutY(195);
+    alivePlayerCharacterLabel.setLayoutX(260);
+    alivePlayerCharacterLabel.setLayoutY(380);
     alivePlayerCharacterLabel.setMinSize(100, 10);
     root.getChildren().add(alivePlayerCharacterLabel);
 
@@ -238,13 +247,13 @@ public class FinalReality extends Application {
     phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
     phaseLabel.setLayoutX(10);
     phaseLabel.setLayoutY(380);
-    phaseLabel.setMinSize(110,10);
+    phaseLabel.setMinSize(100,10);
     root.getChildren().add(phaseLabel);
 
     inventorySizeLabel = new Label("Inventory size: " + controller.getInventory().size());
     inventorySizeLabel.setLayoutX(10);
     inventorySizeLabel.setLayoutY(365);
-    inventorySizeLabel.setMinSize(110,10);
+    inventorySizeLabel.setMinSize(100,10);
     root.getChildren().add(inventorySizeLabel);
 
     enemyPane = new Pane();
@@ -255,11 +264,13 @@ public class FinalReality extends Application {
 
     createEnemyAttackPane();
 
-    /*playerPane = new Pane();
+    playerPane = new Pane();
     playerPane.setMinWidth(400);
     playerPane.setPrefWidth(400);
-    playerPane.setMaxWidth(400);*/
+    playerPane.setMaxWidth(400);
     root.getChildren().add(playerPane);
+
+    createPlayerPane();
 
     startAnimatorMainScene();
 
@@ -286,53 +297,182 @@ public class FinalReality extends Application {
         else if (aliveEnemies == 0) {
           actualScene = createVictoryScene();
         }
-        //LO MATAN ALTIRO, POR ESO NO ESTA EN LA LISTA
+
+        centralLabel.setText("Next turn is for " + controller.getNameCharacter(controller.getActualCharacter()));
+
         if (controller.isPlayerCharacter(controller.getActualCharacter())) {
+          centralLabel.setText(controller.getNameCharacter(controller.getActualCharacter()) + " is choosing a weapon");
           characterAttackLabel.setText("Attack: " + controller.getDamageWeapon(controller.getActualCharacter()));
-          equippedWeaponLabel.setText("Equipped weapon: " + controller.getEquippedWeaponCharacter(controller.getActualCharacter()));
         }
         else if (!controller.isPlayerCharacter(controller.getActualCharacter())) {
           characterAttackLabel.setText("Attack: " + controller.getAttackEnemy(controller.getActualCharacter()));
         }
+
         try {
           Thread.sleep(1000);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
+
         if (controller.isPlayerCharacter(controller.getActualCharacter())) {
-          equippedWeaponLabel.setText("Equipped weapon: " + controller.getEquippedWeaponCharacter(controller.getActualCharacter()));
           while (controller.getActualWeapon() == null) {
-            //playerPane = createEquipPane();
-            createEquipPane();
+            //WAIT
           }
-          playerPane.getChildren().removeAll();
+
+          equippedWeaponLabel.setText("Equipped weapon: " + controller.getEquippedWeaponCharacter(controller.getActualCharacter()));
           controller.tryToEquip(controller.getActualCharacter(), controller.getActualWeapon());
-          while (controller.getActualEnemyToAttack() == null) {
-            playerCharactersLabel.setText("Player Characters");
-            createPlayerCharacterPane();
+
+          while (controller.getActualWeapon() == null) {
+            centralLabel.setText(controller.getNameCharacter(controller.getActualCharacter())
+                    + " can´t equip that weapon, try with another one.");
+            controller.tryToEquip(controller.getActualCharacter(), controller.getActualWeapon());
           }
+
+          centralLabel.setText(controller.getNameCharacter(controller.getActualCharacter()) + " is choosing an opponent");
+
+          while (controller.getActualEnemyToAttack() == null) {
+            //WAIT
+          }
+
           playerPane.getChildren().removeAll();
           controller.tryToAttack(controller.getActualCharacter(), controller.getActualEnemyToAttack());
-          controller.setActualCharacter(null);
-          controller.setActualWeapon(null);
-          controller.setActualEnemyToAttack(null);
         }
         else {
+          centralLabel.setText(controller.getNameCharacter(controller.getActualCharacter()) + " is attacking");
           int i = rng.nextInt(controller.getParty().size());
           controller.tryToAttack(controller.getActualCharacter(), controller.getPlayer(i));
+          controller.setActualEnemyToAttack(controller.getPlayer(i));
         }
+
+        try {
+          Thread.sleep(2000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+
         try {
           controller.tryToExtractCharacter();
         } catch (InvalidMovementException e) {
           e.printStackTrace();
         }
+
         controller.setActualCharacter(controller.getTurns().peek());
+        controller.setActualWeapon(null);
+        controller.setActualEnemyToAttack(null);
       }
     };
     timer.start();
   }
 
-  private void createEquipPane() {
+  private void createPlayerPane() {
+
+    List<String> buttons = Arrays.asList("Axe", "Bow", "Knife", "Staff", "Sword");
+
+    int x = 30;
+    for (String button : buttons) {
+      Button b = new Button(button);
+      b.setLayoutX(x);
+      b.setLayoutY(280);
+      x += 70;
+      b.setMinSize(60, 60);
+      playerPane.getChildren().add(b);
+      switch(button) {
+        case "Axe":
+          b.setOnAction((e) -> {
+            controller.setActualWeapon(controller.getWeapon(0));
+            b.setDisable(true);
+          });
+          break;
+        case "Bow":
+          b.setOnAction((e) -> {
+            controller.setActualWeapon(controller.getWeapon(1));
+            b.setDisable(true);
+          });
+          break;
+        case "Knife":
+          b.setOnAction((e) -> {
+            controller.setActualWeapon(controller.getWeapon(2));
+            b.setDisable(true);
+          });
+          break;
+        case "Staff":
+          b.setOnAction((e) -> {
+            controller.setActualWeapon(controller.getWeapon(3));
+            b.setDisable(true);
+          });
+          break;
+        case "Sword":
+          b.setOnAction((e) -> {
+            controller.setActualWeapon(controller.getWeapon(4));
+            b.setDisable(true);
+          });
+          break;
+      }
+    }
+  }
+
+  private void createEnemyAttackPane() {
+
+    List<String> buttons = Arrays.asList("Enemy 1", "Enemy 2", "Enemy 3");
+
+    int x = 100;
+    for (String button : buttons) {
+      Button b = new Button(button);
+      b.setLayoutX(x);
+      b.setLayoutY(70);
+      x += 70;
+      b.setMinSize(60, 60);
+      enemyPane.getChildren().add(b);
+      switch(button) {
+        case "Enemy 1":
+          b.setOnAction((e) -> {controller.setActualEnemyToAttack(controller.getEnemy(0));
+            b.setDisable(true);});
+          break;
+        case "Enemy 2":
+          b.setOnAction((e) -> {controller.setActualEnemyToAttack(controller.getEnemy(1));
+            b.setDisable(true);});
+          break;
+        case "Enemy 3":
+          b.setOnAction((e) -> {controller.setActualEnemyToAttack(controller.getEnemy(2));
+            b.setDisable(true);});
+          break;
+      }
+    }
+  }
+
+  private Scene createVictoryScene() {
+    Group root = new Group();
+    Scene scene = new Scene(root, 400, 400);
+
+    mainLabel = new Label("CONGRATULATIONS, YOU WON!");
+    mainLabel.setLayoutX(150);
+    mainLabel.setLayoutY(150);
+    mainLabel.setMinSize(150, 30);
+    root.getChildren().add(mainLabel);
+
+    return scene;
+  }
+
+  private Scene createDefeatScene() {
+    Group root = new Group();
+    Scene scene = new Scene(root, 400, 400);
+
+    mainLabel = new Label("YOU LOST:(");
+    mainLabel.setLayoutX(150);
+    mainLabel.setLayoutY(150);
+    mainLabel.setMinSize(150, 30);
+    root.getChildren().add(mainLabel);
+
+    return scene;
+  }
+
+}
+
+
+
+
+
+  /*private void createEquipPane() {
 
     //Pane pane = new Pane();
 
@@ -427,70 +567,7 @@ public class FinalReality extends Application {
           break;
       }
     }
-  }
-
-  private void createEnemyAttackPane() {
-
-    List<String> buttons = Arrays.asList("Enemy 1", "Enemy 2", "Enemy 3");
-
-    int x = 100;
-    for (String button : buttons) {
-      Button b = new Button(button);
-      b.setLayoutX(x);
-      b.setLayoutY(70);
-      x += 70;
-      b.setMinSize(60, 60);
-      enemyPane.getChildren().add(b);
-      switch(button) {
-        case "Axe":
-          b.setOnAction((e) -> {controller.attack(controller.getActualCharacter(), controller.getEnemy(0));
-            b.setDisable(true);});
-          break;
-        case "Bow":
-          b.setOnAction((e) -> {controller.attack(controller.getActualCharacter(), controller.getEnemy(1));
-            b.setDisable(true);});
-          break;
-        case "Knife":
-          b.setOnAction((e) -> {controller.attack(controller.getActualCharacter(), controller.getEnemy(2));
-            b.setDisable(true);});
-          break;
-      }
-    }
-  }
-
-  private Scene createVictoryScene() {
-    Group root = new Group();
-    Scene scene = new Scene(root, 400, 400);
-
-    mainLabel = new Label("CONGRATULATIONS, YOU WON!");
-    mainLabel.setLayoutX(150);
-    mainLabel.setLayoutY(150);
-    mainLabel.setMinSize(150, 30);
-    root.getChildren().add(mainLabel);
-
-    return scene;
-  }
-
-  private Scene createDefeatScene() {
-    Group root = new Group();
-    Scene scene = new Scene(root, 400, 400);
-
-    mainLabel = new Label("YOU LOST:(");
-    mainLabel.setLayoutX(150);
-    mainLabel.setLayoutY(150);
-    mainLabel.setMinSize(150, 30);
-    root.getChildren().add(mainLabel);
-
-    return scene;
-  }
-
-}
-
-
-
-
-
-
+  }*/
 
 
 

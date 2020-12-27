@@ -40,7 +40,7 @@ public class GameController {
 
     private ICharacter actualCharacter = null;
     private IWeapon actualWeapon = null;
-    private Enemy actualEnemyToAttack = null;
+    private ICharacter actualEnemyToAttack = null;
 
     private Phase phase;
 
@@ -551,12 +551,12 @@ public class GameController {
         this.actualWeapon = weapon;
     }
 
-    public Enemy getActualEnemyToAttack() {
+    public ICharacter getActualEnemyToAttack() {
         return actualEnemyToAttack;
     }
 
-    public void setActualEnemyToAttack(Enemy enemy) {
-        this.actualEnemyToAttack = enemy;
+    public void setActualEnemyToAttack(ICharacter character) {
+        this.actualEnemyToAttack = character;
     }
 
     //PHASES
