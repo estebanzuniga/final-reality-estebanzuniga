@@ -36,14 +36,13 @@ public class GameController {
     private List<Enemy> enemies = new ArrayList<>();
     private List<IPlayerCharacter> party = new ArrayList<>();
     private List<IWeapon> inventory = new ArrayList<>();
+    private List<Enemy> allEnemies = new ArrayList<>();
+    private List<IPlayerCharacter> allPlayers = new ArrayList<>();
     private final Random rng = new Random();
 
     private ICharacter currentCharacter = null;
     private IWeapon currentWeapon = null;
     private ICharacter currentOpponentToAttack = null;
-    private ICharacter enemy1 = null;
-    private ICharacter enemy2 = null;
-    private ICharacter enemy3 = null;
 
     private Phase phase;
 
@@ -51,8 +50,8 @@ public class GameController {
      * Creates the controller of the game.
      */
     public GameController() {
-        //this.setPhase(new InitialPhase());
-        this.setPhase(new AttackPhase());
+        this.setPhase(new InitialPhase());
+        //this.setPhase(new AttackPhase());
     }
 
     public void newGame(boolean trueOrFalse) {
@@ -61,12 +60,11 @@ public class GameController {
             party.clear();
             enemies.clear();
             inventory.clear();
+            allEnemies.clear();
+            allPlayers.clear();
             currentCharacter = null;
             currentWeapon = null;
             currentOpponentToAttack = null;
-            enemy1 = null;
-            enemy2 = null;
-            enemy3 = null;
         }
     }
 
@@ -186,13 +184,13 @@ public class GameController {
     public void setEnemies(){
         Enemy createdEnemy1 = createEnemy("Enemy 1", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
                 rng.nextInt(50) + 100, rng.nextInt(30) + 20);
-        enemy1 = createdEnemy1;
+        allEnemies.add(createdEnemy1);
         Enemy createdEnemy2 = createEnemy("Enemy 2", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
                 rng.nextInt(50) + 100, rng.nextInt(30) + 20);
-        enemy2 = createdEnemy2;
+        allEnemies.add(createdEnemy2);
         Enemy createdEnemy3 = createEnemy("Enemy 3", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
                 rng.nextInt(50) + 100, rng.nextInt(30) + 20);
-        enemy3 = createdEnemy3;
+        allEnemies.add(createdEnemy3);
     }
 
     public void tryToSetEnemies() {
@@ -203,16 +201,12 @@ public class GameController {
         }
     }
 
-    public ICharacter getEnemy1() {
-        return enemy1;
+    public Enemy getAllEnemies(int index) {
+        return allEnemies.get(index);
     }
 
-    public ICharacter getEnemy2() {
-        return enemy2;
-    }
-
-    public ICharacter getEnemy3() {
-        return enemy3;
+    public IPlayerCharacter getAllPlayers(int index) {
+        return allPlayers.get(index);
     }
 
     /**
@@ -245,6 +239,7 @@ public class GameController {
     public IPlayerCharacter createEngineer(String name, int life, int defense) {
         IPlayerCharacter engineer = new Engineer(turns, name, life, defense);
         party.add(engineer);
+        allPlayers.add(engineer);
         engineer.addCharacterIsDeadListener(characterIsDeadHandler);
         engineer.addPlayerEndsTurnListener(characterEndsTurnHandler);
         engineer.equip(new Axe("DefaultWeapon", 0, rng.nextInt(10) + 1));
@@ -265,6 +260,7 @@ public class GameController {
         knight.addCharacterIsDeadListener(characterIsDeadHandler);
         knight.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(knight);
+        allPlayers.add(knight);
         knight.equip(new Sword("DefaultWeapon", 0, rng.nextInt(10) + 1));
         knight.waitTurn();
         return knight;
@@ -283,6 +279,7 @@ public class GameController {
         thief.addCharacterIsDeadListener(characterIsDeadHandler);
         thief.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(thief);
+        allPlayers.add(thief);
         thief.equip(new Sword("DefaultWeapon", 0, rng.nextInt(10) + 1));
         thief.waitTurn();
         return thief;
@@ -301,6 +298,7 @@ public class GameController {
         whiteMage.addCharacterIsDeadListener(characterIsDeadHandler);
         whiteMage.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(whiteMage);
+        allPlayers.add(whiteMage);
         whiteMage.equip(new Staff("DefaultWeapon", 0, rng.nextInt(10) + 1));
         whiteMage.waitTurn();
         return whiteMage;
@@ -319,6 +317,7 @@ public class GameController {
         blackMage.addCharacterIsDeadListener(characterIsDeadHandler);
         blackMage.addPlayerEndsTurnListener(characterEndsTurnHandler);
         party.add(blackMage);
+        allPlayers.add(blackMage);
         blackMage.equip(new Staff("DefaultWeapon", 0, rng.nextInt(10) + 1));
         blackMage.waitTurn();
         return blackMage;
@@ -453,7 +452,7 @@ public class GameController {
      * @param character the character in question.
      * @return the enemy's attack.
      */
-    public String getDamageWeapon(ICharacter character) {
+    public String getDamageEquippedWeapon(ICharacter character) {
         return String.valueOf(((IPlayerCharacter) character).getEquippedWeapon().getDamage());
     }
 
@@ -468,9 +467,12 @@ public class GameController {
     }
 
     public String getNameWeapon(IWeapon weapon) {
-        return (weapon).getName();
+        return weapon.getName();
     }
 
+    public String getDamageWeapon(int index) {
+        return String.valueOf(inventory.get(index).getDamage());
+    }
     /**
      * Set the character's equipped weapon as null.
      *
@@ -563,7 +565,7 @@ public class GameController {
      *        true if the character is a player character.
      */
     public boolean isPlayerCharacter(ICharacter character) {
-        return party.contains(character);
+        return allPlayers.contains(character);
     }
 
 
