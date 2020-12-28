@@ -7,6 +7,7 @@ public class InitialPhase extends Phase {
         this.canEquip = false;
         this.canAttack = false;
         this.canExtractACharacter = false;
+        this.canPlayAgain = false;
     }
 
     @Override

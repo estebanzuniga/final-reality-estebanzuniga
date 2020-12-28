@@ -50,7 +50,7 @@ public abstract class AbstractCharacter implements ICharacter {
   @Override
   public boolean isAlive() {
     if (this.getLife() <= 0) {
-      characterIsDeadNotification.firePropertyChange("CHARACTER_IS_DEAD", null, this);
+      //characterIsDeadNotification.firePropertyChange("CHARACTER_IS_DEAD", null, this);
       return false;
     }
     return true;

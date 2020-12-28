@@ -41,6 +41,9 @@ public class GameController {
     private ICharacter currentCharacter = null;
     private IWeapon currentWeapon = null;
     private ICharacter currentOpponentToAttack = null;
+    private ICharacter enemy1 = null;
+    private ICharacter enemy2 = null;
+    private ICharacter enemy3 = null;
 
     private Phase phase;
 
@@ -48,7 +51,29 @@ public class GameController {
      * Creates the controller of the game.
      */
     public GameController() {
-        this.setPhase(new InitialPhase());
+        //this.setPhase(new InitialPhase());
+        this.setPhase(new AttackPhase());
+    }
+
+    public void newGame(boolean trueOrFalse) {
+        if (trueOrFalse == true) {
+            turns.clear();
+            party.clear();
+            enemies.clear();
+            inventory.clear();
+            currentCharacter = null;
+            currentWeapon = null;
+            currentOpponentToAttack = null;
+            enemy1 = null;
+            enemy2 = null;
+            enemy3 = null;
+        }
+    }
+
+    public void tryToNewGame(boolean trueOrFalse) throws InvalidMovementException {
+        if (trueOrFalse == true) {
+            phase.newGame(true);
+        }
     }
 
     /**
@@ -56,7 +81,9 @@ public class GameController {
      */
     public void extractCharacter() {
         ICharacter character = turns.poll();
-        character.waitTurn();
+        if (!isDead(character)) {
+            character.waitTurn();
+        }
     }
 
     public void tryToExtractCharacter() throws InvalidMovementException {
@@ -157,12 +184,15 @@ public class GameController {
      * Creates three random enemies and complete the enemies list.
      */
     public void setEnemies(){
-        createEnemy("Enemy 1", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
+        Enemy createdEnemy1 = createEnemy("Enemy 1", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
                 rng.nextInt(50) + 100, rng.nextInt(30) + 20);
-        createEnemy("Enemy 2", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
+        enemy1 = createdEnemy1;
+        Enemy createdEnemy2 = createEnemy("Enemy 2", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
                 rng.nextInt(50) + 100, rng.nextInt(30) + 20);
-        createEnemy("Enemy 3", rng.nextInt(10) + 1, rng.nextInt(100) + 400,
+        enemy2 = createdEnemy2;
+        Enemy createdEnemy3 = createEnemy("Enemy 3", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
                 rng.nextInt(50) + 100, rng.nextInt(30) + 20);
+        enemy3 = createdEnemy3;
     }
 
     public void tryToSetEnemies() {
@@ -171,7 +201,18 @@ public class GameController {
         } catch (InvalidMovementException e) {
             e.printStackTrace();
         }
+    }
 
+    public ICharacter getEnemy1() {
+        return enemy1;
+    }
+
+    public ICharacter getEnemy2() {
+        return enemy2;
+    }
+
+    public ICharacter getEnemy3() {
+        return enemy3;
     }
 
     /**

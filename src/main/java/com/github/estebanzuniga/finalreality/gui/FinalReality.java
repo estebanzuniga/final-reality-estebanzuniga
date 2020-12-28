@@ -112,31 +112,31 @@ public class FinalReality extends Application {
       switch (button) {
         case "Engineer":
           b.setOnAction((e) -> {
-            controller.createEngineer("Engineer", rng.nextInt(100) + 400, rng.nextInt(30) + 20);
+            controller.createEngineer("Engineer", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
             b.setDisable(true);
           });
           break;
         case "Knight":
           b.setOnAction((e) -> {
-            controller.createKnight("Knight", rng.nextInt(100) + 400, rng.nextInt(30) + 20);
+            controller.createKnight("Knight", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
             b.setDisable(true);
           });
           break;
         case "Thief":
           b.setOnAction((e) -> {
-            controller.createThief("Thief", rng.nextInt(100) + 400, rng.nextInt(30) + 20);
+            controller.createThief("Thief", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
             b.setDisable(true);
           });
           break;
         case "White Mage":
           b.setOnAction((e) -> {
-            controller.createKnight("White Mage", rng.nextInt(100) + 400, rng.nextInt(30) + 20);
+            controller.createKnight("White Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
             b.setDisable(true);
           });
           break;
         case "Black Mage":
           b.setOnAction((e) -> {
-            controller.createKnight("Black Mage", rng.nextInt(100) + 400, rng.nextInt(30) + 20);
+            controller.createKnight("Black Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
             b.setDisable(true);
           });
           break;
@@ -197,6 +197,10 @@ public class FinalReality extends Application {
       public void handle(final long now) {
 
         controller.setCurrentCharacter(controller.getTurns().peek());
+
+        enemy1Button.setText("Enemy 1. Life: " + controller.getLifeCharacter(controller.getEnemy(0)));
+        enemy2Button.setText("Enemy 2. Life: " + controller.getLifeCharacter(controller.getEnemy(1)));
+        enemy3Button.setText("Enemy 3. Life: " + controller.getLifeCharacter(controller.getEnemy(2)));
 
         if (nextTurn == true) {
           centralLabel.setText("Next turn is for " + controller.getNameCharacter(controller.getCurrentCharacter()));
@@ -357,8 +361,8 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(enemyAttackButton);
 
     enemy1Button = new Button("Enemy 1");
-    enemy1Button.setMinSize(60, 60);
-    enemy1Button.setLayoutX(100);
+    enemy1Button.setMinSize(110, 40);
+    enemy1Button.setLayoutX(20);
     enemy1Button.setLayoutY(70);
     enemy1Button.setOnAction((e) -> {
       controller.setCurrentOpponentToAttack(controller.getEnemy(0));
@@ -367,8 +371,8 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(enemy1Button);
 
     enemy2Button = new Button("Enemy 2");
-    enemy2Button.setMinSize(60, 60);
-    enemy2Button.setLayoutX(170);
+    enemy2Button.setMinSize(110, 40);
+    enemy2Button.setLayoutX(145);
     enemy2Button.setLayoutY(70);
     enemy2Button.setOnAction((e) -> {
       controller.setCurrentOpponentToAttack(controller.getEnemy(1));
@@ -377,8 +381,8 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(enemy2Button);
 
     enemy3Button = new Button("Enemy 3");
-    enemy3Button.setMinSize(60, 60);
-    enemy3Button.setLayoutX(240);
+    enemy3Button.setMinSize(110, 40);
+    enemy3Button.setLayoutX(270);
     enemy3Button.setLayoutY(70);
     enemy3Button.setOnAction((e) -> {
       controller.setCurrentOpponentToAttack(controller.getEnemy(2));
@@ -387,7 +391,7 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(enemy3Button);
 
     axeButton = new Button("Axe");
-    axeButton.setMinSize(60, 60);
+    axeButton.setMinSize(60, 40);
     axeButton.setLayoutX(30);
     axeButton.setLayoutY(270);
     axeButton.setOnAction((e) -> {
@@ -397,7 +401,7 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(axeButton);
 
     bowButton = new Button("Bow");
-    bowButton.setMinSize(60, 60);
+    bowButton.setMinSize(60, 40);
     bowButton.setLayoutX(100);
     bowButton.setLayoutY(270);
     bowButton.setOnAction((e) -> {
@@ -407,7 +411,7 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(bowButton);
 
     knifeButton = new Button("Knife");
-    knifeButton.setMinSize(60, 60);
+    knifeButton.setMinSize(60, 40);
     knifeButton.setLayoutX(170);
     knifeButton.setLayoutY(270);
     knifeButton.setOnAction((e) -> {
@@ -417,7 +421,7 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(knifeButton);
 
     staffButton = new Button("Staff");
-    staffButton.setMinSize(60, 60);
+    staffButton.setMinSize(60, 40);
     staffButton.setLayoutX(240);
     staffButton.setLayoutY(270);
     staffButton.setOnAction((e) -> {
@@ -427,7 +431,7 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(staffButton);
 
     swordButton = new Button("Sword");
-    swordButton.setMinSize(60, 60);
+    swordButton.setMinSize(60, 40);
     swordButton.setLayoutX(310);
     swordButton.setLayoutY(270);
     swordButton.setOnAction((e) -> {
@@ -436,6 +440,9 @@ public class FinalReality extends Application {
     });
     mainRoot.getChildren().add(swordButton);
   }
+
+  //cambiar lo indices de los enemigos
+  //ver el tamaño de enemies e ir poniendo casos
 
   private void enemyAttack() {
     enemyAttackButton.setDisable(true);
@@ -524,9 +531,15 @@ public class FinalReality extends Application {
   }
 
   private void activateEnemyButtons() {
-    enemy1Button.setDisable(false);
-    enemy2Button.setDisable(false);
-    enemy3Button.setDisable(false);
+    if (!controller.isDead(controller.getEnemy1())) {
+      enemy1Button.setDisable(false);
+    }
+    if (!controller.isDead(controller.getEnemy2())) {
+      enemy2Button.setDisable(false);
+    }
+    if (!controller.isDead(controller.getEnemy3())) {
+      enemy3Button.setDisable(false);
+    }
   }
 
   private void activateWeaponButtons() {
@@ -547,6 +560,20 @@ public class FinalReality extends Application {
     mainLabel.setMinSize(150, 30);
     root.getChildren().add(mainLabel);
 
+    Button playAgainButton = new Button("Play Again");
+    playAgainButton.setMinSize(60, 30);
+    playAgainButton.setLayoutX(150);
+    playAgainButton.setLayoutY(200);
+    playAgainButton.setOnAction((e) -> {
+      try {
+        controller.tryToNewGame(true);
+      } catch (InvalidMovementException invalidMovementException) {
+        invalidMovementException.printStackTrace();
+      }
+      actualScene = createSetPartyScene();
+    });
+    root.getChildren().add(playAgainButton);
+
     return scene;
   }
 
@@ -559,6 +586,20 @@ public class FinalReality extends Application {
     mainLabel.setLayoutY(150);
     mainLabel.setMinSize(150, 30);
     root.getChildren().add(mainLabel);
+
+    Button playAgainButton = new Button("Play Again");
+    playAgainButton.setMinSize(60, 30);
+    playAgainButton.setLayoutX(150);
+    playAgainButton.setLayoutY(200);
+    playAgainButton.setOnAction((e) -> {
+      try {
+        controller.tryToNewGame(true);
+      } catch (InvalidMovementException invalidMovementException) {
+        invalidMovementException.printStackTrace();
+      }
+      actualScene = createSetPartyScene();
+    });
+    root.getChildren().add(playAgainButton);
 
     return scene;
   }

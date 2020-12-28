@@ -34,6 +34,6 @@ public class CharacterEndsTurnHandler implements IEventHandler {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         //controller.attack((IPlayerCharacter) evt.getNewValue(), (Enemy) evt.getNewValue());
-        controller.endTurn((ICharacter) evt.getNewValue());
+        //controller.endTurn((ICharacter) evt.getNewValue());
     }
 }

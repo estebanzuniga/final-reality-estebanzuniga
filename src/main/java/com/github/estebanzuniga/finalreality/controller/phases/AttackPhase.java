@@ -11,6 +11,7 @@ public class AttackPhase extends Phase {
         this.canAttack = true;
         this.canEquip = true;
         this.canExtractACharacter = false;
+        this.canPlayAgain = false;
     }
 
     @Override

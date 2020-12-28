@@ -1,12 +1,21 @@
 package com.github.estebanzuniga.finalreality.controller.phases;
 
-public class GameOverPhase extends Phase {
+public class FinalPhase extends Phase {
 
-    public GameOverPhase() {
+    public FinalPhase() {
         this.canSetEnemies = false;
         this.canAttack = false;
         this.canExtractACharacter = true;
         this.canEquip = false;
+        this.canPlayAgain = true;
+    }
+
+    @Override
+    public void newGame(boolean trueOrFalse) {
+        if (trueOrFalse == true) {
+            controller.newGame(true);
+            toInitialPhase();
+        }
     }
 
     @Override
@@ -15,7 +24,7 @@ public class GameOverPhase extends Phase {
     }
 
     public String toString() {
-        return "Game Over phase";
+        return "Final phase";
     }
 
 }

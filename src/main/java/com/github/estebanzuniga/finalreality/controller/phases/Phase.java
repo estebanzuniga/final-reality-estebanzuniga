@@ -14,6 +14,7 @@ public class Phase {
     protected boolean canExtractACharacter = false;
     protected boolean canEquip = false;
     protected boolean canAttack = false;
+    protected boolean canPlayAgain = false;
 
     public void setController(final @NotNull GameController controller) {
         this.controller = controller;
@@ -53,10 +54,12 @@ public class Phase {
         controller.extractCharacter();
     }
 
-
-
-
-
+    public void newGame(boolean trueOrFalse) throws InvalidMovementException {
+        if (!canPlayAgain) {
+            throw new InvalidMovementException("You can´t play again now");
+        }
+        controller.newGame(true);
+    }
 
     public void toInitialPhase() throws InvalidTransitionException {
         throw new InvalidTransitionException(
@@ -73,9 +76,9 @@ public class Phase {
                 "Can´t change from " + this.toString() + " to End turn phase");
     }
 
-    public void toGameOverPhase() throws InvalidTransitionException {
+    public void toFinalPhase() throws InvalidTransitionException {
         throw new InvalidTransitionException(
-                "Can't change from " + this.toString() + " to Game Over phase");
+                "Can't change from " + this.toString() + " to Final phase");
     }
 
 }
