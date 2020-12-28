@@ -3,19 +3,15 @@ package com.github.estebanzuniga.finalreality.gui;
 import com.github.estebanzuniga.finalreality.controller.GameController;
 import com.github.estebanzuniga.finalreality.controller.phases.InvalidMovementException;
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -90,70 +86,79 @@ public class FinalReality extends Application {
     Group root = new Group();
     Scene scene = new Scene(root, 500, 500);
 
+    Label mainLabel = new Label("Final Reality");
+    mainLabel.setMinSize(300, 200);
+    mainLabel.setLayoutX(115);
+    mainLabel.setLayoutY(40);
+    mainLabel.setFont(new Font("Serif", 50));
+    root.getChildren().add(mainLabel);
+
     Label label = new Label("Choose three different characters");
-    label.setAlignment(Pos.TOP_CENTER);
-    label.setMinSize(336, 40);
+    label.setMinSize(100, 10);
+    label.setLayoutX(160);
+    label.setLayoutY(260);
     root.getChildren().add(label);
 
-    List<String> buttons = Arrays.asList("Engineer", "Knight", "Thief", "White Mage", "Black Mage");
+    Button engineerButton = new Button("Engineer");
+    engineerButton.setMinSize(80, 40);
+    engineerButton.setLayoutX(30);
+    engineerButton.setLayoutY(290);
+    root.getChildren().add(engineerButton);
+    engineerButton.setOnAction((e) -> {
+      controller.createEngineer("Engineer", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
+      engineerButton.setDisable(true);
+    });
 
-    FlowPane pane = new FlowPane();
-    pane.setAlignment(Pos.CENTER);
-    pane.setPadding(new Insets(50, 200, 50, 200));
-    pane.setHgap(20);
-    pane.setVgap(5);
-    pane.setMinWidth(400);
-    pane.setPrefWidth(400);
-    pane.setMaxWidth(400);
-    root.getChildren().add(pane);
+    Button knightButton = new Button("Knight");
+    knightButton.setMinSize(80, 40);
+    knightButton.setLayoutX(118);
+    knightButton.setLayoutY(290);
+    root.getChildren().add(knightButton);
+    knightButton.setOnAction((e) -> {
+      controller.createKnight("Knight", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
+      knightButton.setDisable(true);
+    });
 
-    for (String button : buttons) {
-      Button b = new Button(button);
-      b.setMinSize(100, 40);
-      pane.getChildren().add(b);
-      switch (button) {
-        case "Engineer":
-          b.setOnAction((e) -> {
-            controller.createEngineer("Engineer", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-            b.setDisable(true);
-          });
-          break;
-        case "Knight":
-          b.setOnAction((e) -> {
-            controller.createKnight("Knight", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-            b.setDisable(true);
-          });
-          break;
-        case "Thief":
-          b.setOnAction((e) -> {
-            controller.createThief("Thief", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-            b.setDisable(true);
-          });
-          break;
-        case "White Mage":
-          b.setOnAction((e) -> {
-            controller.createKnight("White Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-            b.setDisable(true);
-          });
-          break;
-        case "Black Mage":
-          b.setOnAction((e) -> {
-            controller.createKnight("Black Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-            b.setDisable(true);
-          });
-          break;
-      }
-    }
+    Button thiefButton = new Button("Thief");
+    thiefButton.setMinSize(80, 40);
+    thiefButton.setLayoutX(206);
+    thiefButton.setLayoutY(290);
+    root.getChildren().add(thiefButton);
+    thiefButton.setOnAction((e) -> {
+      controller.createThief("Thief", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
+      thiefButton.setDisable(true);
+    });
+
+    Button whiteMageButton = new Button("White mage");
+    whiteMageButton.setMinSize(80, 40);
+    whiteMageButton.setLayoutX(294);
+    whiteMageButton.setLayoutY(290);
+    root.getChildren().add(whiteMageButton);
+    whiteMageButton.setOnAction((e) -> {
+      controller.createKnight("White Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
+      whiteMageButton.setDisable(true);
+    });
+
+    Button blackMageButton = new Button("Black mage");
+    blackMageButton.setMinSize(80, 40);
+    blackMageButton.setLayoutX(382);
+    blackMageButton.setLayoutY(290);
+    root.getChildren().add(blackMageButton);
+    blackMageButton.setOnAction((e) -> {
+      controller.createKnight("Black Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
+      blackMageButton.setDisable(true);
+    });
 
     partySizeLabel = new Label("Party size: " + controller.getParty().size());
-    partySizeLabel.setAlignment(Pos.TOP_RIGHT);
-    partySizeLabel.setMinSize(336, 40);
+    partySizeLabel.setMinSize(100, 10);
+    partySizeLabel.setLayoutX(420);
+    partySizeLabel.setLayoutY(260);
     root.getChildren().add(partySizeLabel);
 
     phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
     phaseLabel.setLayoutX(20);
-    phaseLabel.setLayoutY(100);
-    phaseLabel.setMinSize(336, 40);
+    phaseLabel.setLayoutY(470);
+    phaseLabel.setMinSize(100, 10);
     root.getChildren().add(phaseLabel);
 
     controller.completeInventory();
@@ -183,6 +188,8 @@ public class FinalReality extends Application {
 
 
   ///MAIN SCENE
+
+  //aca ver si el primer es o no player y desactivar y activar botones
 
   private Scene createMainScene() {
     mainRoot = new Group();
@@ -558,6 +565,9 @@ public class FinalReality extends Application {
     controller.setCurrentOpponentToAttack(controller.getPlayer(i));
     centralLabel.setText(controller.getNameCharacter(controller.getCurrentCharacter()) + " is attacking " +
             controller.getNameCharacter(controller.getCurrentOpponentToAttack()));
+    if (controller.isDead(controller.getCurrentOpponentToAttack())) {
+      controller.getTurns().remove(controller.getCurrentOpponentToAttack());
+    }
     disableWeaponButtons();
     disableEnemyButtons();
     controller.setCurrentWeapon(null);
@@ -579,11 +589,16 @@ public class FinalReality extends Application {
     }
   }
 
+  //sacar a un personaje muerto de turns
+
   private void attackingAnEnemy() {
     centralLabel.setText(controller.getNameCharacter(controller.getCurrentCharacter()) +
             " is attacking " + controller.getNameCharacter(controller.getCurrentOpponentToAttack()) +
             " with the " + controller.getNameWeapon(controller.getEquippedWeaponCharacter(controller.getCurrentCharacter())));
     controller.tryToAttack(controller.getCurrentCharacter(), controller.getCurrentOpponentToAttack());
+    if (controller.isDead(controller.getCurrentOpponentToAttack())) {
+      controller.getTurns().remove(controller.getCurrentOpponentToAttack());
+    }
     controller.setCurrentWeapon(null);
     controller.setCurrentOpponentToAttack(null);
     try {
@@ -658,21 +673,36 @@ public class FinalReality extends Application {
 
   private Scene createVictoryScene() {
     Group root = new Group();
-    Scene scene = new Scene(root, 400, 400);
+    Scene scene = new Scene(root, 500, 500);
 
-    mainLabel = new Label("CONGRATULATIONS, YOU WON!");
-    mainLabel.setLayoutX(150);
-    mainLabel.setLayoutY(150);
-    mainLabel.setMinSize(150, 30);
+    mainLabel = new Label("Final Reality");
+    mainLabel.setMinSize(300, 150);
+    mainLabel.setLayoutX(115);
+    mainLabel.setLayoutY(30);
+    mainLabel.setFont(new Font("Serif", 50));
     root.getChildren().add(mainLabel);
 
+    Label main2Label = new Label("CONGRATULATIONS");
+    main2Label.setMinSize(400, 100);
+    main2Label.setLayoutX(130);
+    main2Label.setLayoutY(180);
+    main2Label.setFont(new Font("Serif", 25));
+    root.getChildren().add(main2Label);
+
+    Label winLabel = new Label("YOU WON!");
+    winLabel.setMinSize(400,100);
+    winLabel.setLayoutX(200);
+    winLabel.setLayoutY(220);
+    winLabel.setFont(new Font("Serif", 20));
+    root.getChildren().add(winLabel);
+
     Button playAgainButton = new Button("Play Again");
-    playAgainButton.setMinSize(60, 30);
-    playAgainButton.setLayoutX(150);
-    playAgainButton.setLayoutY(200);
+    playAgainButton.setMinSize(80, 40);
+    playAgainButton.setLayoutX(210);
+    playAgainButton.setLayoutY(350);
     playAgainButton.setOnAction((e) -> {
       try {
-        controller.tryToNewGame(true);
+        controller.tryToNewGame();
       } catch (InvalidMovementException invalidMovementException) {
         invalidMovementException.printStackTrace();
       }
@@ -685,21 +715,29 @@ public class FinalReality extends Application {
 
   private Scene createDefeatScene() {
     Group root = new Group();
-    Scene scene = new Scene(root, 400, 400);
+    Scene scene = new Scene(root, 500, 500);
 
-    mainLabel = new Label("YOU LOST...");
-    mainLabel.setLayoutX(150);
-    mainLabel.setLayoutY(150);
-    mainLabel.setMinSize(150, 30);
+    mainLabel = new Label("Final Reality");
+    mainLabel.setMinSize(300, 150);
+    mainLabel.setLayoutX(115);
+    mainLabel.setLayoutY(50);
+    mainLabel.setFont(new Font("Serif", 50));
     root.getChildren().add(mainLabel);
 
+    Label winLabel = new Label("YOU LOST...");
+    winLabel.setMinSize(400,100);
+    winLabel.setLayoutX(200);
+    winLabel.setLayoutY(200);
+    winLabel.setFont(new Font("Serif", 20));
+    root.getChildren().add(winLabel);
+
     Button playAgainButton = new Button("Play Again");
-    playAgainButton.setMinSize(60, 30);
-    playAgainButton.setLayoutX(150);
-    playAgainButton.setLayoutY(200);
+    playAgainButton.setMinSize(80, 40);
+    playAgainButton.setLayoutX(210);
+    playAgainButton.setLayoutY(350);
     playAgainButton.setOnAction((e) -> {
       try {
-        controller.tryToNewGame(true);
+        controller.tryToNewGame();
       } catch (InvalidMovementException invalidMovementException) {
         invalidMovementException.printStackTrace();
       }

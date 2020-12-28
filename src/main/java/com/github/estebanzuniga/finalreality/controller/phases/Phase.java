@@ -54,11 +54,11 @@ public class Phase {
         controller.extractCharacter();
     }
 
-    public void newGame(boolean trueOrFalse) throws InvalidMovementException {
+    public void newGame() throws InvalidMovementException {
         if (!canPlayAgain) {
             throw new InvalidMovementException("You can´t play again now");
         }
-        controller.newGame(true);
+        controller.newGame();
     }
 
     public void toInitialPhase() throws InvalidTransitionException {

@@ -11,11 +11,9 @@ public class FinalPhase extends Phase {
     }
 
     @Override
-    public void newGame(boolean trueOrFalse) {
-        if (trueOrFalse == true) {
-            controller.newGame(true);
-            toInitialPhase();
-        }
+    public void newGame() {
+        controller.newGame();
+        toInitialPhase();
     }
 
     @Override

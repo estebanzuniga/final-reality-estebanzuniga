@@ -33,11 +33,11 @@ public class GameController {
     private final PropertyChangeSupport characterIsDeadNotification = new PropertyChangeSupport(this);
 
     private final BlockingQueue<ICharacter> turns = new LinkedBlockingQueue<>();
-    private List<Enemy> enemies = new ArrayList<>();
-    private List<IPlayerCharacter> party = new ArrayList<>();
-    private List<IWeapon> inventory = new ArrayList<>();
-    private List<Enemy> allEnemies = new ArrayList<>();
-    private List<IPlayerCharacter> allPlayers = new ArrayList<>();
+    private final List<Enemy> enemies = new ArrayList<>();
+    private final List<IPlayerCharacter> party = new ArrayList<>();
+    private final List<IWeapon> inventory = new ArrayList<>();
+    private final List<Enemy> allEnemies = new ArrayList<>();
+    private final List<IPlayerCharacter> allPlayers = new ArrayList<>();
     private final Random rng = new Random();
 
     private ICharacter currentCharacter = null;
@@ -51,27 +51,22 @@ public class GameController {
      */
     public GameController() {
         this.setPhase(new InitialPhase());
-        //this.setPhase(new AttackPhase());
     }
 
-    public void newGame(boolean trueOrFalse) {
-        if (trueOrFalse == true) {
-            turns.clear();
-            party.clear();
-            enemies.clear();
-            inventory.clear();
-            allEnemies.clear();
-            allPlayers.clear();
-            currentCharacter = null;
-            currentWeapon = null;
-            currentOpponentToAttack = null;
-        }
+    public void newGame() {
+        turns.clear();
+        party.clear();
+        enemies.clear();
+        inventory.clear();
+        allEnemies.clear();
+        allPlayers.clear();
+        currentCharacter = null;
+        currentWeapon = null;
+        currentOpponentToAttack = null;
     }
 
-    public void tryToNewGame(boolean trueOrFalse) throws InvalidMovementException {
-        if (trueOrFalse == true) {
-            phase.newGame(true);
-        }
+    public void tryToNewGame() throws InvalidMovementException {
+        phase.newGame();
     }
 
     /**
@@ -605,9 +600,5 @@ public class GameController {
 
     public String getCurrentPhase() {
         return phase.toString();
-    }
-
-    public Phase getPhase() {
-        return phase;
     }
 }
