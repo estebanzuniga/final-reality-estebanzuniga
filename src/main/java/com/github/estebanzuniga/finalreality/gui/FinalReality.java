@@ -5,6 +5,9 @@ import com.github.estebanzuniga.finalreality.controller.phases.InvalidMovementEx
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.animation.AnimationTimer;
@@ -12,6 +15,8 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Random;
 
 /**
@@ -54,9 +59,12 @@ public class FinalReality extends Application {
   private Button swordButton;
   private boolean nextTurn = true;
   private boolean enemyTurn = false;
-  //private Scene actualScene = createVictoryScene();
-  private Scene actualScene = createSetPartyScene();
+  private Scene actualScene = createInitialScene();
   private final Random rng = new Random();
+  private static final String RESOURCE_PATH = "src/main/resources/";
+
+  public FinalReality() throws FileNotFoundException {
+  }
 
   public static void main(String[] args) {
     launch(args);
@@ -66,6 +74,8 @@ public class FinalReality extends Application {
   public void start(@NotNull Stage primaryStage) {
     primaryStage.setTitle("Final reality");
     primaryStage.setResizable(false);
+    primaryStage.setX(500);
+    primaryStage.setY(150);
     startAnimatorPrimaryScene(primaryStage);
     primaryStage.show();
   }
@@ -83,21 +93,27 @@ public class FinalReality extends Application {
 
   //SET PARTY SCENE
 
-  private Scene createSetPartyScene() {
+  private Scene createInitialScene() throws FileNotFoundException {
     Group root = new Group();
     Scene scene = new Scene(root, 500, 500);
+    var background =
+            new ImageView(new Image(new FileInputStream(RESOURCE_PATH + "background.jpg")));
+    root.getChildren().add(background);
 
     Label mainLabel = new Label("Final Reality");
     mainLabel.setMinSize(300, 200);
     mainLabel.setLayoutX(115);
     mainLabel.setLayoutY(40);
+    mainLabel.setTextFill(Color.WHITE);
     mainLabel.setFont(new Font("Serif", 50));
     root.getChildren().add(mainLabel);
 
     Label label = new Label("Choose three different characters");
-    label.setMinSize(100, 10);
-    label.setLayoutX(160);
-    label.setLayoutY(260);
+    label.setMinSize(100, 20);
+    label.setLayoutX(135);
+    label.setLayoutY(250);
+    label.setFont(new Font("Serif", 15));
+    label.setTextFill(Color.WHITE);
     root.getChildren().add(label);
 
     Button engineerButton = new Button("Engineer");
@@ -150,10 +166,11 @@ public class FinalReality extends Application {
       blackMageButton.setDisable(true);
     });
 
-    partySizeLabel = new Label("Party size: " + controller.getParty().size());
+    partySizeLabel = new Label("");
     partySizeLabel.setMinSize(100, 10);
-    partySizeLabel.setLayoutX(420);
-    partySizeLabel.setLayoutY(260);
+    partySizeLabel.setLayoutX(300);
+    partySizeLabel.setLayoutY(350);
+    partySizeLabel.setTextFill(Color.WHITE);
     root.getChildren().add(partySizeLabel);
 
     phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
@@ -162,23 +179,27 @@ public class FinalReality extends Application {
     phaseLabel.setMinSize(100, 10);
     root.getChildren().add(phaseLabel);
 
-    startAnimatorSetPartyScene();
+    startAnimatorInitialScene();
 
     return scene;
   }
 
-  private void startAnimatorSetPartyScene() {
+  private void startAnimatorInitialScene() {
     AnimationTimer timer = new AnimationTimer() {
       @Override
       public void handle(final long now) {
         int partySize = controller.getParty().size();
-        partySizeLabel.setText("Party Size: " + partySize);
+        partySizeLabel.setText("You have chosen " + partySize + " characters");
         phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
         if (partySize == 3) {
           controller.tryToSetEnemies();
           controller.completeInventory();
           controller.setCurrentCharacter(controller.getTurns().peek());
-          actualScene = createMainScene();
+          try {
+            actualScene = createMainScene();
+          } catch (FileNotFoundException e) {
+            e.printStackTrace();
+          }
           stop();
         }
       }
@@ -189,9 +210,12 @@ public class FinalReality extends Application {
 
   ///MAIN SCENE
 
-  private Scene createMainScene() {
+  private Scene createMainScene() throws FileNotFoundException {
     mainRoot = new Group();
     Scene scene = new Scene(mainRoot, 500, 500);
+    var background =
+            new ImageView(new Image(new FileInputStream(RESOURCE_PATH + "background.jpg")));
+    mainRoot.getChildren().add(background);
     createLabels();
     createButtons();
     disableEnemyButtons();
@@ -232,10 +256,18 @@ public class FinalReality extends Application {
         aliveEnemiesLabel.setText("Alive enemies: " + aliveEnemies);
 
         if (alivePlayerCharacters == 0) {
-          actualScene = createDefeatScene();
+          try {
+            actualScene = createDefeatScene();
+          } catch (FileNotFoundException e) {
+            e.printStackTrace();
+          }
           stop();
         } else if (aliveEnemies == 0) {
-          actualScene = createVictoryScene();
+          try {
+            actualScene = createVictoryScene();
+          } catch (FileNotFoundException e) {
+            e.printStackTrace();
+          }
           stop();
         }
 
@@ -260,208 +292,247 @@ public class FinalReality extends Application {
 
   private void createLabels() {
     mainLabel = new Label("MAY THE BEST WIN...");
-    mainLabel.setLayoutX(200);
+    mainLabel.setLayoutX(180);
     mainLabel.setLayoutY(10);
     mainLabel.setMinSize(100, 10);
+    mainLabel.setFont(new Font(Font.getDefault().getName(), 15));
+    mainLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(mainLabel);
 
     Label enemiesLabel = new Label("Enemies");
-    enemiesLabel.setLayoutX(230);
+    enemiesLabel.setLayoutX(222);
     enemiesLabel.setLayoutY(40);
     enemiesLabel.setMinSize(100, 10);
+    enemiesLabel.setFont(new Font(Font.getDefault().getName(), 15));
+    enemiesLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemiesLabel);
 
     enemy1LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllEnemies(0)));
     enemy1LifeLabel.setMinSize(60, 10);
     enemy1LifeLabel.setLayoutX(125);
     enemy1LifeLabel.setLayoutY(115);
+    enemy1LifeLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemy1LifeLabel);
     Label enemy1DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllEnemies(0)));
     enemy1DefenseLabel.setMinSize(60, 10);
     enemy1DefenseLabel.setLayoutX(125);
     enemy1DefenseLabel.setLayoutY(130);
+    enemy1DefenseLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemy1DefenseLabel);
     Label enemy1AttackLabel = new Label("Attack: " + controller.getAttackEnemy(controller.getAllEnemies(0)));
     enemy1AttackLabel.setMinSize(60, 10);
     enemy1AttackLabel.setLayoutX(125);
     enemy1AttackLabel.setLayoutY(145);
+    enemy1AttackLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemy1AttackLabel);
 
     enemy2LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllEnemies(1)));
     enemy2LifeLabel.setMinSize(60, 10);
     enemy2LifeLabel.setLayoutX(220);
     enemy2LifeLabel.setLayoutY(115);
+    enemy2LifeLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemy2LifeLabel);
     Label enemy2DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllEnemies(1)));
     enemy2DefenseLabel.setMinSize(60, 10);
     enemy2DefenseLabel.setLayoutX(220);
     enemy2DefenseLabel.setLayoutY(130);
+    enemy2DefenseLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemy2DefenseLabel);
     Label enemy2AttackLabel = new Label("Attack: " + controller.getAttackEnemy(controller.getAllEnemies(1)));
     enemy2AttackLabel.setMinSize(60, 10);
     enemy2AttackLabel.setLayoutX(220);
     enemy2AttackLabel.setLayoutY(145);
+    enemy2AttackLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemy2AttackLabel);
 
     enemy3LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllEnemies(2)));
     enemy3LifeLabel.setMinSize(60, 10);
     enemy3LifeLabel.setLayoutX(315);
     enemy3LifeLabel.setLayoutY(115);
+    enemy3LifeLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemy3LifeLabel);
     Label enemy3DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllEnemies(2)));
     enemy3DefenseLabel.setMinSize(60, 10);
     enemy3DefenseLabel.setLayoutX(315);
     enemy3DefenseLabel.setLayoutY(130);
+    enemy3DefenseLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemy3DefenseLabel);
     Label enemy3AttackLabel = new Label("Attack: " + controller.getAttackEnemy(controller.getAllEnemies(2)));
     enemy3AttackLabel.setMinSize(60, 10);
     enemy3AttackLabel.setLayoutX(315);
     enemy3AttackLabel.setLayoutY(145);
+    enemy3AttackLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(enemy3AttackLabel);
 
     Label turnLabel = new Label("Character in turn:");
     turnLabel.setLayoutX(10);
-    turnLabel.setLayoutY(190);
+    turnLabel.setLayoutY(180);
     turnLabel.setMinSize(100, 10);
+    turnLabel.setFont(new Font(Font.getDefault().getName(), 15));
+    turnLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(turnLabel);
 
     characterNameLabel = new Label("");
     characterNameLabel.setLayoutX(10);
     characterNameLabel.setLayoutY(205);
     characterNameLabel.setMinSize(100, 10);
+    characterNameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(characterNameLabel);
-
     characterLifeLabel = new Label("");
     characterLifeLabel.setLayoutX(10);
     characterLifeLabel.setLayoutY(220);
     characterLifeLabel.setMinSize(100, 10);
+    characterLifeLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(characterLifeLabel);
-
     characterDefenseLabel = new Label("");
     characterDefenseLabel.setLayoutX(10);
     characterDefenseLabel.setLayoutY(235);
     characterDefenseLabel.setMinSize(100, 10);
+    characterDefenseLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(characterDefenseLabel);
-
     characterAttackLabel = new Label("");
     characterAttackLabel.setLayoutX(10);
     characterAttackLabel.setLayoutY(250);
     characterAttackLabel.setMinSize(100, 10);
+    characterAttackLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(characterAttackLabel);
 
     centralLabel = new Label("");
-    centralLabel.setLayoutX(185);
-    centralLabel.setLayoutY(220);
-    centralLabel.setMinSize(100, 20);
+    centralLabel.setLayoutX(165);
+    centralLabel.setLayoutY(205);
+    centralLabel.setMinSize(200, 40);
+    centralLabel.setFont(new Font(Font.getDefault().getName(), 15));
+    centralLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(centralLabel);
 
     central2Label = new Label("");
-    central2Label.setLayoutX(185);
-    central2Label.setLayoutY(240);
-    central2Label.setMinSize(100, 20);
+    central2Label.setLayoutX(165);
+    central2Label.setLayoutY(230);
+    central2Label.setMinSize(200, 40);
+    central2Label.setFont(new Font(Font.getDefault().getName(), 15));
+    central2Label.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(central2Label);
 
     Label inventoryLabel = new Label("Inventory");
-    inventoryLabel.setLayoutX(225);
-    inventoryLabel.setLayoutY(280);
     inventoryLabel.setMinSize(100, 10);
+    inventoryLabel.setLayoutX(222);
+    inventoryLabel.setLayoutY(280);
+    inventoryLabel.setFont(new Font(Font.getDefault().getName(), 15));
+    inventoryLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(inventoryLabel);
 
     Label axeDamageLabel = new Label("Damage: " + controller.getDamageWeapon(0));
     axeDamageLabel.setLayoutY(350);
     axeDamageLabel.setLayoutX(30);
     axeDamageLabel.setMinSize(100, 10);
+    axeDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(axeDamageLabel);
     Label bowDamageLabel = new Label("Damage: " + controller.getDamageWeapon(1));
     bowDamageLabel.setLayoutY(350);
     bowDamageLabel.setLayoutX(125);
     bowDamageLabel.setMinSize(100, 10);
+    bowDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(bowDamageLabel);
     Label knifeDamageLabel = new Label("Damage: " + controller.getDamageWeapon(2));
     knifeDamageLabel.setLayoutY(350);
     knifeDamageLabel.setLayoutX(220);
     knifeDamageLabel.setMinSize(100, 10);
+    knifeDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(knifeDamageLabel);
     Label staffDamageLabel = new Label("Damage: " + controller.getDamageWeapon(3));
     staffDamageLabel.setLayoutY(350);
     staffDamageLabel.setLayoutX(315);
     staffDamageLabel.setMinSize(100, 10);
+    staffDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(staffDamageLabel);
     Label swordDamageLabel = new Label("Damage: " + controller.getDamageWeapon(4));
     swordDamageLabel.setLayoutY(350);
     swordDamageLabel.setLayoutX(410);
     swordDamageLabel.setMinSize(100, 10);
+    swordDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(swordDamageLabel);
 
     Label playerCharactersLabel = new Label("Your characters:");
     playerCharactersLabel.setLayoutX(10);
     playerCharactersLabel.setLayoutY(390);
     playerCharactersLabel.setMinSize(100, 10);
+    playerCharactersLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(playerCharactersLabel);
 
     Label player1NameLabel = new Label(controller.getNameCharacter(controller.getAllPlayers(0)));
     player1NameLabel.setMinSize(60, 10);
     player1NameLabel.setLayoutX(125);
     player1NameLabel.setLayoutY(390);
+    player1NameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(player1NameLabel);
     player1LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllPlayers(0)));
     player1LifeLabel.setMinSize(60, 10);
     player1LifeLabel.setLayoutX(125);
     player1LifeLabel.setLayoutY(410);
+    player1LifeLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(player1LifeLabel);
     Label player1DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllPlayers(0)));
     player1DefenseLabel.setMinSize(60, 10);
     player1DefenseLabel.setLayoutX(125);
     player1DefenseLabel.setLayoutY(425);
+    player1DefenseLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(player1DefenseLabel);
 
     Label player2NameLabel = new Label(controller.getNameCharacter(controller.getAllPlayers(1)));
     player2NameLabel.setMinSize(60, 10);
     player2NameLabel.setLayoutX(220);
     player2NameLabel.setLayoutY(390);
+    player2NameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(player2NameLabel);
     player2LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllPlayers(1)));
     player2LifeLabel.setMinSize(60, 10);
     player2LifeLabel.setLayoutX(220);
     player2LifeLabel.setLayoutY(410);
+    player2LifeLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(player2LifeLabel);
     Label player2DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllPlayers(1)));
     player2DefenseLabel.setMinSize(60, 10);
     player2DefenseLabel.setLayoutX(220);
     player2DefenseLabel.setLayoutY(425);
+    player2DefenseLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(player2DefenseLabel);
 
     Label player3NameLabel = new Label(controller.getNameCharacter(controller.getAllPlayers(2)));
     player3NameLabel.setMinSize(60, 10);
     player3NameLabel.setLayoutX(315);
     player3NameLabel.setLayoutY(390);
+    player3NameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(player3NameLabel);
     player3LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllPlayers(2)));
     player3LifeLabel.setMinSize(60, 10);
     player3LifeLabel.setLayoutX(315);
     player3LifeLabel.setLayoutY(410);
+    player3LifeLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(player3LifeLabel);
     Label player3DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllPlayers(2)));
     player3DefenseLabel.setMinSize(60, 10);
     player3DefenseLabel.setLayoutX(315);
     player3DefenseLabel.setLayoutY(425);
+    player3DefenseLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(player3DefenseLabel);
 
     aliveEnemiesLabel = new Label("");
-    aliveEnemiesLabel.setLayoutX(360);
-    aliveEnemiesLabel.setLayoutY(465);
+    aliveEnemiesLabel.setLayoutX(350);
+    aliveEnemiesLabel.setLayoutY(455);
     aliveEnemiesLabel.setMinSize(100, 10);
+    aliveEnemiesLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(aliveEnemiesLabel);
 
     alivePlayerCharacterLabel = new Label("");
-    alivePlayerCharacterLabel.setLayoutX(360);
-    alivePlayerCharacterLabel.setLayoutY(480);
+    alivePlayerCharacterLabel.setLayoutX(350);
+    alivePlayerCharacterLabel.setLayoutY(470);
     alivePlayerCharacterLabel.setMinSize(100, 10);
+    alivePlayerCharacterLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(alivePlayerCharacterLabel);
 
     phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
-    phaseLabel.setLayoutX(10);
-    phaseLabel.setLayoutY(480);
+    phaseLabel.setLayoutX(20);
+    phaseLabel.setLayoutY(470);
     phaseLabel.setMinSize(100, 10);
     mainRoot.getChildren().add(phaseLabel);
   }
@@ -556,6 +627,8 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(swordButton);
   }
 
+  //crear variable isAttacking boolean, para ver si está atacando y actualizar la etiqueta
+
   private void enemyAttack() {
     enemyAttackButton.setDisable(true);
     nextTurn = false;
@@ -576,11 +649,11 @@ public class FinalReality extends Application {
     } catch (InvalidMovementException e) {
       e.printStackTrace();
     }
-    /*try {
+    try {
       Thread.sleep(1000);
     } catch (InterruptedException e) {
       e.printStackTrace();
-    }*/
+    }
     controller.setCurrentCharacter(controller.getTurns().peek());
     nextTurn = true;
     if (controller.isPlayerCharacter(controller.getCurrentCharacter())) {
@@ -670,15 +743,19 @@ public class FinalReality extends Application {
     swordButton.setDisable(false);
   }
 
-  private Scene createVictoryScene() {
+  private Scene createVictoryScene() throws FileNotFoundException {
     Group root = new Group();
     Scene scene = new Scene(root, 500, 500);
+    var background =
+            new ImageView(new Image(new FileInputStream(RESOURCE_PATH + "background.jpg")));
+    root.getChildren().add(background);
 
     mainLabel = new Label("Final Reality");
     mainLabel.setMinSize(300, 150);
     mainLabel.setLayoutX(115);
     mainLabel.setLayoutY(30);
     mainLabel.setFont(new Font("Serif", 50));
+    mainLabel.setTextFill(Color.WHITE);
     root.getChildren().add(mainLabel);
 
     Label main2Label = new Label("CONGRATULATIONS");
@@ -686,6 +763,7 @@ public class FinalReality extends Application {
     main2Label.setLayoutX(130);
     main2Label.setLayoutY(180);
     main2Label.setFont(new Font("Serif", 25));
+    main2Label.setTextFill(Color.WHITE);
     root.getChildren().add(main2Label);
 
     Label winLabel = new Label("YOU WON!");
@@ -693,6 +771,7 @@ public class FinalReality extends Application {
     winLabel.setLayoutX(200);
     winLabel.setLayoutY(220);
     winLabel.setFont(new Font("Serif", 20));
+    winLabel.setTextFill(Color.WHITE);
     root.getChildren().add(winLabel);
 
     Button playAgainButton = new Button("Play Again");
@@ -700,7 +779,11 @@ public class FinalReality extends Application {
     playAgainButton.setLayoutX(210);
     playAgainButton.setLayoutY(350);
     playAgainButton.setOnAction((e) -> {
-      actualScene = createSetPartyScene();
+      try {
+        actualScene = createInitialScene();
+      } catch (FileNotFoundException fileNotFoundException) {
+        fileNotFoundException.printStackTrace();
+      }
       controller.tryToNewGame();
       playAgainButton.setDisable(true);
     });
@@ -715,30 +798,39 @@ public class FinalReality extends Application {
     return scene;
   }
 
-  private Scene createDefeatScene() {
+  private Scene createDefeatScene() throws FileNotFoundException {
     Group root = new Group();
     Scene scene = new Scene(root, 500, 500);
+    var background =
+            new ImageView(new Image(new FileInputStream(RESOURCE_PATH + "background.jpg")));
+    root.getChildren().add(background);
 
     mainLabel = new Label("Final Reality");
     mainLabel.setMinSize(300, 150);
     mainLabel.setLayoutX(115);
     mainLabel.setLayoutY(50);
     mainLabel.setFont(new Font("Serif", 50));
+    mainLabel.setTextFill(Color.WHITE);
     root.getChildren().add(mainLabel);
 
-    Label winLabel = new Label("YOU LOST...");
-    winLabel.setMinSize(400,100);
-    winLabel.setLayoutX(200);
-    winLabel.setLayoutY(200);
-    winLabel.setFont(new Font("Serif", 20));
-    root.getChildren().add(winLabel);
+    Label loseLabel = new Label("YOU LOST...");
+    loseLabel.setMinSize(400,100);
+    loseLabel.setLayoutX(200);
+    loseLabel.setLayoutY(200);
+    loseLabel.setFont(new Font("Serif", 20));
+    loseLabel.setTextFill(Color.WHITE);
+    root.getChildren().add(loseLabel);
 
     Button playAgainButton = new Button("Play Again");
     playAgainButton.setMinSize(80, 40);
     playAgainButton.setLayoutX(210);
     playAgainButton.setLayoutY(350);
     playAgainButton.setOnAction((e) -> {
-      actualScene = createSetPartyScene();
+      try {
+        actualScene = createInitialScene();
+      } catch (FileNotFoundException fileNotFoundException) {
+        fileNotFoundException.printStackTrace();
+      }
       controller.tryToNewGame();
       playAgainButton.setDisable(true);
     });
