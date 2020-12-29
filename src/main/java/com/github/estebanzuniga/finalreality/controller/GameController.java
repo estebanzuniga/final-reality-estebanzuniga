@@ -63,10 +63,15 @@ public class GameController {
         currentCharacter = null;
         currentWeapon = null;
         currentOpponentToAttack = null;
+        setPhase(new InitialPhase());
     }
 
-    public void tryToNewGame() throws InvalidMovementException {
-        phase.newGame();
+    public void tryToNewGame() {
+        try {
+            phase.newGame();
+        } catch (InvalidMovementException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

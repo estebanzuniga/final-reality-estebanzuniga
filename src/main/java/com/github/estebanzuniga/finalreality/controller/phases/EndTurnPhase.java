@@ -33,6 +33,6 @@ public class EndTurnPhase extends Phase {
     }
 
     public String toString() {
-        return "Main phase";
+        return "End turn phase";
     }
 }

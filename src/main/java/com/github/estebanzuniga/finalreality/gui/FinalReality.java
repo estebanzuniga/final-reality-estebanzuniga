@@ -54,6 +54,7 @@ public class FinalReality extends Application {
   private Button swordButton;
   private boolean nextTurn = true;
   private boolean enemyTurn = false;
+  //private Scene actualScene = createVictoryScene();
   private Scene actualScene = createSetPartyScene();
   private final Random rng = new Random();
 
@@ -161,8 +162,6 @@ public class FinalReality extends Application {
     phaseLabel.setMinSize(100, 10);
     root.getChildren().add(phaseLabel);
 
-    controller.completeInventory();
-
     startAnimatorSetPartyScene();
 
     return scene;
@@ -177,6 +176,7 @@ public class FinalReality extends Application {
         phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
         if (partySize == 3) {
           controller.tryToSetEnemies();
+          controller.completeInventory();
           controller.setCurrentCharacter(controller.getTurns().peek());
           actualScene = createMainScene();
           stop();
@@ -189,18 +189,15 @@ public class FinalReality extends Application {
 
   ///MAIN SCENE
 
-  //aca ver si el primer es o no player y desactivar y activar botones
-
   private Scene createMainScene() {
     mainRoot = new Group();
     Scene scene = new Scene(mainRoot, 500, 500);
     createLabels();
     createButtons();
+    disableEnemyButtons();
     startAnimatorMainScene();
     return scene;
   }
-
-  //controller.setCurrentCharacter(controller.getTurns().peek());
 
   private void startAnimatorMainScene() {
     AnimationTimer timer = new AnimationTimer() {
@@ -236,8 +233,10 @@ public class FinalReality extends Application {
 
         if (alivePlayerCharacters == 0) {
           actualScene = createDefeatScene();
+          stop();
         } else if (aliveEnemies == 0) {
           actualScene = createVictoryScene();
+          stop();
         }
 
         characterNameLabel.setText("Name: " + controller.getNameCharacter(controller.getCurrentCharacter()));
@@ -561,8 +560,8 @@ public class FinalReality extends Application {
     enemyAttackButton.setDisable(true);
     nextTurn = false;
     int i = rng.nextInt(controller.getParty().size());
-    controller.tryToAttack(controller.getCurrentCharacter(), controller.getPlayer(i));
     controller.setCurrentOpponentToAttack(controller.getPlayer(i));
+    controller.tryToAttack(controller.getCurrentCharacter(), controller.getCurrentOpponentToAttack());
     centralLabel.setText(controller.getNameCharacter(controller.getCurrentCharacter()) + " is attacking " +
             controller.getNameCharacter(controller.getCurrentOpponentToAttack()));
     if (controller.isDead(controller.getCurrentOpponentToAttack())) {
@@ -577,11 +576,11 @@ public class FinalReality extends Application {
     } catch (InvalidMovementException e) {
       e.printStackTrace();
     }
-    try {
+    /*try {
       Thread.sleep(1000);
     } catch (InterruptedException e) {
       e.printStackTrace();
-    }
+    }*/
     controller.setCurrentCharacter(controller.getTurns().peek());
     nextTurn = true;
     if (controller.isPlayerCharacter(controller.getCurrentCharacter())) {
@@ -589,7 +588,7 @@ public class FinalReality extends Application {
     }
   }
 
-  //sacar a un personaje muerto de turns
+  //problemas con centralLabel
 
   private void attackingAnEnemy() {
     centralLabel.setText(controller.getNameCharacter(controller.getCurrentCharacter()) +
@@ -701,14 +700,17 @@ public class FinalReality extends Application {
     playAgainButton.setLayoutX(210);
     playAgainButton.setLayoutY(350);
     playAgainButton.setOnAction((e) -> {
-      try {
-        controller.tryToNewGame();
-      } catch (InvalidMovementException invalidMovementException) {
-        invalidMovementException.printStackTrace();
-      }
       actualScene = createSetPartyScene();
+      controller.tryToNewGame();
+      playAgainButton.setDisable(true);
     });
     root.getChildren().add(playAgainButton);
+
+    phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
+    phaseLabel.setLayoutX(20);
+    phaseLabel.setLayoutY(470);
+    phaseLabel.setMinSize(100, 10);
+    root.getChildren().add(phaseLabel);
 
     return scene;
   }
@@ -736,15 +738,19 @@ public class FinalReality extends Application {
     playAgainButton.setLayoutX(210);
     playAgainButton.setLayoutY(350);
     playAgainButton.setOnAction((e) -> {
-      try {
-        controller.tryToNewGame();
-      } catch (InvalidMovementException invalidMovementException) {
-        invalidMovementException.printStackTrace();
-      }
       actualScene = createSetPartyScene();
+      controller.tryToNewGame();
+      playAgainButton.setDisable(true);
     });
     root.getChildren().add(playAgainButton);
 
+    phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
+    phaseLabel.setLayoutX(20);
+    phaseLabel.setLayoutY(470);
+    phaseLabel.setMinSize(100, 10);
+    root.getChildren().add(phaseLabel);
+
     return scene;
   }
+
 }

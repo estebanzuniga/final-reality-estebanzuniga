@@ -5,7 +5,7 @@ public class FinalPhase extends Phase {
     public FinalPhase() {
         this.canSetEnemies = false;
         this.canAttack = false;
-        this.canExtractACharacter = true;
+        this.canExtractACharacter = false;
         this.canEquip = false;
         this.canPlayAgain = true;
     }
