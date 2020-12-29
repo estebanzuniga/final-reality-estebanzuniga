@@ -10,7 +10,7 @@ public class Phase {
 
     protected GameController controller;
 
-    protected boolean canSetEnemies = false;
+    protected boolean inInitialPhase = false;
     protected boolean canExtractACharacter = false;
     protected boolean canEquip = false;
     protected boolean canAttack = false;
@@ -26,8 +26,8 @@ public class Phase {
 
 
 
-    public void setEnemies() throws InvalidMovementException {
-        if (!canSetEnemies) {
+    public void partyIsComplete() throws InvalidMovementException {
+        if (!inInitialPhase) {
             throw new InvalidMovementException("You can´t set party now.");
         }
         controller.setEnemies();

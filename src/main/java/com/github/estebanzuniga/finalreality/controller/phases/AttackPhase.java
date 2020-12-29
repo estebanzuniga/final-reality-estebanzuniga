@@ -7,7 +7,7 @@ import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 public class AttackPhase extends Phase {
 
     public AttackPhase() {
-        this.canSetEnemies = false;
+        this.inInitialPhase = false;
         this.canAttack = true;
         this.canEquip = true;
         this.canExtractACharacter = false;

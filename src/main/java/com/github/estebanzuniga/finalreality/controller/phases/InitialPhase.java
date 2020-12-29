@@ -3,7 +3,7 @@ package com.github.estebanzuniga.finalreality.controller.phases;
 public class InitialPhase extends Phase {
 
     public InitialPhase() {
-        this.canSetEnemies = true;
+        this.inInitialPhase = true;
         this.canEquip = false;
         this.canAttack = false;
         this.canExtractACharacter = false;
@@ -11,14 +11,8 @@ public class InitialPhase extends Phase {
     }
 
     @Override
-    public void setEnemies(){
-        controller.setEnemies();
-        toAttackPhase();
-    }
-
-    @Override
-    public void toAttackPhase() {
-        changePhase(new AttackPhase());
+    public void partyIsComplete() {
+        controller.partyIsComplete();
     }
 
     public String toString() {

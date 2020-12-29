@@ -137,7 +137,7 @@ public class GameControllerTest {
     protected void checkEnemyGetters(final Enemy expectedEnemy) {
         assertEquals(GameControllerTest.ENEMY_NAME, controllerTest.getNameCharacter(expectedEnemy));
         assertEquals(400, Integer.parseInt(controllerTest.getLifeCharacter(expectedEnemy)));
-        assertEquals(200, Integer.parseInt(controllerTest.getAttackCharacter(expectedEnemy)));
+        assertEquals(200, Integer.parseInt(controllerTest.getAttackEnemy(expectedEnemy)));
         assertEquals(50, Integer.parseInt(controllerTest.getDefenseCharacter(expectedEnemy)));
     }
 

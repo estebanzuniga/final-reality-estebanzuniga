@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.animation.AnimationTimer;
@@ -32,7 +33,6 @@ public class FinalReality extends Application {
   private final GameController controller = new GameController();
   private Group mainRoot;
   private Label partySizeLabel;
-  private Label mainLabel;
   private Label enemy1LifeLabel;
   private Label enemy2LifeLabel;
   private Label enemy3LifeLabel;
@@ -63,6 +63,11 @@ public class FinalReality extends Application {
   private final Random rng = new Random();
   private static final String RESOURCE_PATH = "src/main/resources/";
 
+  /**
+   * The constructor of the class.
+   * @throws FileNotFoundException
+   *        when the file was not found
+   */
   public FinalReality() throws FileNotFoundException {
   }
 
@@ -80,6 +85,11 @@ public class FinalReality extends Application {
     primaryStage.show();
   }
 
+  /**
+   * Create a timer that refresh the primary stage.
+   * @param primaryStage
+   *       the primary stage of the gui.
+   */
   private void startAnimatorPrimaryScene(Stage primaryStage) {
     AnimationTimer timer = new AnimationTimer() {
       @Override
@@ -90,9 +100,13 @@ public class FinalReality extends Application {
     timer.start();
   }
 
-
-  //SET PARTY SCENE
-
+  /**
+   * Creates the initial scene.
+   * @return
+   *        the created scene.
+   * @throws FileNotFoundException
+   *        when the file was not found
+   */
   private Scene createInitialScene() throws FileNotFoundException {
     Group root = new Group();
     Scene scene = new Scene(root, 500, 500);
@@ -101,9 +115,8 @@ public class FinalReality extends Application {
     root.getChildren().add(background);
 
     Label mainLabel = new Label("Final Reality");
-    mainLabel.setMinSize(300, 200);
     mainLabel.setLayoutX(90);
-    mainLabel.setLayoutY(30);
+    mainLabel.setLayoutY(90);
     mainLabel.setTextFill(Color.WHITE);
     mainLabel.setFont(new Font("Serif", 50));
     root.getChildren().add(mainLabel);
@@ -123,6 +136,8 @@ public class FinalReality extends Application {
     label.setTextFill(Color.WHITE);
     root.getChildren().add(label);
 
+    controller.setEnemies();
+
     Button engineerButton = new Button("Engineer");
     engineerButton.setMinSize(80, 40);
     engineerButton.setLayoutX(30);
@@ -130,7 +145,7 @@ public class FinalReality extends Application {
     root.getChildren().add(engineerButton);
     engineerButton.setOnAction((e) -> {
       controller.createEngineer("Engineer", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-      engineerButton.setDisable(true);
+      waitTurnEnemy();
     });
 
     Button knightButton = new Button("Knight");
@@ -140,7 +155,7 @@ public class FinalReality extends Application {
     root.getChildren().add(knightButton);
     knightButton.setOnAction((e) -> {
       controller.createKnight("Knight", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-      knightButton.setDisable(true);
+      waitTurnEnemy();
     });
 
     Button thiefButton = new Button("Thief");
@@ -150,7 +165,7 @@ public class FinalReality extends Application {
     root.getChildren().add(thiefButton);
     thiefButton.setOnAction((e) -> {
       controller.createThief("Thief", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-      thiefButton.setDisable(true);
+      waitTurnEnemy();
     });
 
     Button whiteMageButton = new Button("White mage");
@@ -159,8 +174,8 @@ public class FinalReality extends Application {
     whiteMageButton.setLayoutY(290);
     root.getChildren().add(whiteMageButton);
     whiteMageButton.setOnAction((e) -> {
-      controller.createKnight("White Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-      whiteMageButton.setDisable(true);
+      controller.createWhiteMage("White Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
+      waitTurnEnemy();
     });
 
     Button blackMageButton = new Button("Black mage");
@@ -169,8 +184,8 @@ public class FinalReality extends Application {
     blackMageButton.setLayoutY(290);
     root.getChildren().add(blackMageButton);
     blackMageButton.setOnAction((e) -> {
-      controller.createKnight("Black Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
-      blackMageButton.setDisable(true);
+      controller.createBlackMage("Black Mage", rng.nextInt(50) + 450, rng.nextInt(30) + 20);
+      waitTurnEnemy();
     });
 
     partySizeLabel = new Label("");
@@ -191,15 +206,31 @@ public class FinalReality extends Application {
     return scene;
   }
 
+  /**
+   * Put an enemy on the turns queue.
+   */
+  private void waitTurnEnemy() {
+    int index = rng.nextInt(3);
+    while (controller.getTurns().contains(controller.getAllEnemies(index))) {
+      index = rng.nextInt(3);
+    }
+    controller.waitTurn(controller.getAllEnemies(index));
+  }
+
+  /**
+   * Creates a timer that refresh the initial scene.
+   */
   private void startAnimatorInitialScene() {
     AnimationTimer timer = new AnimationTimer() {
       @Override
       public void handle(final long now) {
+
         int partySize = controller.getParty().size();
         partySizeLabel.setText("You have chosen " + partySize + " characters");
         phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
+
         if (partySize == 3) {
-          controller.tryToSetEnemies();
+          controller.partyIsComplete();
           controller.completeInventory();
           controller.setCurrentCharacter(controller.getTurns().peek());
           try {
@@ -214,22 +245,44 @@ public class FinalReality extends Application {
     timer.start();
   }
 
-
-  ///MAIN SCENE
-
+  /**
+   * Creates the main scene, in which the combat happens.
+   * @return
+   *        the created scene.
+   * @throws FileNotFoundException
+   *        when the file was not found
+   */
   private Scene createMainScene() throws FileNotFoundException {
+
     mainRoot = new Group();
     Scene scene = new Scene(mainRoot, 500, 500);
+
     var background =
             new ImageView(new Image(new FileInputStream(RESOURCE_PATH + "background.jpg")));
     mainRoot.getChildren().add(background);
+
+    Line horizontal1 = new Line(0, 275, 500, 275);
+    horizontal1.setStroke(Color.WHITE);
+    mainRoot.getChildren().add(horizontal1);
+    Line horizontal2 = new Line(0, 167, 500, 167);
+    horizontal2.setStroke(Color.WHITE);
+    mainRoot.getChildren().add(horizontal2);
+    Line vertical1 = new Line(148, 167, 148, 275);
+    vertical1.setStroke(Color.WHITE);
+    mainRoot.getChildren().add(vertical1);
+
     createLabels();
     createButtons();
     disableEnemyButtons();
+
     startAnimatorMainScene();
+
     return scene;
   }
 
+  /**
+   * Creates a timer that refresh the main scene.
+   */
   private void startAnimatorMainScene() {
     AnimationTimer timer = new AnimationTimer() {
       @Override
@@ -295,9 +348,11 @@ public class FinalReality extends Application {
     timer.start();
   }
 
-  //LABELS AND BUTTONS
-
+  /**
+   * Creates the labels of the main scene.
+   */
   private void createLabels() {
+
     Label enemiesLabel = new Label("Enemies");
     enemiesLabel.setLayoutX(222);
     enemiesLabel.setLayoutY(15);
@@ -370,173 +425,177 @@ public class FinalReality extends Application {
 
     Label turnLabel = new Label("Character in turn:");
     turnLabel.setLayoutX(20);
-    turnLabel.setLayoutY(180);
+    turnLabel.setLayoutY(175);
     turnLabel.setFont(new Font(Font.getDefault().getName(), 15));
     turnLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(turnLabel);
 
     characterNameLabel = new Label("");
     characterNameLabel.setLayoutX(20);
-    characterNameLabel.setLayoutY(205);
+    characterNameLabel.setLayoutY(200);
     characterNameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(characterNameLabel);
     characterLifeLabel = new Label("");
     characterLifeLabel.setLayoutX(20);
-    characterLifeLabel.setLayoutY(220);
+    characterLifeLabel.setLayoutY(215);
     characterLifeLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(characterLifeLabel);
     characterDefenseLabel = new Label("");
     characterDefenseLabel.setLayoutX(20);
-    characterDefenseLabel.setLayoutY(235);
+    characterDefenseLabel.setLayoutY(230);
     characterDefenseLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(characterDefenseLabel);
     characterAttackLabel = new Label("");
     characterAttackLabel.setLayoutX(20);
-    characterAttackLabel.setLayoutY(250);
+    characterAttackLabel.setLayoutY(245);
     characterAttackLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(characterAttackLabel);
 
     centralLabel = new Label("");
     centralLabel.setLayoutX(165);
-    centralLabel.setLayoutY(205);
+    centralLabel.setLayoutY(220);
     centralLabel.setFont(new Font(Font.getDefault().getName(), 15));
     centralLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(centralLabel);
 
     central2Label = new Label("");
     central2Label.setLayoutX(165);
-    central2Label.setLayoutY(230);
+    central2Label.setLayoutY(242);
     central2Label.setFont(new Font(Font.getDefault().getName(), 15));
     central2Label.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(central2Label);
 
     aliveEnemiesLabel = new Label("");
     aliveEnemiesLabel.setLayoutX(350);
-    aliveEnemiesLabel.setLayoutY(180);
+    aliveEnemiesLabel.setLayoutY(175);
     aliveEnemiesLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(aliveEnemiesLabel);
 
     alivePlayerCharacterLabel = new Label("");
     alivePlayerCharacterLabel.setLayoutX(350);
-    alivePlayerCharacterLabel.setLayoutY(195);
+    alivePlayerCharacterLabel.setLayoutY(190);
     alivePlayerCharacterLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(alivePlayerCharacterLabel);
 
+    Label playerCharactersLabel = new Label("Your characters:");
+    playerCharactersLabel.setLayoutX(40);
+    playerCharactersLabel.setLayoutY(285);
+    playerCharactersLabel.setFont(new Font(Font.getDefault().getName(), 15));
+    playerCharactersLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(playerCharactersLabel);
+
+    Label player1NameLabel = new Label(controller.getNameCharacter(controller.getAllPlayers(0)));
+    player1NameLabel.setLayoutX(180);
+    player1NameLabel.setLayoutY(285);
+    player1NameLabel.setFont(new Font(Font.getDefault().getName(), 15));
+    player1NameLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(player1NameLabel);
+    player1LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllPlayers(0)));
+    player1LifeLabel.setLayoutX(180);
+    player1LifeLabel.setLayoutY(305);
+    player1LifeLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(player1LifeLabel);
+    Label player1DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllPlayers(0)));
+    player1DefenseLabel.setLayoutX(180);
+    player1DefenseLabel.setLayoutY(320);
+    player1DefenseLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(player1DefenseLabel);
+
+    Label player2NameLabel = new Label(controller.getNameCharacter(controller.getAllPlayers(1)));
+    player2NameLabel.setLayoutX(275);
+    player2NameLabel.setLayoutY(285);
+    player2NameLabel.setFont(new Font(Font.getDefault().getName(), 15));
+    player2NameLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(player2NameLabel);
+    player2LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllPlayers(1)));
+    player2LifeLabel.setLayoutX(275);
+    player2LifeLabel.setLayoutY(305);
+    player2LifeLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(player2LifeLabel);
+    Label player2DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllPlayers(1)));
+    player2DefenseLabel.setLayoutX(275);
+    player2DefenseLabel.setLayoutY(320);
+    player2DefenseLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(player2DefenseLabel);
+
+    Label player3NameLabel = new Label(controller.getNameCharacter(controller.getAllPlayers(2)));
+    player3NameLabel.setLayoutX(370);
+    player3NameLabel.setLayoutY(285);
+    player3NameLabel.setFont(new Font(Font.getDefault().getName(), 15));
+    player3NameLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(player3NameLabel);
+    player3LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllPlayers(2)));
+    player3LifeLabel.setLayoutX(370);
+    player3LifeLabel.setLayoutY(305);
+    player3LifeLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(player3LifeLabel);
+    Label player3DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllPlayers(2)));
+    player3DefenseLabel.setLayoutX(370);
+    player3DefenseLabel.setLayoutY(320);
+    player3DefenseLabel.setTextFill(Color.WHITE);
+    mainRoot.getChildren().add(player3DefenseLabel);
+
     Label inventoryLabel = new Label("Inventory");
-    inventoryLabel.setLayoutX(222);
-    inventoryLabel.setLayoutY(280);
+    inventoryLabel.setLayoutX(216);
+    inventoryLabel.setLayoutY(350);
     inventoryLabel.setFont(new Font(Font.getDefault().getName(), 15));
     inventoryLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(inventoryLabel);
 
     Label axeNameLabel = new Label("Axe");
-    axeNameLabel.setLayoutX(47);
-    axeNameLabel.setLayoutY(310);
+    axeNameLabel.setLayoutX(49);
+    axeNameLabel.setLayoutY(380);
     axeNameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(axeNameLabel);
     Label axeDamageLabel = new Label("Damage: " + controller.getDamageWeapon(0));
-    axeDamageLabel.setLayoutY(380);
     axeDamageLabel.setLayoutX(25);
+    axeDamageLabel.setLayoutY(450);
     axeDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(axeDamageLabel);
 
     Label bowNameLabel = new Label("Bow");
     bowNameLabel.setLayoutX(142);
-    bowNameLabel.setLayoutY(310);
+    bowNameLabel.setLayoutY(380);
     bowNameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(bowNameLabel);
     Label bowDamageLabel = new Label("Damage: " + controller.getDamageWeapon(1));
-    bowDamageLabel.setLayoutY(380);
     bowDamageLabel.setLayoutX(120);
+    bowDamageLabel.setLayoutY(450);
     bowDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(bowDamageLabel);
 
     Label knifeNameLabel = new Label("Knife");
-    knifeNameLabel.setLayoutX(235);
-    knifeNameLabel.setLayoutY(310);
+    knifeNameLabel.setLayoutX(234);
+    knifeNameLabel.setLayoutY(380);
     knifeNameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(knifeNameLabel);
     Label knifeDamageLabel = new Label("Damage: " + controller.getDamageWeapon(2));
-    knifeDamageLabel.setLayoutY(380);
     knifeDamageLabel.setLayoutX(215);
+    knifeDamageLabel.setLayoutY(450);
     knifeDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(knifeDamageLabel);
 
     Label staffNameLabel = new Label("Staff");
-    staffNameLabel.setLayoutX(330);
-    staffNameLabel.setLayoutY(310);
+    staffNameLabel.setLayoutX(329);
+    staffNameLabel.setLayoutY(380);
     staffNameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(staffNameLabel);
     Label staffDamageLabel = new Label("Damage: " + controller.getDamageWeapon(3));
-    staffDamageLabel.setLayoutY(380);
     staffDamageLabel.setLayoutX(310);
+    staffDamageLabel.setLayoutY(450);
     staffDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(staffDamageLabel);
 
     Label swordNameLabel = new Label("Sword");
     swordNameLabel.setLayoutX(420);
-    swordNameLabel.setLayoutY(310);
+    swordNameLabel.setLayoutY(380);
     swordNameLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(swordNameLabel);
     Label swordDamageLabel = new Label("Damage: " + controller.getDamageWeapon(4));
-    swordDamageLabel.setLayoutY(380);
     swordDamageLabel.setLayoutX(405);
+    swordDamageLabel.setLayoutY(450);
     swordDamageLabel.setTextFill(Color.WHITE);
     mainRoot.getChildren().add(swordDamageLabel);
-
-    Label playerCharactersLabel = new Label("Your characters:");
-    playerCharactersLabel.setLayoutX(20);
-    playerCharactersLabel.setLayoutY(410);
-    playerCharactersLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(playerCharactersLabel);
-
-    Label player1NameLabel = new Label(controller.getNameCharacter(controller.getAllPlayers(0)));
-    player1NameLabel.setLayoutX(125);
-    player1NameLabel.setLayoutY(410);
-    player1NameLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(player1NameLabel);
-    player1LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllPlayers(0)));
-    player1LifeLabel.setLayoutX(125);
-    player1LifeLabel.setLayoutY(430);
-    player1LifeLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(player1LifeLabel);
-    Label player1DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllPlayers(0)));
-    player1DefenseLabel.setLayoutX(125);
-    player1DefenseLabel.setLayoutY(445);
-    player1DefenseLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(player1DefenseLabel);
-
-    Label player2NameLabel = new Label(controller.getNameCharacter(controller.getAllPlayers(1)));
-    player2NameLabel.setLayoutX(220);
-    player2NameLabel.setLayoutY(410);
-    player2NameLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(player2NameLabel);
-    player2LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllPlayers(1)));
-    player2LifeLabel.setLayoutX(220);
-    player2LifeLabel.setLayoutY(430);
-    player2LifeLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(player2LifeLabel);
-    Label player2DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllPlayers(1)));
-    player2DefenseLabel.setLayoutX(220);
-    player2DefenseLabel.setLayoutY(445);
-    player2DefenseLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(player2DefenseLabel);
-
-    Label player3NameLabel = new Label(controller.getNameCharacter(controller.getAllPlayers(2)));
-    player3NameLabel.setLayoutX(315);
-    player3NameLabel.setLayoutY(410);
-    player3NameLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(player3NameLabel);
-    player3LifeLabel = new Label("Life: " + controller.getLifeCharacter(controller.getAllPlayers(2)));
-    player3LifeLabel.setLayoutX(315);
-    player3LifeLabel.setLayoutY(430);
-    player3LifeLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(player3LifeLabel);
-    Label player3DefenseLabel = new Label("Defense: " + controller.getDefenseCharacter(controller.getAllPlayers(2)));
-    player3DefenseLabel.setLayoutX(315);
-    player3DefenseLabel.setLayoutY(445);
-    player3DefenseLabel.setTextFill(Color.WHITE);
-    mainRoot.getChildren().add(player3DefenseLabel);
 
     phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
     phaseLabel.setLayoutX(20);
@@ -544,12 +603,17 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(phaseLabel);
   }
 
+  /**
+   * Creates the buttons of the main scene.
+   * @throws FileNotFoundException
+   *        when the file was not found
+   */
   private void createButtons() throws FileNotFoundException {
 
     enemyAttackButton = new Button("Simulate Enemy Turn");
     enemyAttackButton.setMinSize(120, 20);
     enemyAttackButton.setLayoutX(185);
-    enemyAttackButton.setLayoutY(175);
+    enemyAttackButton.setLayoutY(180);
     enemyAttackButton.setOnAction((e) -> enemyAttack());
     mainRoot.getChildren().add(enemyAttackButton);
 
@@ -568,7 +632,7 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(enemy1Button);
 
     var drOctopusImage =
-            new ImageView(new Image(new FileInputStream(RESOURCE_PATH + "droctopus.png")));
+            new ImageView(new Image(new FileInputStream(RESOURCE_PATH + "drOctopus.png")));
     drOctopusImage.setFitHeight(40);
     drOctopusImage.setFitWidth(40);
     enemy2Button = new Button("", drOctopusImage);
@@ -582,7 +646,7 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(enemy2Button);
 
     var greenGoblinImage =
-            new ImageView(new Image(new FileInputStream(RESOURCE_PATH + "greengoblin.png")));
+            new ImageView(new Image(new FileInputStream(RESOURCE_PATH + "greenGoblin.png")));
     greenGoblinImage.setFitHeight(40);
     greenGoblinImage.setFitWidth(40);
     enemy3Button = new Button("", greenGoblinImage);
@@ -602,7 +666,7 @@ public class FinalReality extends Application {
     axeButton = new Button("", axeImage);
     axeButton.setMinSize(40, 40);
     axeButton.setLayoutX(30);
-    axeButton.setLayoutY(330);
+    axeButton.setLayoutY(400);
     axeButton.setOnAction((e) -> {
       controller.setCurrentWeapon(controller.getWeapon(0));
       equipAWeapon(axeButton);
@@ -616,7 +680,7 @@ public class FinalReality extends Application {
     bowButton = new Button("", bowImage);
     bowButton.setMinSize(40, 40);
     bowButton.setLayoutX(125);
-    bowButton.setLayoutY(330);
+    bowButton.setLayoutY(400);
     bowButton.setOnAction((e) -> {
       controller.setCurrentWeapon(controller.getWeapon(1));
       equipAWeapon(bowButton);
@@ -630,7 +694,7 @@ public class FinalReality extends Application {
     knifeButton = new Button("", knifeImage);
     knifeButton.setMinSize(40, 40);
     knifeButton.setLayoutX(220);
-    knifeButton.setLayoutY(330);
+    knifeButton.setLayoutY(400);
     knifeButton.setOnAction((e) -> {
       controller.setCurrentWeapon(controller.getWeapon(2));
       equipAWeapon(knifeButton);
@@ -644,7 +708,7 @@ public class FinalReality extends Application {
     staffButton = new Button("", staffImage);
     staffButton.setMinSize(40, 40);
     staffButton.setLayoutX(315);
-    staffButton.setLayoutY(330);
+    staffButton.setLayoutY(400);
     staffButton.setOnAction((e) -> {
       controller.setCurrentWeapon(controller.getWeapon(3));
       equipAWeapon(staffButton);
@@ -658,7 +722,7 @@ public class FinalReality extends Application {
     swordButton = new Button("", swordImage);
     swordButton.setMinSize(40, 40);
     swordButton.setLayoutX(410);
-    swordButton.setLayoutY(330);
+    swordButton.setLayoutY(400);
     swordButton.setOnAction((e) -> {
       controller.setCurrentWeapon(controller.getWeapon(4));
       equipAWeapon(swordButton);
@@ -666,9 +730,11 @@ public class FinalReality extends Application {
     mainRoot.getChildren().add(swordButton);
   }
 
-  //crear variable isAttacking boolean, para ver si está atacando y actualizar la etiqueta
-
+  /**
+   * Contains the actions that happens when an enemy is attacking.
+   */
   private void enemyAttack() {
+
     enemyAttackButton.setDisable(true);
     nextTurn = false;
     int i = rng.nextInt(controller.getParty().size());
@@ -700,9 +766,11 @@ public class FinalReality extends Application {
     }
   }
 
-  //problemas con centralLabel
-
+  /**
+   * Contains the actions that happens when the player is attacking an enemy.
+   */
   private void attackingAnEnemy() {
+
     centralLabel.setText(controller.getNameCharacter(controller.getCurrentCharacter()) +
             " is attacking " + controller.getNameCharacter(controller.getCurrentOpponentToAttack()) +
             " with the " + controller.getNameWeapon(controller.getEquippedWeaponCharacter(controller.getCurrentCharacter())));
@@ -728,7 +796,13 @@ public class FinalReality extends Application {
     nextTurn = true;
   }
 
+  /**
+   * Contains the actions that happens when the player is choosing a weapon to equip.
+   * @param button
+   *       the button that was pressed.
+   */
   private void equipAWeapon(Button button) {
+
     nextTurn = false;
     controller.setEquippedWeaponCharacterNull(controller.getCurrentCharacter());
     controller.tryToEquip(controller.getCurrentCharacter(), controller.getCurrentWeapon());
@@ -748,12 +822,18 @@ public class FinalReality extends Application {
     }
   }
 
+  /**
+   * Disables all the buttons that represents the enemies.
+   */
   private void disableEnemyButtons() {
     enemy1Button.setDisable(true);
     enemy2Button.setDisable(true);
     enemy3Button.setDisable(true);
   }
 
+  /**
+   * Disables all the buttons that represents the weapons.
+   */
   private void disableWeaponButtons() {
     axeButton.setDisable(true);
     bowButton.setDisable(true);
@@ -762,6 +842,9 @@ public class FinalReality extends Application {
     swordButton.setDisable(true);
   }
 
+  /**
+   * Activates the buttons that represents the enemies that are alive.
+   */
   private void activateEnemyButtons() {
     if (!controller.isDead(controller.getAllEnemies(0))) {
       enemy1Button.setDisable(false);
@@ -774,6 +857,9 @@ public class FinalReality extends Application {
     }
   }
 
+  /**
+   * Activates the buttons that represents the weapons.
+   */
   private void activateWeaponButtons() {
     axeButton.setDisable(false);
     bowButton.setDisable(false);
@@ -782,7 +868,15 @@ public class FinalReality extends Application {
     swordButton.setDisable(false);
   }
 
+  /**
+   * Creates a scene that appears when the player wins.
+   * @return
+   *        the created scene.
+   * @throws FileNotFoundException
+   *        when the file was not found
+   */
   private Scene createVictoryScene() throws FileNotFoundException {
+
     Group root = new Group();
     Scene scene = new Scene(root, 500, 500);
     var background =
@@ -791,9 +885,8 @@ public class FinalReality extends Application {
 
 
     Label mainLabel = new Label("Final Reality");
-    mainLabel.setMinSize(300, 200);
     mainLabel.setLayoutX(90);
-    mainLabel.setLayoutY(30);
+    mainLabel.setLayoutY(90);
     mainLabel.setTextFill(Color.WHITE);
     mainLabel.setFont(new Font("Serif", 50));
     root.getChildren().add(mainLabel);
@@ -806,17 +899,15 @@ public class FinalReality extends Application {
     root.getChildren().add(bestWinLabel);
 
     Label main2Label = new Label("CONGRATULATIONS");
-    main2Label.setMinSize(400, 100);
-    main2Label.setLayoutX(132);
-    main2Label.setLayoutY(210);
+    main2Label.setLayoutX(135);
+    main2Label.setLayoutY(240);
     main2Label.setFont(new Font("Serif", 25));
     main2Label.setTextFill(Color.WHITE);
     root.getChildren().add(main2Label);
 
     Label winLabel = new Label("YOU WON!");
-    winLabel.setMinSize(400,100);
     winLabel.setLayoutX(200);
-    winLabel.setLayoutY(250);
+    winLabel.setLayoutY(270);
     winLabel.setFont(new Font("Serif", 20));
     winLabel.setTextFill(Color.WHITE);
     root.getChildren().add(winLabel);
@@ -832,6 +923,7 @@ public class FinalReality extends Application {
         fileNotFoundException.printStackTrace();
       }
       controller.tryToNewGame();
+      controller.setEnemies();
       playAgainButton.setDisable(true);
     });
     root.getChildren().add(playAgainButton);
@@ -845,7 +937,15 @@ public class FinalReality extends Application {
     return scene;
   }
 
+  /**
+   * Creates a scene that appears when the player loses.
+   * @return
+   *        the creates scene.
+   * @throws FileNotFoundException
+   *        when the file was not found
+   */
   private Scene createDefeatScene() throws FileNotFoundException {
+
     Group root = new Group();
     Scene scene = new Scene(root, 500, 500);
     var background =
@@ -853,9 +953,8 @@ public class FinalReality extends Application {
     root.getChildren().add(background);
 
     Label mainLabel = new Label("Final Reality");
-    mainLabel.setMinSize(300, 200);
     mainLabel.setLayoutX(90);
-    mainLabel.setLayoutY(30);
+    mainLabel.setLayoutY(90);
     mainLabel.setTextFill(Color.WHITE);
     mainLabel.setFont(new Font("Serif", 50));
     root.getChildren().add(mainLabel);
@@ -868,9 +967,8 @@ public class FinalReality extends Application {
     root.getChildren().add(bestWinLabel);
 
     Label loseLabel = new Label("YOU LOST...");
-    loseLabel.setMinSize(400,100);
     loseLabel.setLayoutX(200);
-    loseLabel.setLayoutY(210);
+    loseLabel.setLayoutY(250);
     loseLabel.setFont(new Font("Serif", 20));
     loseLabel.setTextFill(Color.WHITE);
     root.getChildren().add(loseLabel);
@@ -886,6 +984,7 @@ public class FinalReality extends Application {
         fileNotFoundException.printStackTrace();
       }
       controller.tryToNewGame();
+      controller.setEnemies();
       playAgainButton.setDisable(true);
     });
     root.getChildren().add(playAgainButton);
@@ -893,7 +992,6 @@ public class FinalReality extends Application {
     phaseLabel = new Label("Current phase: " + controller.getCurrentPhase());
     phaseLabel.setLayoutX(20);
     phaseLabel.setLayoutY(470);
-    phaseLabel.setMinSize(100, 10);
     root.getChildren().add(phaseLabel);
 
     return scene;

@@ -109,15 +109,6 @@ public class GameController {
     }
 
     /**
-     * Indicates the end of a turn.
-     *
-     * @param character the character that finish its turn.
-     */
-    public void endTurn(ICharacter character) {
-        character.waitTurn();
-    }
-
-    /**
      * Notify if the player won.
      *
      * @return true if enemies list is empty.
@@ -174,7 +165,9 @@ public class GameController {
         }
     }
 
-
+    public void waitTurn(ICharacter character) {
+        character.waitTurn();
+    }
 
     //CONSTRUCTORS
 
@@ -182,22 +175,28 @@ public class GameController {
      * Creates three random enemies and complete the enemies list.
      */
     public void setEnemies(){
-        Enemy createdEnemy1 = createEnemy("Enemy 1", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
+        Enemy createdEnemy1 = createEnemy("Venom", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
                 rng.nextInt(50) + 100, rng.nextInt(30) + 20);
         allEnemies.add(createdEnemy1);
-        Enemy createdEnemy2 = createEnemy("Enemy 2", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
+        Enemy createdEnemy2 = createEnemy("Dr. Octopus", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
                 rng.nextInt(50) + 100, rng.nextInt(30) + 20);
         allEnemies.add(createdEnemy2);
-        Enemy createdEnemy3 = createEnemy("Enemy 3", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
+        Enemy createdEnemy3 = createEnemy("Green Goblin", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
                 rng.nextInt(50) + 100, rng.nextInt(30) + 20);
         allEnemies.add(createdEnemy3);
     }
 
-    public void tryToSetEnemies() {
+    public void tryToPartyIsComplete() {
         try {
-            phase.setEnemies();
+            phase.partyIsComplete();
         } catch (InvalidMovementException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void partyIsComplete() {
+        if (party.size() == 3) {
+            setPhase(new AttackPhase());
         }
     }
 
@@ -222,7 +221,7 @@ public class GameController {
     public Enemy createEnemy(String name, int weight, int life, int attack, int defense) {
         Enemy enemy = new Enemy(turns, name, weight, life, attack, defense);
         enemies.add(enemy);
-        enemy.waitTurn();
+        //enemy.waitTurn();
         enemy.addCharacterIsDeadListener(characterIsDeadHandler);
         enemy.addEnemyEndsTurnListener(characterEndsTurnHandler);
         return enemy;
@@ -238,11 +237,11 @@ public class GameController {
      */
     public IPlayerCharacter createEngineer(String name, int life, int defense) {
         IPlayerCharacter engineer = new Engineer(turns, name, life, defense);
-        party.add(engineer);
-        allPlayers.add(engineer);
         engineer.addCharacterIsDeadListener(characterIsDeadHandler);
         engineer.addPlayerEndsTurnListener(characterEndsTurnHandler);
         engineer.equip(new Axe("DefaultWeapon", 0, rng.nextInt(10) + 1));
+        party.add(engineer);
+        allPlayers.add(engineer);
         engineer.waitTurn();
         return engineer;
     }
@@ -259,9 +258,9 @@ public class GameController {
         IPlayerCharacter knight = new Knight(turns, name, life, defense);
         knight.addCharacterIsDeadListener(characterIsDeadHandler);
         knight.addPlayerEndsTurnListener(characterEndsTurnHandler);
+        knight.equip(new Sword("DefaultWeapon", 0, rng.nextInt(10) + 1));
         party.add(knight);
         allPlayers.add(knight);
-        knight.equip(new Sword("DefaultWeapon", 0, rng.nextInt(10) + 1));
         knight.waitTurn();
         return knight;
     }
@@ -278,9 +277,9 @@ public class GameController {
         IPlayerCharacter thief = new Thief(turns, name, life, defense);
         thief.addCharacterIsDeadListener(characterIsDeadHandler);
         thief.addPlayerEndsTurnListener(characterEndsTurnHandler);
+        thief.equip(new Sword("DefaultWeapon", 0, rng.nextInt(10) + 1));
         party.add(thief);
         allPlayers.add(thief);
-        thief.equip(new Sword("DefaultWeapon", 0, rng.nextInt(10) + 1));
         thief.waitTurn();
         return thief;
     }
@@ -297,9 +296,9 @@ public class GameController {
         IPlayerCharacter whiteMage = new WhiteMage(turns, name, life, defense);
         whiteMage.addCharacterIsDeadListener(characterIsDeadHandler);
         whiteMage.addPlayerEndsTurnListener(characterEndsTurnHandler);
+        whiteMage.equip(new Staff("DefaultWeapon", 0, rng.nextInt(10) + 1));
         party.add(whiteMage);
         allPlayers.add(whiteMage);
-        whiteMage.equip(new Staff("DefaultWeapon", 0, rng.nextInt(10) + 1));
         whiteMage.waitTurn();
         return whiteMage;
     }
@@ -316,9 +315,9 @@ public class GameController {
         IPlayerCharacter blackMage = new BlackMage(turns, name, life, defense);
         blackMage.addCharacterIsDeadListener(characterIsDeadHandler);
         blackMage.addPlayerEndsTurnListener(characterEndsTurnHandler);
+        blackMage.equip(new Staff("DefaultWeapon", 0, rng.nextInt(10) + 1));
         party.add(blackMage);
         allPlayers.add(blackMage);
-        blackMage.equip(new Staff("DefaultWeapon", 0, rng.nextInt(10) + 1));
         blackMage.waitTurn();
         return blackMage;
     }

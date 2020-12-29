@@ -3,7 +3,7 @@ package com.github.estebanzuniga.finalreality.controller.phases;
 public class FinalPhase extends Phase {
 
     public FinalPhase() {
-        this.canSetEnemies = false;
+        this.inInitialPhase = false;
         this.canAttack = false;
         this.canExtractACharacter = false;
         this.canEquip = false;
