@@ -1,6 +1,7 @@
 package controller;
 
 import com.github.estebanzuniga.finalreality.controller.GameController;
+import com.github.estebanzuniga.finalreality.controller.phases.*;
 import com.github.estebanzuniga.finalreality.model.character.Enemy;
 import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.character.player.IPlayerCharacter;
@@ -8,11 +9,13 @@ import com.github.estebanzuniga.finalreality.model.character.player.party.*;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import com.github.estebanzuniga.finalreality.model.weapon.party.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.zip.CheckedOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -130,8 +133,8 @@ public class GameControllerTest {
 
     protected void checkCharacterGetters(final ICharacter expectedCharacter, String name) {
         assertEquals(name, controllerTest.getNameCharacter(expectedCharacter));
-        assertEquals(500, controllerTest.getLifeCharacter(expectedCharacter));
-        assertEquals(100, controllerTest.getDefenseCharacter(expectedCharacter));
+        assertEquals(500, Integer.parseInt(controllerTest.getLifeCharacter(expectedCharacter)));
+        assertEquals(100, Integer.parseInt(controllerTest.getDefenseCharacter(expectedCharacter)));
     }
 
     protected void checkEnemyGetters(final Enemy expectedEnemy) {
@@ -187,30 +190,105 @@ public class GameControllerTest {
         assertEquals(life, controllerTest.getLifeCharacter(attacked));
     }
 
-    public void checkPlayerTurn(IPlayerCharacter playerCharacter, Enemy enemy, IWeapon weapon) {
+    public void checkPlayerTurn(IPlayerCharacter playerCharacter, Enemy enemy, IWeapon weapon) throws InvalidMovementException, InterruptedException {
+        controllerTest.getAllPlayersList().clear();
+        controllerTest.getAllEnemiesList().clear();
+        controllerTest.getParty().clear();
+        controllerTest.getEnemies().clear();
+        controllerTest.setPhase(new CombatPhase());
         controllerTest.getParty().add(playerCharacter);
+        controllerTest.getAllPlayersList().add(playerCharacter);
         controllerTest.getEnemies().add(enemy);
+        controllerTest.getAllEnemiesList().add(enemy);
+        assertEquals(playerCharacter, controllerTest.getAllPlayers(0));
         String life = controllerTest.getLifeCharacter(enemy);
         while (Integer.parseInt(controllerTest.getLifeCharacter(enemy)) > 0) {
-            Enemy attacked = controllerTest.getEnemies().get(0);
-            controllerTest.equipWeapon(playerCharacter, weapon);
-            controllerTest.attack(playerCharacter, attacked);
+            controllerTest.tryToEquip(playerCharacter, weapon);
+            controllerTest.tryToAttack(playerCharacter, enemy);
+            controllerTest.setPhase(new CombatPhase());
         }
+        assertEquals(0, Integer.parseInt(controllerTest.getLifeCharacter(enemy)));
         controllerTest.setLifeCharacter(enemy, Integer.parseInt(life));
         assertEquals(life, controllerTest.getLifeCharacter(enemy));
         assertTrue(controllerTest.playerWon());
     }
 
-    public void checkEnemyTurn(Enemy enemy, IPlayerCharacter playerCharacter) {
+    public void checkEnemyTurn(Enemy enemy, IPlayerCharacter playerCharacter) throws InvalidMovementException, InterruptedException {
+        controllerTest.getAllEnemiesList().clear();
+        controllerTest.getAllPlayersList().clear();
+        controllerTest.getEnemies().clear();
+        controllerTest.getParty().clear();
+        controllerTest.setPhase(new CombatPhase());
         controllerTest.getEnemies().add(enemy);
+        controllerTest.getAllEnemiesList().add(enemy);
         controllerTest.getParty().add(playerCharacter);
+        controllerTest.getAllPlayersList().add(playerCharacter);
+        assertEquals(enemy, controllerTest.getAllEnemies(0));
         String life = controllerTest.getLifeCharacter(playerCharacter);
         while (Integer.parseInt(controllerTest.getLifeCharacter(playerCharacter)) > 0) {
-            IPlayerCharacter attacked = controllerTest.getParty().get(0);
-            controllerTest.attack(enemy, attacked);
+            controllerTest.tryToAttack(enemy, playerCharacter);
+            controllerTest.setPhase(new CombatPhase());
         }
+        assertEquals(0, Integer.parseInt(controllerTest.getLifeCharacter(playerCharacter)));
         controllerTest.setLifeCharacter(playerCharacter, Integer.parseInt(life));
         assertEquals(life, controllerTest.getLifeCharacter(playerCharacter));
         assertTrue(controllerTest.enemyWon());
+    }
+
+    public void checkOtherGetters() {
+        controllerTest.setPhase(new InitialPhase());
+        assertEquals("Initial phase", controllerTest.getCurrentPhase());
+        controllerTest.setPhase(new CombatPhase());
+        controllerTest.getInventory().clear();
+        controllerTest.completeInventory();
+        controllerTest.tryToEquip(testEngineer, controllerTest.getWeapon(0));
+        assertEquals(controllerTest.getDamageEquippedWeapon(testEngineer), controllerTest.getDamageWeapon(0));
+        assertEquals("Axe", controllerTest.getNameWeapon(controllerTest.getEquippedWeaponCharacter(testEngineer)));
+        //assertEquals(151, controllerTest.getDamageEquippedWeapon(testEngineer));
+        controllerTest.setEquippedWeaponCharacterNull(testEngineer);
+        assertEquals("Combat phase", controllerTest.getCurrentPhase());
+        controllerTest.setPhase(new EndTurnPhase());
+        assertEquals("End turn phase", controllerTest.getCurrentPhase());
+        controllerTest.setPhase(new FinalPhase());
+        assertEquals("Final phase", controllerTest.getCurrentPhase());
+        controllerTest.setPhase(new InitialPhase());
+        controllerTest.setCurrentCharacter(testEnemy);
+        assertEquals(testEnemy, controllerTest.getCurrentCharacter());
+        controllerTest.setCurrentWeapon(testAxe);
+        assertEquals(testAxe, controllerTest.getCurrentWeapon());
+        controllerTest.setCurrentOpponentToAttack(testEnemy);
+        assertEquals(testEnemy, controllerTest.getCurrentOpponentToAttack());
+    }
+
+    public void checkSomeMethods() {
+        controllerTest.setPhase(new InitialPhase());
+        controllerTest.getParty().add(testEngineer);
+        controllerTest.tryToPartyIsComplete();
+        assertEquals("Initial phase", controllerTest.getCurrentPhase());
+        controllerTest.getParty().add(testKnight);
+        controllerTest.tryToPartyIsComplete();
+        assertEquals("Initial phase", controllerTest.getCurrentPhase());
+        controllerTest.getParty().add(testThief);
+        controllerTest.tryToPartyIsComplete();
+        assertEquals("Combat phase", controllerTest.getCurrentPhase());
+
+        controllerTest.setPhase(new FinalPhase());
+        assertEquals("Final phase", controllerTest.getCurrentPhase());
+        controllerTest.tryToNewGame();
+        assertTrue(controllerTest.getTurns().isEmpty());
+        assertTrue(controllerTest.getParty().isEmpty());
+        assertTrue(controllerTest.getEnemies().isEmpty());
+        assertTrue(controllerTest.getInventory().isEmpty());
+        assertTrue(controllerTest.getAllPlayersList().isEmpty());
+        assertTrue(controllerTest.getAllEnemiesList().isEmpty());
+        assertEquals(null, controllerTest.getCurrentCharacter());
+        assertEquals(null, controllerTest.getCurrentWeapon());
+        assertEquals(null, controllerTest.getCurrentOpponentToAttack());
+
+        controllerTest.setPhase(new InitialPhase());
+
+        controllerTest.setEnemies();
+        assertEquals(3, controllerTest.getAllEnemiesList().size());
+        controllerTest.getAllEnemiesList().clear();
     }
 }

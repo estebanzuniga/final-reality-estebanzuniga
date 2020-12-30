@@ -1,5 +1,6 @@
 package controller;
 
+import com.github.estebanzuniga.finalreality.controller.phases.InvalidMovementException;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ public class TurnTest extends GameControllerTest {
     }
 
     @Test
-    void checkPlayerTurnTest() {
+    void checkPlayerTurnTest() throws InvalidMovementException, InterruptedException {
         for (IWeapon weapon : testEngineerWeaponList) {
             checkPlayerTurn(testEngineer, testEnemy, weapon);
         }
@@ -31,7 +32,7 @@ public class TurnTest extends GameControllerTest {
     }
 
     @Test
-    void checkEnemyTurnTest() {
+    void checkEnemyTurnTest() throws InvalidMovementException, InterruptedException {
         for (IWeapon weapon : testEngineerWeaponList) {
             controllerTest.equipWeapon(testEngineer, weapon);
             checkEnemyTurn(testEnemy, testEngineer);
@@ -53,4 +54,10 @@ public class TurnTest extends GameControllerTest {
             checkEnemyTurn(testEnemy, testBlackMage);
         }
     }
+
+    @Test
+    public void someMethodsTest() {
+        checkSomeMethods();
+    }
+
 }

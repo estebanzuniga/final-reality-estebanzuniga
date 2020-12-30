@@ -252,18 +252,6 @@ public class GameController {
     }
 
     /**
-     * Equips a weapon to a player character.
-     *
-     * @param character the character that will equip the weapon.
-     * @param weapon    the weapon that will be equipped.
-     */
-    public void equipWeapon(ICharacter character, IWeapon weapon) {
-        if (inventory.contains(weapon)) {
-            ((IPlayerCharacter) character).equip(weapon);
-        }
-    }
-
-    /**
      * Calls phase equipWeapon method.
      *
      * @param character the character that will equip the weapon.
@@ -274,6 +262,18 @@ public class GameController {
             phase.equipWeapon((IPlayerCharacter) character, weapon);
         } catch (InvalidMovementException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Equips a weapon to a player character.
+     *
+     * @param character the character that will equip the weapon.
+     * @param weapon    the weapon that will be equipped.
+     */
+    public void equipWeapon(ICharacter character, IWeapon weapon) {
+        if (inventory.contains(weapon)) {
+            ((IPlayerCharacter) character).equip(weapon);
         }
     }
 
@@ -301,10 +301,10 @@ public class GameController {
         attacker.attack(attacked);
         characterEndsTurnNotification.firePropertyChange(
                 "CHARACTER_ENDS_TURN", null, this);
-        if (isPlayerCharacter(attacker) && isDead(attacked)) {
-            getEnemies().remove(attacked);
-        } else if (!isPlayerCharacter(attacker) && isDead(attacked)) {
-            getParty().remove(attacked);
+        if (isPlayer(attacker) && isDead(attacked)) {
+            enemies.remove(attacked);
+        } else if (!isPlayer(attacker) && isDead(attacked)) {
+            party.remove(attacked);
         }
     }
 
@@ -422,7 +422,7 @@ public class GameController {
      * @param character the character in question.
      * @return true if the character is a player character.
      */
-    public boolean isPlayerCharacter(ICharacter character) {
+    public boolean isPlayer(ICharacter character) {
         return allPlayers.contains(character);
     }
 
@@ -572,6 +572,24 @@ public class GameController {
      */
     public IPlayerCharacter getPlayer(int index) {
         return party.get(index);
+    }
+
+    /**
+     * Gets the allEnemies list.
+     *
+     * @return the allEnemies list.
+     */
+    public List<Enemy> getAllEnemiesList() {
+        return allEnemies;
+    }
+
+    /**
+     * Gets the allPlayers list.
+     *
+     * @return the allPlayers list.
+     */
+    public List<IPlayerCharacter> getAllPlayersList() {
+        return allPlayers;
     }
 
     /**

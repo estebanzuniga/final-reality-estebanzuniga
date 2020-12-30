@@ -299,14 +299,14 @@ public class FinalReality extends Application {
           centralLabel.setText("Next turn is for " + controller.getNameCharacter(controller.getCurrentCharacter()));
         }
 
-        if (controller.isPlayerCharacter(controller.getCurrentCharacter())) {
+        if (controller.isPlayer(controller.getCurrentCharacter())) {
           enemyAttackButton.setDisable(true);
         }
-        else if (!controller.isPlayerCharacter(controller.getCurrentCharacter())) {
+        else if (!controller.isPlayer(controller.getCurrentCharacter())) {
           disableWeaponButtons();
         }
 
-        if (!controller.isPlayerCharacter(controller.getCurrentCharacter()) && enemyTurn) {
+        if (!controller.isPlayer(controller.getCurrentCharacter()) && enemyTurn) {
           enemyAttackButton.setDisable(false);
         }
 
@@ -336,10 +336,10 @@ public class FinalReality extends Application {
         characterDefenseLabel.setText("Defense: " + controller.getDefenseCharacter(controller.getCurrentCharacter()));
         phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
 
-        if (controller.isPlayerCharacter(controller.getCurrentCharacter()) &&
+        if (controller.isPlayer(controller.getCurrentCharacter()) &&
                 controller.getEquippedWeaponCharacter(controller.getCurrentCharacter()) != null) {
           characterAttackLabel.setText("Attack: " + controller.getDamageEquippedWeapon(controller.getCurrentCharacter()));
-        } else if (!controller.isPlayerCharacter(controller.getCurrentCharacter())) {
+        } else if (!controller.isPlayer(controller.getCurrentCharacter())) {
           characterAttackLabel.setText("Attack: " + controller.getAttackEnemy(controller.getCurrentCharacter()));
           enemyTurn = true;
         }
@@ -761,7 +761,7 @@ public class FinalReality extends Application {
     }
     controller.setCurrentCharacter(controller.getTurns().peek());
     nextTurn = true;
-    if (controller.isPlayerCharacter(controller.getCurrentCharacter())) {
+    if (controller.isPlayer(controller.getCurrentCharacter())) {
       activateWeaponButtons();
     }
   }

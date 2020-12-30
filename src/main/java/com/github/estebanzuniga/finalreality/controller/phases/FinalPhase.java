@@ -11,6 +11,11 @@ public class FinalPhase extends Phase {
      * Creates a new FinalPhase, it represents when the combat finishes.
      */
     public FinalPhase() {
+        canChangeToInitialPhase = true;
+        canChangeToCombatPhase = false;
+        canChangeToEndTurnPhase = false;
+        canChangeToFinalPhase = false;
+
         this.inInitialPhase = false;
         this.canAttack = false;
         this.canExtractACharacter = false;
@@ -19,17 +24,26 @@ public class FinalPhase extends Phase {
     }
 
     @Override
-    public void newGame() {
-        controller.newGame();
-        toInitialPhase();
+    public void newGame() throws InvalidMovementException {
+        super.newGame();
+        try {
+            toInitialPhase();
+        } catch (InvalidTransitionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void toInitialPhase() {
-        changePhase(new InitialPhase());
+    public void toInitialPhase() throws InvalidTransitionException {
+        //changePhase(new InitialPhase());
+        super.toInitialPhase();
     }
 
-    @Override
+    /**
+     * Return the name of a phase.
+     * @return
+     *        the name of a phase.
+     */
     public String toString() {
         return "Final phase";
     }
