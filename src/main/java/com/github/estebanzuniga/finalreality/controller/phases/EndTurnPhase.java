@@ -11,10 +11,6 @@ public class EndTurnPhase extends Phase {
      * Creates a new EndTurnPhase, it represents when the user or an enemy ends it turn.
      */
     public EndTurnPhase() {
-        canChangeToInitialPhase = false;
-        canChangeToCombatPhase = true;
-        canChangeToEndTurnPhase = false;
-        canChangeToFinalPhase = true;
 
         this.inInitialPhase = false;
         this.canEquip = false;
@@ -24,25 +20,19 @@ public class EndTurnPhase extends Phase {
     }
 
     @Override
-    public void extractCharacter() throws InvalidMovementException {
-        super.extractCharacter();
+    public void extractCharacter() {
+        controller.extractCharacter();
         if (controller.enemyWon() || controller.playerWon()) {
             toFinalPhase();
         }
         else {
-            while (controller.getTurns().isEmpty()) { }
-            try {
-                toCombatPhase();
-            } catch (InvalidTransitionException e) {
-                e.printStackTrace();
-            }
+            toCombatPhase();
         }
     }
 
     @Override
-    public void toCombatPhase() throws InvalidTransitionException {
-        //changePhase(new CombatPhase());
-        super.toCombatPhase();
+    public void toCombatPhase() {
+        changePhase(new CombatPhase());
     }
 
     @Override

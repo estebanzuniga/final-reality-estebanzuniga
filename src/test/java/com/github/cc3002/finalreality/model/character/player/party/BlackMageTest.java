@@ -1,5 +1,6 @@
 package com.github.cc3002.finalreality.model.character.player.party;
 
+import com.github.cc3002.finalreality.model.character.player.AbstractPlayerCharacterTest;
 import com.github.estebanzuniga.finalreality.model.character.player.party.BlackMage;
 import com.github.estebanzuniga.finalreality.model.character.player.party.Engineer;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Esteban Zúñiga Salamanca.
  * @see BlackMage
  */
-class BlackMageTest extends AbstractMageTest {
+class BlackMageTest extends AbstractPlayerCharacterTest {
 
     private BlackMage blackMage;
     private List<IWeapon> testBlackMageWeaponList;

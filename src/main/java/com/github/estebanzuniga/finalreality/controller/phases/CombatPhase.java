@@ -15,10 +15,6 @@ public class CombatPhase extends Phase {
      * Creates a new CombatPhase, it represents when the user and the enemies are facing.
      */
     public CombatPhase() {
-        canChangeToInitialPhase = false;
-        canChangeToCombatPhase = false;
-        canChangeToEndTurnPhase = true;
-        canChangeToFinalPhase = false;
 
         this.inInitialPhase = false;
         this.canAttack = true;
@@ -33,19 +29,14 @@ public class CombatPhase extends Phase {
     }
 
     @Override
-    public void attack(ICharacter attacker, ICharacter attacked) throws InvalidMovementException {
-        super.attack(attacker, attacked);
-        try {
-            toEndTurnPhase();
-        } catch (InvalidTransitionException e) {
-            e.printStackTrace();
-        }
+    public void attack(ICharacter attacker, ICharacter attacked) {
+        controller.attack(attacker, attacked);
+        toEndTurnPhase();
     }
 
     @Override
-    public void toEndTurnPhase() throws InvalidTransitionException {
-        //changePhase(new EndTurnPhase());
-        super.toEndTurnPhase();
+    public void toEndTurnPhase(){
+        changePhase(new EndTurnPhase());
     }
 
     /**

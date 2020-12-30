@@ -258,11 +258,7 @@ public class GameController {
      * @param weapon    the weapon that will be equipped.
      */
     public void tryToEquip(ICharacter character, IWeapon weapon) {
-        try {
-            phase.equipWeapon((IPlayerCharacter) character, weapon);
-        } catch (InvalidMovementException e) {
-            e.printStackTrace();
-        }
+        phase.equipWeapon((IPlayerCharacter) character, weapon);
     }
 
     /**
@@ -284,11 +280,7 @@ public class GameController {
      * @param attacked the attacked character.
      */
     public void tryToAttack(ICharacter attacker, ICharacter attacked) {
-        try {
-            phase.attack(attacker, attacked);
-        } catch (InvalidMovementException e) {
-            e.printStackTrace();
-        }
+        phase.attack(attacker, attacked);
     }
 
     /**
@@ -310,10 +302,8 @@ public class GameController {
 
     /**
      * Calls phase extractCharacter method.
-     *
-     * @throws InvalidMovementException when try to extract a character in a invalid phase.
      */
-    public void tryToExtractCharacter() throws InvalidMovementException {
+    public void tryToExtractCharacter() {
         phase.extractCharacter();
     }
 
@@ -332,11 +322,7 @@ public class GameController {
      * Calls phase newGame method.
      */
     public void tryToNewGame() {
-        try {
-            phase.newGame();
-        } catch (InvalidMovementException e) {
-            e.printStackTrace();
-        }
+        phase.newGame();
     }
 
     /**
@@ -358,11 +344,7 @@ public class GameController {
      * Calls the phase partyIsComplete method
      */
     public void tryToPartyIsComplete() {
-        try {
-            phase.partyIsComplete();
-        } catch (InvalidMovementException e) {
-            e.printStackTrace();
-        }
+        phase.partyIsComplete();
     }
 
     /**
@@ -370,7 +352,7 @@ public class GameController {
      */
     public void partyIsComplete() {
         if (party.size() == 3) {
-            setPhase(new CombatPhase());
+            completeInventory();
         }
     }
 
@@ -705,5 +687,9 @@ public class GameController {
      */
     public String getCurrentPhase() {
         return phase.toString();
+    }
+
+    public Phase getPhase() {
+        return phase;
     }
 }

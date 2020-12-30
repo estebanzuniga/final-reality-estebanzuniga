@@ -8,21 +8,17 @@ import com.github.estebanzuniga.finalreality.model.character.player.IPlayerChara
 import com.github.estebanzuniga.finalreality.model.character.player.party.*;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 import com.github.estebanzuniga.finalreality.model.weapon.party.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.zip.CheckedOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameControllerTest {
 
     protected GameController controllerTest;
-    protected BlockingQueue<ICharacter> turns;
     protected List<ICharacter> testCharacters;
     protected static final String BLACK_MAGE_NAME = "Vivi";
     protected static final String KNIGHT_NAME = "Adelbert";
@@ -56,15 +52,14 @@ public class GameControllerTest {
     @BeforeEach
     protected void basicSetUp() {
         controllerTest = new GameController();
-        turns = new LinkedBlockingQueue<>();
         testCharacters = new ArrayList<>();
 
-        testEnemy = new Enemy(turns, ENEMY_NAME, 10, 400, 200, 50);
-        testEngineer = new Engineer(turns, ENGINEER_NAME, 500, 100);
-        testKnight = new Knight(turns, KNIGHT_NAME, 500, 100);
-        testThief = new Thief(turns, THIEF_NAME, 500, 100);
-        testWhiteMage = new WhiteMage(turns, WHITE_MAGE_NAME, 500, 100);
-        testBlackMage = new BlackMage(turns, BLACK_MAGE_NAME, 500, 100);
+        testEnemy = new Enemy(controllerTest.getTurns(), ENEMY_NAME, 10, 400, 200, 50);
+        testEngineer = new Engineer(controllerTest.getTurns(), ENGINEER_NAME, 500, 100);
+        testKnight = new Knight(controllerTest.getTurns(), KNIGHT_NAME, 500, 100);
+        testThief = new Thief(controllerTest.getTurns(), THIEF_NAME, 500, 100);
+        testWhiteMage = new WhiteMage(controllerTest.getTurns(), WHITE_MAGE_NAME, 500, 100);
+        testBlackMage = new BlackMage(controllerTest.getTurns(), BLACK_MAGE_NAME, 500, 100);
 
         testAxe = new Axe("TEST_AXE" , 151, 10);
         testBow = new Bow("TEST_BOW", 151, 10);
@@ -190,7 +185,7 @@ public class GameControllerTest {
         assertEquals(life, controllerTest.getLifeCharacter(attacked));
     }
 
-    public void checkPlayerTurn(IPlayerCharacter playerCharacter, Enemy enemy, IWeapon weapon) throws InvalidMovementException, InterruptedException {
+    public void checkPlayerTurn(IPlayerCharacter playerCharacter, Enemy enemy, IWeapon weapon) {
         controllerTest.getAllPlayersList().clear();
         controllerTest.getAllEnemiesList().clear();
         controllerTest.getParty().clear();
@@ -213,7 +208,7 @@ public class GameControllerTest {
         assertTrue(controllerTest.playerWon());
     }
 
-    public void checkEnemyTurn(Enemy enemy, IPlayerCharacter playerCharacter) throws InvalidMovementException, InterruptedException {
+    public void checkEnemyTurn(Enemy enemy, IPlayerCharacter playerCharacter) {
         controllerTest.getAllEnemiesList().clear();
         controllerTest.getAllPlayersList().clear();
         controllerTest.getEnemies().clear();
@@ -236,6 +231,7 @@ public class GameControllerTest {
     }
 
     public void checkOtherGetters() {
+
         controllerTest.setPhase(new InitialPhase());
         assertEquals("Initial phase", controllerTest.getCurrentPhase());
         controllerTest.setPhase(new CombatPhase());
@@ -260,8 +256,11 @@ public class GameControllerTest {
         assertEquals(testEnemy, controllerTest.getCurrentOpponentToAttack());
     }
 
-    public void checkSomeMethods() {
+    public void checkSomeControllerMethods() {
+
         controllerTest.setPhase(new InitialPhase());
+        controllerTest.getParty().clear();
+        controllerTest.getInventory().clear();
         controllerTest.getParty().add(testEngineer);
         controllerTest.tryToPartyIsComplete();
         assertEquals("Initial phase", controllerTest.getCurrentPhase());
@@ -281,14 +280,134 @@ public class GameControllerTest {
         assertTrue(controllerTest.getInventory().isEmpty());
         assertTrue(controllerTest.getAllPlayersList().isEmpty());
         assertTrue(controllerTest.getAllEnemiesList().isEmpty());
-        assertEquals(null, controllerTest.getCurrentCharacter());
-        assertEquals(null, controllerTest.getCurrentWeapon());
-        assertEquals(null, controllerTest.getCurrentOpponentToAttack());
-
-        controllerTest.setPhase(new InitialPhase());
+        assertNull(controllerTest.getCurrentCharacter());
+        assertNull(controllerTest.getCurrentWeapon());
+        assertNull(controllerTest.getCurrentOpponentToAttack());
 
         controllerTest.setEnemies();
         assertEquals(3, controllerTest.getAllEnemiesList().size());
         controllerTest.getAllEnemiesList().clear();
+
+        controllerTest.setPhase(new InitialPhase());
     }
+
+    public void checkQueue(IPlayerCharacter character, IWeapon weapon) {
+
+        controllerTest.setPhase(new CombatPhase());
+        controllerTest.tryToEquip(character, weapon);
+
+        Assertions.assertTrue(controllerTest.getTurns().isEmpty());
+        controllerTest.waitTurn(character);
+        try {
+            Thread.sleep(900);
+            Assertions.assertEquals(0, controllerTest.getTurns().size());
+            Thread.sleep(200);
+            Assertions.assertEquals(1, controllerTest.getTurns().size());
+            Assertions.assertEquals(character, controllerTest.getTurns().peek());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        controllerTest.getTurns().clear();
+
+        controllerTest.setPhase(new EndTurnPhase());
+
+        Assertions.assertTrue(controllerTest.getTurns().isEmpty());
+        controllerTest.getParty().add(character);
+        controllerTest.getEnemies().add(testEnemy);
+        controllerTest.waitTurn(testEngineer);
+        try {
+            Thread.sleep(1200);
+            Assertions.assertEquals(1, controllerTest.getTurns().size());
+            Assertions.assertEquals(testEngineer, controllerTest.getTurns().peek());
+            controllerTest.tryToExtractCharacter();
+            Thread.sleep(1200);
+
+            controllerTest.setPhase(new EndTurnPhase());
+
+            controllerTest.getEnemies().clear();
+            Assertions.assertEquals(1, controllerTest.getTurns().size());
+            Assertions.assertEquals(testEngineer, controllerTest.getTurns().peek());
+            controllerTest.tryToExtractCharacter();
+            Thread.sleep(1200);
+
+            controllerTest.setPhase(new EndTurnPhase());
+
+            controllerTest.getEnemies().add(testEnemy);
+            controllerTest.getParty().clear();
+            Assertions.assertEquals(1, controllerTest.getTurns().size());
+            Assertions.assertEquals(testEngineer, controllerTest.getTurns().peek());
+            controllerTest.tryToExtractCharacter();
+            Thread.sleep(1200);
+
+            controllerTest.setPhase(new EndTurnPhase());
+
+            controllerTest.getParty().add(testEngineer);
+            controllerTest.setLifeCharacter(testEngineer, 0);
+            Assertions.assertEquals(1, controllerTest.getTurns().size());
+            Assertions.assertEquals(testEngineer, controllerTest.getTurns().peek());
+            controllerTest.tryToExtractCharacter();
+            Thread.sleep(1200);
+            Assertions.assertEquals(0, controllerTest.getTurns().size());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        controllerTest.getTurns().clear();
+        controllerTest.setLifeCharacter(testEngineer, 500);
+        controllerTest.setEquippedWeaponCharacterNull(testEngineer);
+        controllerTest.setPhase(new InitialPhase());
+
+    }
+
+    public void checkPhasesTransitions() {
+        controllerTest.setPhase(new InitialPhase());
+
+        Exception exception1 = assertThrows(InvalidTransitionException.class, () ->
+                controllerTest.getPhase().toEndTurnPhase());
+        String expectedMessage1 = "Can not change from Initial phase to End turn phase";
+        String actualMessage1 = exception1.getMessage();
+        assertTrue(actualMessage1.contains(expectedMessage1));
+
+        Exception exception2 = assertThrows(InvalidTransitionException.class, () ->
+                controllerTest.getPhase().toFinalPhase());
+        String expectedMessage2 = "Can not change from Initial phase to Final phase";
+        String actualMessage2 = exception2.getMessage();
+        assertTrue(actualMessage2.contains(expectedMessage2));
+
+        controllerTest.setPhase(new CombatPhase());
+
+        Exception exception3 = assertThrows(InvalidTransitionException.class, () ->
+                controllerTest.getPhase().toFinalPhase());
+        String expectedMessage3 = "Can not change from Combat phase to Final phase";
+        String actualMessage3 = exception3.getMessage();
+        assertTrue(actualMessage3.contains(expectedMessage3));
+
+        Exception exception4 = assertThrows(InvalidTransitionException.class, () ->
+                controllerTest.getPhase().toInitialPhase());
+        String expectedMessage4 = "Can not change from Combat phase to Initial phase";
+        String actualMessage4 = exception4.getMessage();
+        assertTrue(actualMessage4.contains(expectedMessage4));
+
+        controllerTest.setPhase(new EndTurnPhase());
+
+        Exception exception5 = assertThrows(InvalidTransitionException.class, () ->
+                controllerTest.getPhase().toInitialPhase());
+        String expectedMessage5 = "Can not change from End turn phase to Initial phase";
+        String actualMessage5 = exception5.getMessage();
+        assertTrue(actualMessage5.contains(expectedMessage5));
+
+        controllerTest.setPhase(new FinalPhase());
+
+        Exception exception6 = assertThrows(InvalidTransitionException.class, () ->
+                controllerTest.getPhase().toCombatPhase());
+        String expectedMessage6 = "Can not change from Final phase to Combat phase";
+        String actualMessage6 = exception6.getMessage();
+        assertTrue(actualMessage6.contains(expectedMessage6));
+
+        Exception exception7 = assertThrows(InvalidTransitionException.class, () ->
+                controllerTest.getPhase().toEndTurnPhase());
+        String expectedMessage7 = "Can not change from Final phase to End turn phase";
+        String actualMessage7 = exception7.getMessage();
+        assertTrue(actualMessage7.contains(expectedMessage7));
+    }
+
 }

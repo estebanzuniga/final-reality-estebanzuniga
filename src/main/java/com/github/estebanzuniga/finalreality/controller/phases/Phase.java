@@ -15,11 +15,6 @@ public class Phase {
 
     protected GameController controller;
 
-    protected boolean canChangeToInitialPhase = false;
-    protected boolean canChangeToCombatPhase = false;
-    protected boolean canChangeToEndTurnPhase = false;
-    protected boolean canChangeToFinalPhase = false;
-
     protected boolean inInitialPhase = false;
     protected boolean canExtractACharacter = false;
     protected boolean canEquip = false;
@@ -46,15 +41,8 @@ public class Phase {
 
     /**
      * Calls controller partyIsComplete method.
-     * @throws InvalidMovementException
-     *        when inInitialPhase is false
      */
-    public void partyIsComplete() throws InvalidMovementException {
-        if (!inInitialPhase) {
-            throw new InvalidMovementException("You can not set party now.");
-        }
-        controller.partyIsComplete();
-    }
+    public void partyIsComplete() { }
 
     /**
      * Calls controller equipWeapon method.
@@ -62,15 +50,8 @@ public class Phase {
      *       the player character.
      * @param weapon
      *       the weapon.
-     * @throws InvalidMovementException
-     *        when canEquip is false.
      */
-    public void equipWeapon(IPlayerCharacter character, IWeapon weapon) throws InvalidMovementException {
-        if (!canEquip) {
-            throw new InvalidMovementException("You can not equip a weapon now.");
-        }
-        controller.equipWeapon(character, weapon);
-    }
+    public void equipWeapon(IPlayerCharacter character, IWeapon weapon) { }
 
     /**
      * Calls controller attack method.
@@ -78,39 +59,18 @@ public class Phase {
      *       the character that is attacking.
      * @param attacked
      *       the attacked character.
-     * @throws InvalidMovementException
-     *        when canAttack is false.
      */
-    public void attack(ICharacter attacker, ICharacter attacked) throws InvalidMovementException {
-        if (!canAttack) {
-            throw new InvalidMovementException("You can not attack now.");
-        }
-        controller.attack(attacker, attacked);
-    }
+    public void attack(ICharacter attacker, ICharacter attacked) { }
 
     /**
      * Calls controller extractCharacter method.
-     * @throws InvalidMovementException
-     *        when canExtractACharacter is false.
      */
-    public void extractCharacter() throws InvalidMovementException {
-        if (!canExtractACharacter) {
-            throw new InvalidMovementException("You can not extract a character now.");
-        }
-        controller.extractCharacter();
-    }
+    public void extractCharacter() { }
 
     /**
      * Calls controller newGame method.
-     * @throws InvalidMovementException
-     *        when canPlayAgain is false.
      */
-    public void newGame() throws InvalidMovementException {
-        if (!canPlayAgain) {
-            throw new InvalidMovementException("You can not play again now");
-        }
-        controller.newGame();
-    }
+    public void newGame() { }
 
     /**
      * Changes the current phase to initial phase.
@@ -118,11 +78,8 @@ public class Phase {
      *        when can not change to a specific phase.
      */
     public void toInitialPhase() throws InvalidTransitionException {
-        if (!canChangeToInitialPhase) {
-            throw new InvalidTransitionException(
-                    "Can not change form " + this.toString() + " to Initial phase");
-        }
-        changePhase(new InitialPhase());
+        throw new InvalidTransitionException(
+                "Can not change from " + this.toString() + " to Initial phase");
     }
 
     /**
@@ -131,11 +88,8 @@ public class Phase {
      *        when can not change to a specific phase.
      */
     public void toCombatPhase() throws InvalidTransitionException {
-        if (!canChangeToCombatPhase) {
-            throw new InvalidTransitionException(
-                    "Can not change from " + this.toString() + " to Combat phase");
-        }
-        changePhase(new CombatPhase());
+        throw new InvalidTransitionException(
+                "Can not change from " + this.toString() + " to Combat phase");
     }
 
     /**
@@ -144,11 +98,8 @@ public class Phase {
      *        when can not change to a specific phase.
      */
     public void toEndTurnPhase() throws InvalidTransitionException {
-        if (!canChangeToEndTurnPhase) {
-            throw new InvalidTransitionException(
-                    "Can not change from " + this.toString() + " to End turn phase");
-        }
-        changePhase(new EndTurnPhase());
+        throw new InvalidTransitionException(
+                "Can not change from " + this.toString() + " to End turn phase");
     }
 
     /**
@@ -157,11 +108,8 @@ public class Phase {
      *        when can not change to a specific phase.
      */
     public void toFinalPhase() throws InvalidTransitionException {
-        if (!canChangeToFinalPhase) {
-            throw new InvalidTransitionException(
-                    "Can not change from " + this.toString() + " to Final phase");
-        }
-        changePhase(new FinalPhase());
+        throw new InvalidTransitionException(
+                "Can not change from " + this.toString() + " to Final phase");
     }
 }
 

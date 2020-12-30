@@ -11,10 +11,6 @@ public class InitialPhase extends Phase {
      * Creates a new InitialPhase, it represents when the user have to pick its characters.
      */
     public InitialPhase() {
-        canChangeToInitialPhase = false;
-        canChangeToCombatPhase = true;
-        canChangeToEndTurnPhase = false;
-        canChangeToFinalPhase = false;
 
         this.inInitialPhase = true;
         this.canEquip = false;
@@ -24,8 +20,16 @@ public class InitialPhase extends Phase {
     }
 
     @Override
-    public void partyIsComplete() throws InvalidMovementException {
-        super.partyIsComplete();
+    public void partyIsComplete() {
+        controller.partyIsComplete();
+        if (controller.getParty().size() == 3) {
+            toCombatPhase();
+        }
+    }
+
+    @Override
+    public void toCombatPhase() {
+        changePhase(new CombatPhase());
     }
 
     /**

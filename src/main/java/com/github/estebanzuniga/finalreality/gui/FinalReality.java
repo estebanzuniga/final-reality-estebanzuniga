@@ -1,7 +1,6 @@
 package com.github.estebanzuniga.finalreality.gui;
 
 import com.github.estebanzuniga.finalreality.controller.GameController;
-import com.github.estebanzuniga.finalreality.controller.phases.InvalidMovementException;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -14,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
@@ -22,15 +22,17 @@ import java.util.Random;
 
 /**
  * Main entry point for the application.
- * <p>
- * <Complete here with the details of the implemented application>
  *
- * @author Ignacio Slater Muñoz.
+ * This project's goal is to create a (simplified) clone of _Final Fantasy_'s combat, a game developed
+ * by Square Enix Broadly speaking for the combat the player has a group of characters to control and a group of
+ * enemies controlled by the computer.
+ *
  * @author Esteban Zúñiga Salamanca.
  */
 public class FinalReality extends Application {
 
   private final GameController controller = new GameController();
+
   private Group mainRoot;
   private Label partySizeLabel;
   private Label enemy1LifeLabel;
@@ -48,6 +50,7 @@ public class FinalReality extends Application {
   private Label aliveEnemiesLabel;
   private Label alivePlayerCharacterLabel;
   private Label phaseLabel;
+
   private Button enemyAttackButton;
   private Button enemy1Button;
   private Button enemy2Button;
@@ -57,11 +60,13 @@ public class FinalReality extends Application {
   private Button knifeButton;
   private Button staffButton;
   private Button swordButton;
+
   private boolean nextTurn = true;
   private boolean enemyTurn = false;
-  private Scene actualScene = createInitialScene();
   private final Random rng = new Random();
   private static final String RESOURCE_PATH = "src/main/resources/";
+
+  private Scene actualScene = createInitialScene();
 
   /**
    * The constructor of the class.
@@ -77,6 +82,7 @@ public class FinalReality extends Application {
 
   @Override
   public void start(@NotNull Stage primaryStage) {
+
     primaryStage.setTitle("Final reality");
     primaryStage.setResizable(false);
     primaryStage.setX(500);
@@ -108,6 +114,7 @@ public class FinalReality extends Application {
    *        when the file was not found
    */
   private Scene createInitialScene() throws FileNotFoundException {
+
     Group root = new Group();
     Scene scene = new Scene(root, 500, 500);
     var background =
@@ -210,6 +217,7 @@ public class FinalReality extends Application {
    * Put an enemy on the turns queue.
    */
   private void waitTurnEnemy() {
+
     int index = rng.nextInt(3);
     while (controller.getTurns().contains(controller.getAllEnemies(index))) {
       index = rng.nextInt(3);
@@ -231,7 +239,6 @@ public class FinalReality extends Application {
 
         if (partySize == 3) {
           controller.tryToPartyIsComplete();
-          controller.completeInventory();
           controller.setCurrentCharacter(controller.getTurns().peek());
           try {
             actualScene = createMainScene();
@@ -749,11 +756,7 @@ public class FinalReality extends Application {
     disableEnemyButtons();
     controller.setCurrentWeapon(null);
     controller.setCurrentOpponentToAttack(null);
-    try {
-      controller.tryToExtractCharacter();
-    } catch (InvalidMovementException e) {
-      e.printStackTrace();
-    }
+    controller.tryToExtractCharacter();
     try {
       Thread.sleep(1000);
     } catch (InterruptedException e) {
@@ -780,11 +783,7 @@ public class FinalReality extends Application {
     }
     controller.setCurrentWeapon(null);
     controller.setCurrentOpponentToAttack(null);
-    try {
-      controller.tryToExtractCharacter();
-    } catch (InvalidMovementException e) {
-      e.printStackTrace();
-    }
+    controller.tryToExtractCharacter();
     try {
       Thread.sleep(1000);
     } catch (InterruptedException e) {
@@ -846,6 +845,7 @@ public class FinalReality extends Application {
    * Activates the buttons that represents the enemies that are alive.
    */
   private void activateEnemyButtons() {
+
     if (!controller.isDead(controller.getAllEnemies(0))) {
       enemy1Button.setDisable(false);
     }
