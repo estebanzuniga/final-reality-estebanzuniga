@@ -28,7 +28,6 @@ public class GameController {
 
     private final IEventHandler characterEndsTurnHandler = new CharacterEndsTurnHandler(this);
     private final IEventHandler characterIsDeadHandler = new CharacterIsDeadHandler(this);
-
     private final PropertyChangeSupport characterEndsTurnNotification = new PropertyChangeSupport(this);
     private final PropertyChangeSupport characterIsDeadNotification = new PropertyChangeSupport(this);
 
@@ -39,11 +38,9 @@ public class GameController {
     private final List<Enemy> allEnemies = new ArrayList<>();
     private final List<IPlayerCharacter> allPlayers = new ArrayList<>();
     private final Random rng = new Random();
-
     private ICharacter currentCharacter = null;
     private IWeapon currentWeapon = null;
     private ICharacter currentOpponentToAttack = null;
-
     private Phase phase;
 
     /**
@@ -51,161 +48,6 @@ public class GameController {
      */
     public GameController() {
         this.setPhase(new InitialPhase());
-    }
-
-    public void newGame() {
-        turns.clear();
-        party.clear();
-        enemies.clear();
-        inventory.clear();
-        allEnemies.clear();
-        allPlayers.clear();
-        currentCharacter = null;
-        currentWeapon = null;
-        currentOpponentToAttack = null;
-        setPhase(new InitialPhase());
-    }
-
-    public void tryToNewGame() {
-        try {
-            phase.newGame();
-        } catch (InvalidMovementException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Remove and return the first character of the turns queue.
-     */
-    public void extractCharacter() {
-        ICharacter character = turns.poll();
-        if (!isDead(character)) {
-            character.waitTurn();
-        }
-    }
-
-    public void tryToExtractCharacter() throws InvalidMovementException {
-        phase.extractCharacter();
-    }
-
-    /**
-     * Equips a weapon to a character.
-     *
-     * @param character the character that will equip the weapon.
-     * @param weapon    the weapon that will be equipped.
-     */
-    public void equipWeapon(ICharacter character, IWeapon weapon) {
-        if (inventory.contains(weapon)) {
-            ((IPlayerCharacter) character).equip(weapon);
-        }
-    }
-
-    public void tryToEquip(ICharacter character, IWeapon weapon) {
-        try {
-            phase.equipWeapon((IPlayerCharacter) character, weapon);
-        } catch (InvalidMovementException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Notify if the player won.
-     *
-     * @return true if enemies list is empty.
-     */
-    public boolean playerWon() {
-        return enemies.isEmpty();
-    }
-
-    /**
-     * Notify if the enemy won.
-     *
-     * @return true if party list is empty.
-     */
-    public boolean enemyWon() {
-        return party.isEmpty();
-    }
-
-    /**
-     * Notify if a character is dead.
-     *
-     * @param character the character in question.
-     * @return true if a character is dead.
-     */
-    public boolean isDead(ICharacter character) {
-        if (!character.isAlive()) {
-            characterIsDeadNotification.firePropertyChange("CHARACTER_IS_DEAD", null, this);
-            return true;
-        }
-        return false;
-    }
-
-    public void attack(ICharacter attacker, ICharacter attacked) {
-        attacker.attack(attacked);
-        characterEndsTurnNotification.firePropertyChange("CHARACTER_ENDS_TURN", null, this);
-        if (isPlayerCharacter(attacker) && isDead(attacked)) {
-            getEnemies().remove(attacked);
-        }
-        else if (!isPlayerCharacter(attacker) && isDead(attacked)){
-            getParty().remove(attacked);
-        }
-    }
-
-     /**
-     * Represents the attack of a character.
-     *
-     * @param attacker    the enemy that is attacking.
-     * @param attacked    the attacked character.
-     */
-    public void tryToAttack(ICharacter attacker, ICharacter attacked) {
-        try {
-            phase.attack(attacker, attacked);
-        } catch (InvalidMovementException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void waitTurn(ICharacter character) {
-        character.waitTurn();
-    }
-
-    //CONSTRUCTORS
-
-    /**
-     * Creates three random enemies and complete the enemies list.
-     */
-    public void setEnemies(){
-        Enemy createdEnemy1 = createEnemy("Venom", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
-                rng.nextInt(50) + 100, rng.nextInt(30) + 20);
-        allEnemies.add(createdEnemy1);
-        Enemy createdEnemy2 = createEnemy("Dr. Octopus", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
-                rng.nextInt(50) + 100, rng.nextInt(30) + 20);
-        allEnemies.add(createdEnemy2);
-        Enemy createdEnemy3 = createEnemy("Green Goblin", rng.nextInt(10) + 1, rng.nextInt(50) + 450,
-                rng.nextInt(50) + 100, rng.nextInt(30) + 20);
-        allEnemies.add(createdEnemy3);
-    }
-
-    public void tryToPartyIsComplete() {
-        try {
-            phase.partyIsComplete();
-        } catch (InvalidMovementException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void partyIsComplete() {
-        if (party.size() == 3) {
-            setPhase(new AttackPhase());
-        }
-    }
-
-    public Enemy getAllEnemies(int index) {
-        return allEnemies.get(index);
-    }
-
-    public IPlayerCharacter getAllPlayers(int index) {
-        return allPlayers.get(index);
     }
 
     /**
@@ -221,7 +63,6 @@ public class GameController {
     public Enemy createEnemy(String name, int weight, int life, int attack, int defense) {
         Enemy enemy = new Enemy(turns, name, weight, life, attack, defense);
         enemies.add(enemy);
-        //enemy.waitTurn();
         enemy.addCharacterIsDeadListener(characterIsDeadHandler);
         enemy.addEnemyEndsTurnListener(characterEndsTurnHandler);
         return enemy;
@@ -392,152 +233,202 @@ public class GameController {
         return sword;
     }
 
-
-    //GETTERS
+    /**
+     * Creates three enemies with random stats.
+     */
+    public void setEnemies() {
+        Enemy createdEnemy1 = createEnemy("Venom", rng.nextInt(10) + 1,
+                rng.nextInt(50) + 450, rng.nextInt(50) + 100,
+                rng.nextInt(30) + 20);
+        allEnemies.add(createdEnemy1);
+        Enemy createdEnemy2 = createEnemy("Dr. Octopus", rng.nextInt(10) + 1,
+                rng.nextInt(50) + 450, rng.nextInt(50) + 100,
+                rng.nextInt(30) + 20);
+        allEnemies.add(createdEnemy2);
+        Enemy createdEnemy3 = createEnemy("Green Goblin", rng.nextInt(10) + 1,
+                rng.nextInt(50) + 450, rng.nextInt(50) + 100,
+                rng.nextInt(30) + 20);
+        allEnemies.add(createdEnemy3);
+    }
 
     /**
-     * Get the character's name.
+     * Equips a weapon to a player character.
+     *
+     * @param character the character that will equip the weapon.
+     * @param weapon    the weapon that will be equipped.
+     */
+    public void equipWeapon(ICharacter character, IWeapon weapon) {
+        if (inventory.contains(weapon)) {
+            ((IPlayerCharacter) character).equip(weapon);
+        }
+    }
+
+    /**
+     * Calls phase equipWeapon method.
+     *
+     * @param character the character that will equip the weapon.
+     * @param weapon    the weapon that will be equipped.
+     */
+    public void tryToEquip(ICharacter character, IWeapon weapon) {
+        try {
+            phase.equipWeapon((IPlayerCharacter) character, weapon);
+        } catch (InvalidMovementException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Calls phase attack method.
+     *
+     * @param attacker the enemy that is attacking.
+     * @param attacked the attacked character.
+     */
+    public void tryToAttack(ICharacter attacker, ICharacter attacked) {
+        try {
+            phase.attack(attacker, attacked);
+        } catch (InvalidMovementException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Represents the attack from one character to other.
+     *
+     * @param attacker the enemy that is attacking.
+     * @param attacked the attacked character.
+     */
+    public void attack(ICharacter attacker, ICharacter attacked) {
+        attacker.attack(attacked);
+        characterEndsTurnNotification.firePropertyChange(
+                "CHARACTER_ENDS_TURN", null, this);
+        if (isPlayerCharacter(attacker) && isDead(attacked)) {
+            getEnemies().remove(attacked);
+        } else if (!isPlayerCharacter(attacker) && isDead(attacked)) {
+            getParty().remove(attacked);
+        }
+    }
+
+    /**
+     * Calls phase extractCharacter method.
+     *
+     * @throws InvalidMovementException when try to extract a character in a invalid phase.
+     */
+    public void tryToExtractCharacter() throws InvalidMovementException {
+        phase.extractCharacter();
+    }
+
+    /**
+     * Extracts the first character from the turns queue and put in it again if is alive.
+     */
+    public void extractCharacter() {
+        ICharacter character = turns.poll();
+        assert character != null;
+        if (!isDead(character)) {
+            character.waitTurn();
+        }
+    }
+
+    /**
+     * Calls phase newGame method.
+     */
+    public void tryToNewGame() {
+        try {
+            phase.newGame();
+        } catch (InvalidMovementException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Empties all the lists and set null some variables.
+     */
+    public void newGame() {
+        turns.clear();
+        party.clear();
+        enemies.clear();
+        inventory.clear();
+        allEnemies.clear();
+        allPlayers.clear();
+        currentCharacter = null;
+        currentWeapon = null;
+        currentOpponentToAttack = null;
+    }
+
+    /**
+     * Calls the phase partyIsComplete method
+     */
+    public void tryToPartyIsComplete() {
+        try {
+            phase.partyIsComplete();
+        } catch (InvalidMovementException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks if the party list is complete.
+     */
+    public void partyIsComplete() {
+        if (party.size() == 3) {
+            setPhase(new CombatPhase());
+        }
+    }
+
+    /**
+     * Checks if the player won.
+     *
+     * @return true if enemies list is empty.
+     */
+    public boolean playerWon() {
+        return enemies.isEmpty();
+    }
+
+    /**
+     * Checks if the enemy won.
+     *
+     * @return true if party list is empty.
+     */
+    public boolean enemyWon() {
+        return party.isEmpty();
+    }
+
+    /**
+     * Checks if a character is dead.
      *
      * @param character the character in question.
-     * @return the character's name.
+     * @return true if a character is dead.
      */
-    public String getNameCharacter(ICharacter character) {
-        return character.getName();
+    public boolean isDead(ICharacter character) {
+        if (!character.isAlive()) {
+            characterIsDeadNotification.firePropertyChange(
+                    "CHARACTER_IS_DEAD", null, this);
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Get the character's life.
-     *
-     * @param character the character in question.
-     * @return the character's life.
-     */
-    public String getLifeCharacter(ICharacter character) {
-        return String.valueOf(character.getLife());
-    }
-
-    /**
-     * Set the character's life.
-     *
-     * @param character the character in question.
-     * @param life      the character's new life.
-     */
-    public void setLifeCharacter(ICharacter character, int life) {
-        character.setLife(life);
-    }
-
-    /**
-     * Get the character's defense.
-     *
-     * @param character the character in question.
-     * @return the character's defense.
-     */
-    public String getDefenseCharacter(ICharacter character) {
-        return String.valueOf(character.getDefense());
-    }
-
-    /**
-     * Get the character's attack.
-     *
-     * @param character the character in question.
-     * @return the enemy's attack.
-     */
-    public String getAttackEnemy(ICharacter character) {
-        return String.valueOf(((Enemy) character).getAttack());
-    }
-
-    /**
-     * Get the character's attack.
-     *
-     * @param character the character in question.
-     * @return the enemy's attack.
-     */
-    public String getDamageEquippedWeapon(ICharacter character) {
-        return String.valueOf(((IPlayerCharacter) character).getEquippedWeapon().getDamage());
-    }
-
-    /**
-     * Get the character's equipped weapon.
-     *
-     * @param character the character in question.
-     * @return the character's equipped weapon.
-     */
-    public IWeapon getEquippedWeaponCharacter(ICharacter character) {
-        return ((IPlayerCharacter) character).getEquippedWeapon();
-    }
-
-    public String getNameWeapon(IWeapon weapon) {
-        return weapon.getName();
-    }
-
-    public String getDamageWeapon(int index) {
-        return String.valueOf(inventory.get(index).getDamage());
-    }
-    /**
-     * Set the character's equipped weapon as null.
+     * Puts a character on the turns queue.
      *
      * @param character the character in question.
      */
-    public void setEquippedWeaponCharacterNull(ICharacter character) {
-        ((IPlayerCharacter) character).setEquippedWeaponNull();
+    public void waitTurn(ICharacter character) {
+        character.waitTurn();
     }
 
     /**
-     * Get the enemies list.
-     * @return
-     *        the enemies list.
-     */
-    public List<Enemy> getEnemies() {
-        return enemies;
-    }
-
-    /**
-     * Get the party list.
-     * @return
-     *        the party list.
-     */
-    public List<IPlayerCharacter> getParty() {
-        return party;
-    }
-
-    /**
-     * Get a enemy from enemies list.
+     * Returns true if the character is a player character.
      *
-     * @param index the index in enemies of the enemy.
-     * @return the enemy in the indicated index.
+     * @param character the character in question.
+     * @return true if the character is a player character.
      */
-    public Enemy getEnemy(int index) {
-        return enemies.get(index);
+    public boolean isPlayerCharacter(ICharacter character) {
+        return allPlayers.contains(character);
     }
 
     /**
-     * Get a character from party list.
-     *
-     * @param index the index in party of the character.
-     * @return the character in the indicated index.
+     * Completes the inventory with five weapons with random stats.
      */
-    public IPlayerCharacter getPlayer(int index) {
-        return party.get(index);
-    }
-
-    /**
-     * Get a weapon from the inventory.
-     *
-     * @param index the index in the inventory of the weapon.
-     * @return the weapon in the indicated index.
-     */
-    public IWeapon getWeapon(int index) {
-        return getInventory().get(index);
-    }
-
-    /**
-     * Get the inventory.
-     *
-     * @return the inventory.
-     */
-    public List<IWeapon> getInventory() {
-        return inventory;
-    }
-
     public void completeInventory() {
         createAxe("Axe", rng.nextInt(50) + 100, rng.nextInt(10) + 1);
         createBow("Bow", rng.nextInt(50) + 100, rng.nextInt(10) + 1);
@@ -547,61 +438,253 @@ public class GameController {
     }
 
     /**
+     * Gets the character's name.
+     *
+     * @param character the character in question.
+     * @return the character's name.
+     */
+    public String getNameCharacter(ICharacter character) {
+        return character.getName();
+    }
+
+    /**
+     * Gets the character's life.
+     *
+     * @param character the character in question.
+     * @return the character's life.
+     */
+    public String getLifeCharacter(ICharacter character) {
+        return String.valueOf(character.getLife());
+    }
+
+    /**
+     * Sets the character's life.
+     *
+     * @param character the character in question.
+     * @param life      the character's new life.
+     */
+    public void setLifeCharacter(ICharacter character, int life) {
+        character.setLife(life);
+    }
+
+    /**
+     * Gets the character's defense.
+     *
+     * @param character the character in question.
+     * @return the character's defense.
+     */
+    public String getDefenseCharacter(ICharacter character) {
+        return String.valueOf(character.getDefense());
+    }
+
+    /**
+     * Gets the character's attack.
+     *
+     * @param character the character in question.
+     * @return the enemy's attack.
+     */
+    public String getAttackEnemy(ICharacter character) {
+        return String.valueOf(((Enemy) character).getAttack());
+    }
+
+    /**
+     * Gets the character's attack.
+     *
+     * @param character the character in question.
+     * @return the enemy's attack.
+     */
+    public String getDamageEquippedWeapon(ICharacter character) {
+        return String.valueOf(((IPlayerCharacter) character).getEquippedWeapon().getDamage());
+    }
+
+    /**
+     * Gets the character's equipped weapon.
+     *
+     * @param character the character in question.
+     * @return the character's equipped weapon.
+     */
+    public IWeapon getEquippedWeaponCharacter(ICharacter character) {
+        return ((IPlayerCharacter) character).getEquippedWeapon();
+    }
+
+    /**
+     * Gets the weapon's name.
+     *
+     * @param weapon the weapon in question.
+     * @return the weapon´s name.
+     */
+    public String getNameWeapon(IWeapon weapon) {
+        return weapon.getName();
+    }
+
+    /**
+     * Gets the inventory weapon's damage.
+     *
+     * @param index the weapon's index in the inventory.
+     * @return the weapon's damage.
+     */
+    public String getDamageWeapon(int index) {
+        return String.valueOf(inventory.get(index).getDamage());
+    }
+
+    /**
+     * Sets the character's equipped weapon as null.
+     *
+     * @param character the character in question.
+     */
+    public void setEquippedWeaponCharacterNull(ICharacter character) {
+        ((IPlayerCharacter) character).setEquippedWeaponNull();
+    }
+
+    /**
+     * Gets the enemies list.
+     *
+     * @return the enemies list.
+     */
+    public List<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    /**
+     * Gets the party list.
+     *
+     * @return the party list.
+     */
+    public List<IPlayerCharacter> getParty() {
+        return party;
+    }
+
+    /**
+     * Gets a enemy from enemies list.
+     *
+     * @param index the index in enemies of the enemy.
+     * @return the enemy in the indicated index.
+     */
+    public Enemy getEnemy(int index) {
+        return enemies.get(index);
+    }
+
+    /**
+     * Gets a character from party list.
+     *
+     * @param index the index in party of the character.
+     * @return the character in the indicated index.
+     */
+    public IPlayerCharacter getPlayer(int index) {
+        return party.get(index);
+    }
+
+    /**
+     * Gets a weapon from the inventory.
+     *
+     * @param index the index in the inventory of the weapon.
+     * @return the weapon in the indicated index.
+     */
+    public IWeapon getWeapon(int index) {
+        return getInventory().get(index);
+    }
+
+    /**
+     * Gets the inventory.
+     *
+     * @return the inventory.
+     */
+    public List<IWeapon> getInventory() {
+        return inventory;
+    }
+
+    /**
      * Get the turns queue.
-     * @return
-     *        the turns queue.
+     *
+     * @return the turns queue.
      */
     public BlockingQueue<ICharacter> getTurns() {
         return turns;
     }
 
-
     /**
-     * Returns true if the character is a player character.
-     * @param character
-     *       the character in question.
-     * @return
-     *        true if the character is a player character.
+     * Gets a enemy from allEnemies list.
+     *
+     * @param index the index in enemies of the enemy.
+     * @return the enemy in the indicated index.
      */
-    public boolean isPlayerCharacter(ICharacter character) {
-        return allPlayers.contains(character);
+    public Enemy getAllEnemies(int index) {
+        return allEnemies.get(index);
     }
 
+    /**
+     * Gets a character from allPlayers list.
+     *
+     * @param index the index in party of the character.
+     * @return the character in the indicated index.
+     */
+    public IPlayerCharacter getAllPlayers(int index) {
+        return allPlayers.get(index);
+    }
 
-
-
-
+    /**
+     * Gets the character in the currentCharacter variable.
+     *
+     * @return the current character.
+     */
     public ICharacter getCurrentCharacter() {
         return currentCharacter;
     }
 
+    /**
+     * Sets the character in the currentCharacter variable.
+     */
     public void setCurrentCharacter(ICharacter character) {
         this.currentCharacter = character;
     }
 
+    /**
+     * Gets the weapon in the currentWeapon variable.
+     *
+     * @return the current weapon.
+     */
     public IWeapon getCurrentWeapon() {
         return currentWeapon;
     }
 
+    /**
+     * Sets the character in the currentWeapon variable.
+     */
     public void setCurrentWeapon(IWeapon weapon) {
         this.currentWeapon = weapon;
     }
 
+    /**
+     * Gets the character in the currentOpponentToAttack variable.
+     *
+     * @return the current opponent to attack.
+     */
     public ICharacter getCurrentOpponentToAttack() {
         return currentOpponentToAttack;
     }
 
+    /**
+     * Sets the character in the currentOpponentToAttack variable.
+     */
     public void setCurrentOpponentToAttack(ICharacter character) {
         this.currentOpponentToAttack = character;
     }
 
-    //PHASES
-
+    /**
+     * Sets a new phase to the controller.
+     * @param phase
+     *       the new phase.
+     */
     public void setPhase(final @NotNull Phase phase) {
         this.phase = phase;
         phase.setController(this);
     }
 
+    /**
+     * Gets the name of the current phase.
+     * @return
+     *        the current phase's name.
+     */
     public String getCurrentPhase() {
         return phase.toString();
     }

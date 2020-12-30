@@ -1,7 +1,15 @@
 package com.github.estebanzuniga.finalreality.controller.phases;
 
+/**
+ * A class that holds all the information of a FinalPhase.
+ *
+ * @author Esteban Zúñiga Salamanca.
+ */
 public class FinalPhase extends Phase {
 
+    /**
+     * Creates a new FinalPhase, it represents when the combat finishes.
+     */
     public FinalPhase() {
         this.inInitialPhase = false;
         this.canAttack = false;
@@ -21,8 +29,8 @@ public class FinalPhase extends Phase {
         changePhase(new InitialPhase());
     }
 
+    @Override
     public String toString() {
         return "Final phase";
     }
-
 }

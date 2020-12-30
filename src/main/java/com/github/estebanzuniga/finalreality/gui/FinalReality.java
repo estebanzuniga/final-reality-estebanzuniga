@@ -2,8 +2,11 @@ package com.github.estebanzuniga.finalreality.gui;
 
 import com.github.estebanzuniga.finalreality.controller.GameController;
 import com.github.estebanzuniga.finalreality.controller.phases.InvalidMovementException;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,9 +14,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.animation.AnimationTimer;
-import javafx.scene.Group;
-import javafx.scene.control.Button;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileInputStream;
@@ -230,7 +230,7 @@ public class FinalReality extends Application {
         phaseLabel.setText("Current phase: " + controller.getCurrentPhase());
 
         if (partySize == 3) {
-          controller.partyIsComplete();
+          controller.tryToPartyIsComplete();
           controller.completeInventory();
           controller.setCurrentCharacter(controller.getTurns().peek());
           try {

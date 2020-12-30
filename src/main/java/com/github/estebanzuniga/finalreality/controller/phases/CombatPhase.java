@@ -4,9 +4,17 @@ import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 import com.github.estebanzuniga.finalreality.model.character.player.IPlayerCharacter;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
 
-public class AttackPhase extends Phase {
+/**
+ * A class that holds all the information of a CombatPhase.
+ *
+ * @author Esteban Zúñiga Salamanca.
+ */
+public class CombatPhase extends Phase {
 
-    public AttackPhase() {
+    /**
+     * Creates a new CombatPhase, it represents when the user and the enemies are facing.
+     */
+    public CombatPhase() {
         this.inInitialPhase = false;
         this.canAttack = true;
         this.canEquip = true;
@@ -30,6 +38,7 @@ public class AttackPhase extends Phase {
         changePhase(new EndTurnPhase());
     }
 
+    @Override
     public String toString() {
         return "Attack phase";
     }

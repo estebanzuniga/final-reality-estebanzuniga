@@ -54,20 +54,6 @@ public interface ICharacter {
   boolean isAlive();
 
   /**
-   * Returns true if the character is a player character.
-   * @return
-   *        true if the character is a player character.
-   */
-  boolean isPlayer();
-
-  /**
-   * Returns the return value of isPlayer method.
-   * @return
-   *        true if the character is a player character.
-   */
-  boolean isPlayerCharacter();
-
-  /**
    * Add a character to a handler.
    * @param characterIsDeadHandler
    *        the handler.

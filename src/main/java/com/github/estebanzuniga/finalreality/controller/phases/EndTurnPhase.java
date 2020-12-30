@@ -1,7 +1,15 @@
 package com.github.estebanzuniga.finalreality.controller.phases;
 
+/**
+ * A class that holds all the information of an EndTurnPhase.
+ *
+ * @author Esteban Zúñiga Salamanca.
+ */
 public class EndTurnPhase extends Phase {
 
+    /**
+     * Creates a new EndTurnPhase, it represents when the user or an enemy ends it turn.
+     */
     public EndTurnPhase() {
         this.inInitialPhase = false;
         this.canEquip = false;
@@ -18,20 +26,21 @@ public class EndTurnPhase extends Phase {
         }
         else {
             while (controller.getTurns().isEmpty()) { }
-            toAttackPhase();
+            toCombatPhase();
         }
     }
 
     @Override
-    public void toAttackPhase() {
-        changePhase(new AttackPhase());
+    public void toCombatPhase() {
+        changePhase(new CombatPhase());
     }
 
     @Override
-        public void toFinalPhase() {
+    public void toFinalPhase() {
         changePhase(new FinalPhase());
     }
 
+    @Override
     public String toString() {
         return "End turn phase";
     }
