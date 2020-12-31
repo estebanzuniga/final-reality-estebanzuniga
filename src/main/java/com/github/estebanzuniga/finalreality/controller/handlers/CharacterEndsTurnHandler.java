@@ -1,7 +1,7 @@
 package com.github.estebanzuniga.finalreality.controller.handlers;
 
 import com.github.estebanzuniga.finalreality.controller.GameController;
-import com.github.estebanzuniga.finalreality.model.character.player.IPlayerCharacter;
+import com.github.estebanzuniga.finalreality.model.character.ICharacter;
 
 import java.beans.PropertyChangeEvent;
 
@@ -10,7 +10,7 @@ import java.beans.PropertyChangeEvent;
  *
  * @author Esteban Zúñiga Salamanca.
  */
-public class PlayerEndsTurnHandler implements IEventHandler {
+public class CharacterEndsTurnHandler implements IEventHandler {
 
     private final GameController controller;
 
@@ -19,7 +19,7 @@ public class PlayerEndsTurnHandler implements IEventHandler {
      * @param controller
      *        the controller that the listener is observing.
      */
-    public PlayerEndsTurnHandler(GameController controller) {
+    public CharacterEndsTurnHandler(GameController controller) {
         this.controller = controller;
     }
 
@@ -31,6 +31,6 @@ public class PlayerEndsTurnHandler implements IEventHandler {
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        controller.playerAttack((IPlayerCharacter) evt.getNewValue(), (int) evt.getNewValue());
+        controller.attack((ICharacter) evt.getNewValue(), (ICharacter) evt.getNewValue());
     }
 }

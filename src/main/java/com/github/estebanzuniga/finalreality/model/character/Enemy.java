@@ -89,7 +89,6 @@ public class Enemy extends AbstractCharacter {
     if (character.getLife() <= 0) {
       character.setLife(0);
     }
-    enemyEndsTurnNotification.firePropertyChange("ENEMY_ENDS_TURN", null, this);
   }
 
   @Override

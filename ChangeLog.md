@@ -1,6 +1,19 @@
 ChangeLog
 =========
 
+Version 7.0
+-----------
+
+- Se implementó la gui del proyecto.
+
+- Se completaron los test.
+
+Version 6.0
+-----------
+
+- Se aplicó el patrón State. Se crearon cuatro fases, la fase inicial, 
+  la fase de combate, la fase de fin de turno y la fase final.
+
 Version 5.0
 -----------
 

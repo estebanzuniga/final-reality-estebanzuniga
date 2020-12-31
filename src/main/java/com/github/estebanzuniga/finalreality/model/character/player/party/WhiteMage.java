@@ -16,7 +16,6 @@ public class WhiteMage extends AbstractMage{
 
     private int life;
     private final int defense;
-    //protected int mana;
 
     /**
      * Creates a new white mage.
@@ -34,7 +33,6 @@ public class WhiteMage extends AbstractMage{
         super(turnsQueue, name);
         this.life = life;
         this.defense = defense;
-        //this.mana = mana;
     }
 
     @Override
@@ -75,12 +73,4 @@ public class WhiteMage extends AbstractMage{
     public int hashCode() {
         return Objects.hash(getName(), getLife(), getDefense());
     }
-
-    /*public int getMana() {
-        return mana;
-    }
-
-    public void setMana(int mana) {
-        this.mana = mana;
-    }*/
 }

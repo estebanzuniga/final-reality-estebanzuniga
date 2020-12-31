@@ -25,10 +25,4 @@ public abstract class AbstractMage extends AbstractPlayerCharacter {
                         @NotNull String name){
         super(turnsQueue, name);
     }
-
-    //Se escribieron algunas líneas en las clases hijas para cuando se implementen las magias
-    //Se creó la variable mana y los métodos getMana y setMana
-
-    //Próximamente se crearán métodos en esta clase.
-
 }

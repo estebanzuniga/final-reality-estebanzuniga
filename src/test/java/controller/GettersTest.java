@@ -19,4 +19,9 @@ public class GettersTest extends GameControllerTest {
         checkCharacterGetters(testWhiteMage, WHITE_MAGE_NAME);
         checkCharacterGetters(testBlackMage, BLACK_MAGE_NAME);
     }
+
+    @Test
+    public void otherGettersTest() {
+        checkOtherGetters();
+    }
 }

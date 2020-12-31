@@ -48,7 +48,6 @@ public abstract class AbstractPlayerCharacter extends AbstractCharacter implemen
     if (character.getLife() <= 0) {
       character.setLife(0);
     }
-    playerEndsTurnNotification.firePropertyChange("PLAYER_ENDS_TURN", null, this);
   }
 
   @Override

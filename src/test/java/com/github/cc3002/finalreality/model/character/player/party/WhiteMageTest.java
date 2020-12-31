@@ -1,5 +1,6 @@
 package com.github.cc3002.finalreality.model.character.player.party;
 
+import com.github.cc3002.finalreality.model.character.player.AbstractPlayerCharacterTest;
 import com.github.estebanzuniga.finalreality.model.character.player.party.Engineer;
 import com.github.estebanzuniga.finalreality.model.character.player.party.WhiteMage;
 import com.github.estebanzuniga.finalreality.model.weapon.IWeapon;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Esteban Zúñiga Salamanca.
  * @see WhiteMage
  */
-class WhiteMageTest extends AbstractMageTest {
+class WhiteMageTest extends AbstractPlayerCharacterTest {
 
     private WhiteMage whiteMage;
     private List<IWeapon> testWhiteMageWeaponList;
